@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Money Monsters - Goals</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body data-child-id="<%= user.id %>">
+  <div class="container">
+    <header>
+      <%- include('../partials/header') %>
+    </header>
+    <div class="goal-page">
+      <div class="goals-container">
+        <% if (goals && goals.length > 0) { %>
+          <div class="section-tabs">
+            <span class="tab goals-tab">Goals</span>
+            <span class="tab progress-tab">Progress</span>
+          </div>
+          <div class="goal-list">
+            <% goals.forEach(function(goal) { %>
+              <a href="/goals/view/<%= goal._id %>" class="goal-card-link">
+                <div class="goal-card">
+                  <div class="goal-info">
+                    <% if (goal.purchaseLink) { %>
+                      <img src="/images/goal.png" alt="Goal Image" class="goal-image" />
+                    <% } else { %>
+                      <div class="initials-avatar"><%= getInitials(goal.title) %></div>
+                    <% } %>
+                    <div class="goal-text">
+                      <h3><%= goal.title %></h3>
+                      <p><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
+                    </div>
+                  </div>
+                  <div class="goal-progress">
+                    <div class="progress-bar">
+                      <div class="progress-fill" data-progress="<%= goal.progress || 0 %>" style="--progress-width: <%= goal.progress || 0 %>%"></div>
+                    </div>
+                    <span><%= goal.progress || 0 %>%</span>
+                  </div>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <div class="no-goals-message">
+            <i class="fas fa-bullseye"></i>
+            <h2>No Goals Yet</h2>
+            <p>You haven't set any goals yet. Start by adding your first goal!</p>
+          </div>
+        <% } %>
+      </div>
+
+      <% if (user.accountType === 'child') { %>
+        <div class="add-goal-btn-container">
+          <button class="btn">Add a New Goal</button>
+        </div>
+      <% } %>
+    </div>
+
+    <footer>
+      <%- include('../partials/bottomNav') %>
+    </footer>
+  </div>
+
+  <%- include('./addGoalModal') %>
+  <script src="/dynamic/addGoalModal.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+//how much task completed
+
+.progress-wrapper {
+  flex: 1;
+  margin-left: 1rem;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.progress-bar {
+  height: 6px;
+  background-color: $tertiary;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 120px;
+}

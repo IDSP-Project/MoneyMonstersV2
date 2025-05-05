@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log out</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="confirmLogout">
+    <div class="container">
+      <header>
+        <%- include('../partials/header') %>
+      </header>
+      <main>
+        <form id="logout" action="/logout" method="POST">
+          <p>Are you sure that you would like to log out of <%= profileUser.firstName %> <%= profileUser.lastName %>'s account?</p>
+          <button type="submit" class="btn" id="submitButton">Yes, logout</button>
+        </form>
+        <a href="/profile/<%= user.id %>" >Nevermind, cancel</a>
+
+      </main>
+      <footer>
+        <%- include('../partials/bottomNav', { user: user, currentPage: 'profile' }) %>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

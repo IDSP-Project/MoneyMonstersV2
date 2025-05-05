@@ -1,0 +1,49 @@
+<!-- Add Goal Modal -->
+<div id="addGoalModal" class="goal-modal" style="display: none;">
+  <div class="goal-modal-content">
+    <h2>Add a New Goal!</h2>
+    <p>Do you want to import something from Amazon.ca or would you like to set a custom goal?</p>
+    <form id="goalTypeForm">
+      <label class="goal-radio">
+        <input type="radio" name="goalType" value="amazon" checked>
+        <span>Amazon.ca</span>
+      </label>
+      <label class="goal-radio">
+        <input type="radio" name="goalType" value="custom">
+        <span>Custom Goal</span>
+      </label>
+      <button type="submit" class="btn confirm-btn">Confirm</button>
+      <button type="button" class="btn cancel-btn" id="cancelGoalModal">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<!-- Custom Goal Modal -->
+<div id="customGoalModal" class="goal-modal" style="display: none;">
+  <div class="goal-modal-content">
+    <h2>Custom Goal</h2>
+    <p>Enter the details including the name of the goal and the amount you want to piggy bank</p>
+    <form id="customGoalForm">
+      <input type="text" name="goalName" placeholder="Name" class="goal-input" required />
+      <input type="number" name="goalAmount" placeholder="Amount • $" class="goal-input" min="0" step="1" required />
+      <button type="submit" class="btn confirm-btn">Create Goal</button>
+      <button type="button" class="btn cancel-btn" id="backToTypeModal">Back</button>
+    </form>
+  </div>
+</div>
+
+<!-- Amazon Goal Modal -->
+<div id="amazonGoalModal" class="goal-modal" style="display: none;">
+  <div class="goal-modal-content">
+    <h2>Amazon Product</h2>
+    <p>Please copy the link of the product you wish to add to your goal from Amazon.ca and paste it below</p>
+    <form id="amazonGoalForm">
+      <div class="goal-input amazon-link-input">
+        <input type="text" name="amazonLink" placeholder="amazn.ca/abcd" required />
+        <span class="copy-icon" title="Copy"><i class="fa fa-copy"></i></span>
+      </div>
+      <button type="submit" class="btn confirm-btn">Create Goal</button>
+      <button type="button" class="btn cancel-btn" id="backToTypeModalAmazon">Back</button>
+    </form>
+  </div>
+</div> 

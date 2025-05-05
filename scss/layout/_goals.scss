@@ -1,0 +1,317 @@
+.goal-page {
+  margin-bottom: 4rem;
+  
+    .goals-container {
+      margin: 0 auto;
+  
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+  
+      .goal-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+  
+      .section-tabs {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1rem 0.5rem 1rem;
+        font-weight: $font-regular;
+        font-family: $primary-font;
+        color: #888;
+        font-size: 1rem;
+  
+        .goals-tab {
+          flex: 2;
+          text-align: left;
+          background: none;
+          box-shadow: none;
+          cursor: default;
+          font-size: $font-size-xs;
+        }
+        .progress-tab {
+          flex: 1;
+          text-align: right;
+          background: none;
+          box-shadow: none;
+          cursor: default;
+          font-size: $font-size-xs;
+        }
+      }
+  
+      .goal-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 1rem;
+        padding-left: 1rem;
+        border-radius: 10px;
+        background-color: $white;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      }
+  
+      .goal-info {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+  
+        .goal-image {
+          width: 40px;
+          height: 40px;
+          object-fit: cover;
+          border-radius: 8px;
+        }
+  
+        .goal-text {
+          h3 {
+            font-size: $font-size-base;
+            margin: 0;
+          }
+          p {
+            font-size: $font-size-sm;
+            font-family: $primary-font;
+            color: $secondary;
+          }
+        }
+      }
+  
+      .goal-progress {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+  
+        .progress-bar {
+          width: 80px;
+          height: 8px;
+          background: $primary;
+          border-radius: 4px;
+          overflow: hidden;
+  
+          .progress-fill {
+            height: 100%;
+            background: $tertiary;
+            border-radius: 4px;
+            
+            &[data-progress] {
+              width: var(--progress-width);
+            }
+          }
+        }
+  
+        span {
+          font-size: 0.875rem;
+          color: $secondary;
+        }
+      }
+    }
+  
+    .button-fixed-bottom {
+      position: fixed;
+      bottom: 4rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 23rem;
+      z-index: 10;
+
+      .btn {
+        width: auto;
+        min-width: 180px;
+        display: block;
+        margin: 0 auto;
+      }
+    }
+
+    .add-goal-btn-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 2rem 1rem 1rem 1rem;
+
+      .btn {
+        width: 100%;
+        color: $white;
+        background-color: $tertiary;
+        border: none;
+        border-radius: 6px;
+        padding: 0.75rem;
+        font-size: $font-size-sm;
+        cursor: pointer;
+        text-align: center;
+        box-sizing: border-box;
+        min-width: unset;
+      }
+    }
+  }
+  
+
+
+// Add Goal Modal
+.goal-modal {
+  font-family: $primary-font;;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+
+
+.goal-modal-content {
+  background: $white;
+  border-radius: 16px;
+  padding: 1.2rem 1rem 1rem 1rem;
+  max-width: 240px;
+  text-align: center;
+}
+
+.goal-modal-content h2 {
+  margin-top: 0;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.goal-modal-content p {
+  margin-bottom: 1.5rem;
+}
+
+.goal-radio {
+  display: flex;
+  align-items: center;
+  background: $primary;
+  border: 2px solid $secondary-light;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.goal-radio input[type="radio"] {
+  accent-color: $tertiary;
+  margin-right: 0.75rem;
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.goal-radio input[type="radio"]:checked + span {
+  color: $tertiary;
+}
+
+.confirm-btn {
+  background: $tertiary;
+  color: $white;
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 0.7rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.7rem 0;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.confirm-btn:hover {
+  background: $tertiary;
+}
+
+.cancel-btn {
+  background: $primary;
+  color: $black;
+  width: 100%;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.7rem 0;
+  border: none;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background: $secondary-light;
+}
+
+.goal-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 10px;
+  background: $primary;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.goal-input:focus {
+  border: 2px solid $tertiary;
+  background: $white;
+}
+
+.amazon-link-input {
+  display: flex;
+  align-items: center;
+  background: $primary;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+.amazon-link-input input {
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  flex: 1;
+  outline: none;
+  color: $black;
+}
+.copy-icon {
+  color: $secondary-light;
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.copy-icon:hover {
+  color: $tertiary;
+}
+.copy-icon.copied {
+  color: $success;
+}
+
+.error-message {
+  background-color: $secondary-light;
+  color: $error;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  text-align: left;
+}
+}
+
+.goal-details-card {
+  .goal-source {
+    font-family: $primary-font;
+  }
+  .goal-description {
+    font-family: $primary-font;
+  }
+  .goal-price {
+    font-family: $primary-font;
+  }
+  .goal-progress {
+    font-family: $primary-font;
+  }
+
+  margin-left: 1rem;
+}

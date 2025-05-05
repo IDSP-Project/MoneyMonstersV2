@@ -1,0 +1,151 @@
+.signin, .register {
+  font-family: $primary-font;
+
+    h1 {
+    font-size: $font-size-lg;;
+    text-align: center;
+    margin: 3rem 0 0.5rem 0;
+    color: $secondary;
+  }
+  
+  p {
+    text-align: center;
+    color: lighten($secondary, 30%);
+    font-size: $font-size-sm;
+    margin-bottom: 0.5rem;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    grid-gap: 0.5rem;
+    width: 80%;
+    margin: auto;
+  }
+  
+  label {
+    display: block;
+    align-items: center;
+    color: $secondary;
+    margin-top: 0.5rem;;
+  }
+  
+  input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid $tertiary;
+    border-radius: 50px;
+    font-size: $font-size-sm;
+    color: $secondary;
+  }
+  
+  
+  .input:focus {
+    outline: none;
+    border-color: $tertiary;
+  }
+  
+ .btn {
+    box-sizing: border-box; 
+    width: 100%;
+    align-items: center;
+    background-color: $tertiary; 
+    color: $white;
+    padding: $font-size-xs;
+    border: none;
+    border-radius: 20px;
+    font-size: $font-size-base;
+    cursor: pointer;
+    margin: 0.5rem auto 0.5rem auto;
+  }
+  
+  .btn:hover {
+    opacity: 0.9;
+  }
+  
+  a {
+    text-decoration: none;
+  }
+  
+a:hover {
+  text-decoration: underline;
+}
+  
+  .forgot-password, .showPassword {
+    display: block;
+    text-align: right;
+    font-size: $font-size-xs;
+    color: lighten($secondary, 30%);
+    margin-bottom: 15px;
+  }
+  
+  .error-message {
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: $font-size-sm;
+    text-align: center;
+    color: $error;
+  }
+  
+  input.validated-valid {
+    border-color: $tertiary;
+  }
+  
+  input.validated-invalid {
+    border-color: $error;
+  }
+
+  .reroute {
+    margin-bottom: 2.5rem;
+  }
+}
+
+.register {
+  .accountType {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin: 1rem 0;
+  }
+  
+  .accountType label {
+    flex: 1;
+    margin: 0;
+    position: relative;
+  }
+  
+  .accountType input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .accountType .radioBtn {
+    display: block;
+    padding: 10px 15px;
+    text-align: center;
+    font-size: $font-size-sm;
+    border-radius: 10px;
+    border: 1px solid $tertiary;
+    color: $secondary;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .accountType input[type="radio"]:checked + .radioBtn {
+    background-color: $tertiary;
+    color: $white;
+  }
+
+  .accountType input[type="radio"]:not(:checked) + .radioBtn {
+    background-color: $white;
+    color: $tertiary;
+  }
+  
+  .accountType input[type="radio"]:focus + .radioBtn {
+    outline: 2px solid rgba($tertiary, 0.5);
+  }
+}

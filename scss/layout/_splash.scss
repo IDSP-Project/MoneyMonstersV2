@@ -1,0 +1,41 @@
+
+.splash {
+  margin-top: 3rem;
+      font-family: $primary-font;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      .container {
+        background-color: rgba($inner-coin, 0.1);
+      }
+
+    h1 {
+      font-size: 2.3rem;
+      color: $tertiary;
+      font-style: bold;
+      box-shadow: 5px $secondary;
+      justify-content: center;
+      margin: 2rem auto 1rem auto;
+    }
+    
+    a {
+      display: block;
+      text-align: center;
+      margin: 2rem;
+      text-decoration: none;
+      color: $white;
+      background-color: $tertiary;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+
+    svg {
+      margin: 1rem;
+    }
+}

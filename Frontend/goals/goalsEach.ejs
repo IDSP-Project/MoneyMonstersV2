@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Goal Details - Money Monsters</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <%- include('../partials/header') %>
+    </header>
+    <main>
+      <div class="goal-details-page">
+        <% if (error) { %>
+          <div class="error-message"><%= error %></div>
+        <% } else if (goal) { %>
+          <div class="goal-progress-graphic" style="text-align:center; margin: 2rem 0 1rem 0;">
+            <div style="font-size:2.2rem; font-weight:700; color:#714AA8; font-family: 'Inter', sans-serif;">80%</div>
+            <div style="color:#888; font-size:1rem; font-family: 'Inter', sans-serif;">Completed</div>
+          </div>
+          <div class="goal-details-card" style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+            <% if (goal.purchaseLink) { %>
+              <img src="/images/goal.png" alt="Goal Image" class="goal-image" style="width:60px; height:60px; object-fit:cover; border-radius:10px;" />
+            <% } else { %>
+              <div class="initials-avatar" style="width:60px; height:60px; font-size:1.5rem;"><%= goal.title ? goal.title.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) : '' %></div>
+            <% } %>
+            <div>
+              <h2 style="margin:0 0 0.2rem 0; font-size:1.2rem;"><%= goal.title %></h2>
+              <p class="goal-source" style="margin:0; color:#888; font-size:0.95rem;"><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
+              <p class="goal-description" style="margin:0.2rem 0 0.2rem 0; color:#444; font-size:0.98rem;"><%= goal.description %></p>
+              <div class="goal-price" style="color:#714AA8; font-weight:600;">Target: $<%= goal.price ? goal.price.toFixed(2) : '0.00' %></div>
+            </div>
+          </div>
+          <div class="tasks-container">
+            <div class="section-tabs">
+              <span class="tab tasks-tab">Tasks</span>
+              <span class="tab status-tab">Status</span>
+            </div>
+            <% if (assignedTasks && assignedTasks.length > 0) { %>
+              <div class="task-list">
+                <% assignedTasks.forEach(function(task) { %>
+                  <% let iconClass = 'fa-solid '; %>
+                  <% switch(task.category) {
+                    case 'dog': iconClass += 'fa-dog'; break;
+                    case 'house': iconClass += 'fa-house'; break;
+                    case 'babysit': iconClass += 'fa-baby'; break;
+                    case 'plants': iconClass += 'fa-leaf'; break;
+                    default: iconClass += 'fa-list-check';
+                  } %>
+                  <div class="task-card" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>">
+                    <div class="task-info">
+                      <i class="<%= iconClass %> task-icon"></i>
+                      <div class="task-text">
+                        <h3><%= task.title %></h3>
+                        <small class="due-date" data-due="<%= task.dueDate && task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> |<%= task.formattedDue ? task.formattedDue : '' %></small>
+                      </div>
+                    </div>
+                    <div class="task-status">
+                      <span class="status-badge <%= task.status %>">
+                        <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>
+                      </span>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            <% } else { %>
+              <div class="no-tasks-message">
+                <i class="fas fa-tasks"></i>
+                <h2>No Tasks Yet</h2>
+                <p>There are no tasks assigned to this goal yet.</p>
+                <button class="btn add-task-btn" onclick="alert('Add Task functionality coming soon!')">Add Task</button>
+              </div>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    </main>
+    <footer>
+      <%- include('../partials/bottomNav', { user: user, currentPage: 'goals' }) %>
+    </footer>
+  </div>
+  <script src="/dynamic/formatDueDates.js"></script>
+</body>
+</html>

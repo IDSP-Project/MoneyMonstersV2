@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Money Monsters - Goals</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="tasks">
+  <div class="container">
+    <header>
+      <%- include('../partials/header') %>
+    </header>
+ <main>
+  <div class="tasks-container">
+    <% if (tasks && tasks.length > 0) { %>
+      <div class="section-tabs">
+        <span class="tab tasks-tab">Tasks</span>
+        <span class="tab status-tab">Status</span>
+      </div>
+      <div class="task-list">
+        <% tasks.forEach(function(task) { %>
+          <div class="task-card" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>">
+            <div class="task-info">
+              <% 
+                let iconClass = 'fa-solid ';
+                switch(task.category) {
+                  case 'dog': iconClass += 'fa-dog'; break;
+                  case 'house': iconClass += 'fa-house'; break;
+                  case 'babysit': iconClass += 'fa-baby'; break;
+                  case 'plants': iconClass += 'fa-leaf'; break;
+                  default: iconClass += 'fa-list-check';
+                }
+              %>
+              <i class="<%= iconClass %> task-icon"></i>
+              <div class="task-text">
+                <h3><%= task.title %></h3>
+                <small class="due-date" data-due="<%= task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> |<%= task.formattedDue %></small>
+              </div>
+            </div>
+            <div class="task-status">
+              <span class="status-badge <%= task.status %>">
+                <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>
+              </span>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="no-tasks-message">
+        <i class="fas fa-tasks"></i>
+        <h2>No Tasks Yet</h2>
+        <p>Ask your parent to assign a task.</p>
+      </div>
+    <% } %>
+  </div>
+</main>
+
+    <footer>
+      <%- include('../partials/bottomNav') %>
+    </footer>
+    <div id="taskModal" class="task-modal" style="display:none;">
+      <div class="task-modal-content">
+        <div class="task-modal-icon" id="modalTaskIcon"></div>
+        <h2 id="modalTaskTitle"></h2>
+        <p class="task-modal-desc" id="modalTaskDesc"></p>
+        <div class="task-modal-meta">
+          <span id="modalTaskReward"></span> |
+          <span id="modalTaskDue"></span>
+        </div>
+        <div class="task-modal-actions" id="modalTaskActions">
+          <button class="btn cancel-btn" id="modalCancelBtn">Cancel</button>
+          <button class="btn start-btn" id="modalStartBtn">Start</button>
+          <button class="btn complete-btn" id="modalCompleteBtn" style="display:none;">Mark Completed</button>
+        </div>
+        <div class="assign-goal-row" style="margin-top: 0.5rem; text-align: right;">
+          <button class="btn assign-goal-btn" id="modalAssignGoalBtn" style="display:none;">Assign to Goal</button>
+        </div>
+        <button class="modal-close" id="modalCloseBtn">&times;</button>
+      </div>
+    </div>
+    <div id="assignGoalModal" class="goal-modal" style="display:none;">
+      <div class="goal-modal-content">
+        <h2>Assign to a Goal</h2>
+        <% if (activeGoals && activeGoals.length > 0) { %>
+          <form id="assignGoalForm">
+            <% activeGoals.forEach(function(goal) { %>
+              <label class="goal-radio">
+                <input type="radio" name="goalId" value="<%= goal._id %>" />
+                <span><%= goal.title %></span>
+              </label>
+            <% }); %>
+            <button type="submit" class="confirm-btn">Assign</button>
+            <button type="button" class="cancel-btn" id="cancelAssignGoalModal">Cancel</button>
+          </form>
+        <% } else { %>
+          <div class="no-goals-message">
+            <i class="fas fa-bullseye"></i>
+            <p>No active goals to assign.</p>
+          </div>
+          <button type="button" class="cancel-btn" id="cancelAssignGoalModal">Close</button>
+        <% } %>
+      </div>
+    </div>
+    <div id="confirmReassignModal" class="goal-modal" style="display:none;">
+      <div class="goal-modal-content">
+        <h2>Change Assigned Goal?</h2>
+        <p id="confirmReassignMsg">You assigned the task to a goal. Are you sure you want to change the goal?</p>
+        <button type="button" class="confirm-btn" id="confirmReassignYes">Yes</button>
+        <button type="button" class="cancel-btn" id="confirmReassignNo">No</button>
+      </div>
+    </div>
+    <script src="/dynamic/formatDueDates.js"></script>
+    <script src="/dynamic/taskModal.js"></script>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+.learn {
+    font-family: $primary-font;
+  
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+  
+    .blog-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+      background: var(--White, #FFF);
+      box-shadow: 0 4px 10px $secondary;
+      padding: 1.5rem 1.5rem 2rem 1.5rem;
+      margin-bottom: 2rem;
+      overflow: hidden;
+      border-radius: 12px;
+      max-width: 100%;
+    }
+  
+    .blog-cat {
+      color: var(--Barney, #7F56D9);
+      text-align: justify;
+      font-family: $primary-font;
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 1.25rem;
+    }
+  
+    .blog-title a {
+      color: var(--Gray-900, #181D27);
+      text-decoration: none;
+      font-family: $primary-font;
+      font-size: 1.25rem;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 1.875rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+  
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  
+    .blog-title a:visited {
+      text-decoration: none;
+      color: var(--Gray-900, #181D27);
+    }
+  
+    .blog-summary {
+      color: var(--Gray-600, #535862);
+      font-family: $primary-font;
+      font-size: 1rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1.5rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+  
+      p {
+        margin: 0;
+      }
+    }
+  
+    .blog-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      height: auto;
+      min-height: 15.125rem;
+      align-self: stretch;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  }
+  
+  .singleLearn {
+    h5 {
+      color: $tertiary;
+    }
+  
+    h1, p {
+      color: $secondary;
+    }
+  
+    article {
+      font-family: $primary-font;
+      padding: 1rem;
+    }
+    .blog-summary{
+        font-size: $font-size-base;
+    }
+  }
+
+
+  
+
+

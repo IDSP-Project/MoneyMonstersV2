@@ -1,0 +1,21 @@
+// Partials
+@import 'partials/variables/colours';
+@import 'partials/variables/fonts';
+@import 'partials/header';
+@import 'partials/navbar';
+@import 'partials/desktopBg';
+
+// Layout
+
+@import 'layout/formLayout';
+@import 'layout/homepage';
+@import 'layout/profile';
+@import 'layout/goals';
+@import 'layout/splash';
+@import 'layout/learn';
+@import 'layout/tasks';
+
+// Components
+@import 'components/cards';
+@import 'components/progress';
+@import 'components/avatars';

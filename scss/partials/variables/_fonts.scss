@@ -1,0 +1,31 @@
+// style guide fonts
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+ 
+$primary-font: 'Inter', sans-serif;
+
+$font-regular: 400;
+$font-bold: 700;
+
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-md: 18px;
+$font-size-lg: 24px;
+$font-size-xl: 32px;
+
+.homepage {
+    font-family: $primary-font;
+    color: $secondary;
+    background-color: $primary;
+  }
+  
+  h1, h2, h3 {
+    font-family: $primary-font;
+    font-weight: $font-bold;
+  }
+  
+  .text-regular {
+    font-weight: $font-regular;
+  }
+

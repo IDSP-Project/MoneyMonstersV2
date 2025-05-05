@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile View</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="profile">
+        <div class="container">
+            <header>
+                <%- include('../partials/header') %>
+              </header>
+            <main>
+                <div class="profilePhoto">
+                    <% if (profileUser.profilePhoto && profileUser.profilePhoto.url) { %>
+                        <img src="<%= profileUser.profilePhoto.url %>" alt="Profile Photo">
+                    <% } else { %>
+                        <i class="fas fa-user"></i>
+                    <% } %>
+                    
+                    <% if (user && profileUser && user.id == profileUser.id) { %>
+                        <form id="profilePhotoForm" action="/upload-photo" method="POST" enctype="multipart/form-data" style="display: none;">
+                            <input type="file" id="profilePhotoInput" name="profilePhoto" accept="image/*">
+                        </form>
+                    <% } %>
+                </div>
+
+                <div class="userInfo">
+                    <div class="userFName">
+                        <label>First Name</label>
+                        <div class="currentDetails"><%= profileUser.firstName %></div>
+                    </div>
+                    
+                    <div class="userLName">
+                        <label>Last Name</label>
+                        <div class="currentDetails"><%= profileUser.lastName %></div>
+                    </div>
+                    
+                    <div class="userEmail">
+                        <label>Email</label>
+                        <div class="currentDetails"><%= profileUser.email %></div>
+                    </div>
+                
+                    <div class="editUser">
+                        <% if (user && profileUser && user.id == profileUser.id) { %>
+                            <a href="/update-profile" class="btn">Update Profile</a>
+                        <% } %>
+
+                    </div>
+
+                        <div class="logout">
+                            <a href="/logout/<%= user.id %>"> Logout </a>
+                        </div>
+                        <script src="/dynamic/fakeButtons.js"></script>
+                        <% if (user && profileUser && user.id == profileUser.id) { %>
+                            <script src="/dynamic/userPhoto.js"></script>
+                        <% } %>
+            </main>
+            
+            <footer>
+              <%- include('../partials/bottomNav', { user: user, currentPage: 'profile' }) %>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

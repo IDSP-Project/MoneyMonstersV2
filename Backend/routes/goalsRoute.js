@@ -1,0 +1,206 @@
+const express = require('express');
+const router = express.Router();
+const { getDB } = require('../db/connection');
+const { ObjectId } = require('mongodb');
+const { ensureAuthenticated } = require('../helpers/authHelpers');
+const { fetchGoalsForHome } = require('../helpers/goalsHelpers');
+
+// Helper to get initials from a string for initials avatar
+function getInitials(name) {
+  if (!name) return '';
+  return name
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+router.get('/goals', ensureAuthenticated, async (req, res) => {
+    try {
+      const db = getDB();
+      let goals = [];
+      
+      if (req.session.user) {
+        if (req.session.user.accountType === 'child') {
+          goals = await db.collection('goals')
+            .find({ childId: req.session.user.id })
+            .sort({ createdAt: -1 }) 
+            .toArray();
+        }
+        else if (req.session.user.accountType === 'parent') {
+          goals = await db.collection('goals')
+            .find({ parentId: req.session.user.id })
+            .sort({ createdAt: -1 }) 
+            .toArray();
+        }
+      }
+  
+      res.render('goals/goals', { 
+        goals,
+        user: req.session.user,
+        currentPage: 'goals',
+        getInitials
+      });
+    } catch (error) {
+      console.error('Error fetching goals:', error);
+      res.status(500).render('goals/goals', { 
+        goals: [], 
+        user: req.session.user,
+        error: 'Failed to fetch goals' 
+      });
+    }
+  });
+
+
+ router.get('/goals/:childId', ensureAuthenticated, async (req, res) => {
+      try {
+      const db = getDB();
+      const goals = await db.collection('goals')
+        .find({ childId: req.params.childId })
+        .toArray();
+      
+      res.render('goals/goals', { 
+        goals, 
+        user: req.session.user,
+        childId: req.params.childId,
+        currentPage: 'goals'
+      });
+    } catch (error) {
+      console.error('Error fetching child goals:', error);
+      res.status(500).render('goals/goals', { 
+        goals: [], 
+        user: req.session.user,
+        error: 'Failed to fetch goals',
+        currentPage: 'goals'
+      });
+    }
+  });
+
+
+router.post('/add', ensureAuthenticated, async (req, res) => {
+    try {
+        const db = getDB();
+        const { title, description, price, purchaseLink, childId } = req.body;
+
+        // Convert childId to ObjectId for MongoDB query
+        const childObjectId = new ObjectId(childId);
+        // Fetch the child user document to get parentId(s)
+        const childUser = await db.collection('users').findOne({ _id: childObjectId });
+        if (!childUser) {
+            return res.status(404).json({ success: false, error: 'Child user not found' });
+        }
+        let parentIds = childUser.parentId;
+        if (!parentIds || (Array.isArray(parentIds) && parentIds.length === 0)) {
+            return res.status(400).json({ success: false, error: 'You must have a parent to create a goal.' });
+        }
+        if (!Array.isArray(parentIds)) parentIds = [parentIds];
+        parentIds = parentIds.map(id => (typeof id === 'string' ? new ObjectId(id) : id));
+
+        // Validate required fields
+        if (!title) {
+            return res.status(400).json({ success: false, error: 'Title is required' });
+        }
+        if (!price) {
+            return res.status(400).json({ success: false, error: 'Price is required' });
+        }
+        if (!childId) {
+            return res.status(400).json({ success: false, error: 'Child ID is required' });
+        }
+
+        const newGoal = {
+            title,
+            description: description || '',
+            price: parseFloat(price),
+            purchaseLink: purchaseLink || '',
+            parentId: parentIds, // array of ObjectIds
+            childId,
+            status: 'active',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+
+        const result = await db.collection('goals').insertOne(newGoal);
+        if (result.acknowledged) {
+            res.json({ success: true, goal: newGoal });
+        } else {
+            throw new Error('Failed to create goal');
+        }
+    } catch (error) {
+        console.error('Error creating goal:', error);
+        res.status(500).json({ success: false, error: error.message || 'Failed to create goal' });
+    }
+});
+
+
+// why put?
+router.post('/update/:goalId', ensureAuthenticated, async (req, res) => {
+    try {
+      const db = getDB();
+      const { status } = req.body;
+      const goalId = new ObjectId(req.params.goalId);
+  
+      const result = await db.collection('goals').updateOne(
+        { _id: goalId },
+        { 
+          $set: { 
+            status,
+            updatedAt: new Date() 
+          }
+        }
+      );
+  
+      if (result.modifiedCount === 1) {
+        res.json({ success: true });
+      } else {
+        throw new Error('Goal not found or not modified');
+      }
+    } catch (error) {
+      console.error('Error updating goal:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to update goal' 
+      });
+    }
+  });
+  
+  router.delete('/:goalId', async (req, res) => {
+    try {
+      const db = getDB();
+      const goalId = new ObjectId(req.params.goalId);
+  
+      const result = await db.collection('goals').deleteOne({ _id: goalId });
+  
+      if (result.deletedCount === 1) {
+        res.json({ success: true });
+      } else {
+        throw new Error('Goal not found');
+      }
+    } catch (error) {
+      console.error('Error deleting goal:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to delete goal',
+        currentPage: 'goals',
+      });
+    }
+  });
+
+// Route to view a single goal by ID
+router.get('/goals/view/:goalId', ensureAuthenticated, async (req, res) => {
+  try {
+    const db = getDB();
+    const goalId = req.params.goalId;
+    const goal = await db.collection('goals').findOne({ _id: new ObjectId(goalId) });
+    if (!goal) {
+      return res.status(404).render('goals/goalsEach', { goal: null, user: req.session.user, error: 'Goal not found', assignedTasks: [] });
+    }
+    const assignedTasks = await db.collection('tasks').find({ goalId: new ObjectId(goalId) }).toArray();
+    res.render('goals/goalsEach', { goal, user: req.session.user, error: null, assignedTasks });
+  } catch (error) {
+    console.error('Error fetching goal:', error);
+    res.status(500).render('goals/goalsEach', { goal: null, user: req.session.user, error: 'Failed to fetch goal', assignedTasks: [] });
+  }
+});
+
+module.exports = { router, fetchGoalsForHome };

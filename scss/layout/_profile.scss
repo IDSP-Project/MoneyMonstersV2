@@ -1,0 +1,202 @@
+.profile {
+    font-family: $primary-font;
+
+    .error-message {
+      padding: 8px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: $font-size-sm;
+      text-align: center;
+      color: $error;
+    }
+    
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .profilePhoto {
+      cursor: pointer;
+      width: 5rem;
+      height: 5rem;
+      border-radius: 50%;
+      background-color: $secondary-light;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+
+      i.fas.fa-user {
+        font-size: 2.5rem; 
+        color: $white; 
+      }
+
+      &.loading {
+        opacity: 0.6; 
+      }
+    }
+    .success-message {
+      @extend .error-message;
+      color: $tertiary;
+    }
+    }
+    
+    .profilePhoto img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .profilePhoto::after {
+      content: '\f044';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background-color: $white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid $primary;;
+    }
+    
+    .userInfo {
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    
+    .userFName, 
+    .userLName, 
+    .userEmail {
+      margin-bottom: 1rem;
+    }
+    
+    .userInfo label {
+      display: block;
+      font-size: 0.8rem;
+      color: $secondary;
+      margin-bottom: 0.25rem;
+    }
+    
+  
+    .currentDetails {
+      padding: 0.75rem;
+      border: 1px solid $secondary;
+      color: $secondary-light;
+      border-radius: 6px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .userInfo input[type="text"],
+    .userInfo input[type="email"] {
+      padding: 0.75rem;
+      border: 1px solid $secondary;
+      color: $secondary;
+      border-radius: 6px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .editUser,
+    .btn,
+    button[type="submit"] {
+      width: 100%;
+      color: $white;
+      background-color: $tertiary;
+      border: none;
+      border-radius: 6px;
+      padding: 0.75rem;
+      font-size: $font-size-sm;
+      cursor: pointer;
+      text-align: center;
+      box-sizing: border-box;
+
+      a {
+        color: $white;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+    }
+
+    .logout {
+        text-align: center;
+        margin-top: 1rem;
+        a {
+            text-decoration: none;
+            color: $tertiary;
+
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    }
+
+.confirmLogout, .addFamily {
+    font-family: $primary-font;
+
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+        min-height: 70vh;
+        justify-content: center;
+      }
+    
+    form {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: $secondary;
+    }
+    
+    .btn, 
+    button[type="submit"] {
+      width: 100%;
+      color: $white;
+      background-color: $tertiary;
+      border: none;
+      border-radius: 6px;
+      padding: 0.75rem;
+      cursor: pointer;
+      text-align: center;
+      box-sizing: border-box;
+      margin-bottom: 1rem;
+    }
+
+    .btn:hover {
+        text-decoration: underline;
+      }
+    
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      text-decoration: none;
+      color: $tertiary;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    }
+
+

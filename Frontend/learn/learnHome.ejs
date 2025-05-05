@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <title>Money Monsters Learn</title>
+   <link rel="stylesheet" href="/style.css" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ </head>
+
+<div class="learn">
+    <div class="container">
+      <header>
+        <%- include('../partials/header') %>
+      </header>
+        <main><h3>Learn how to manage your money</h3>
+          <% blogs.forEach(blog => { %>
+          <div class="blog-card">
+            <div class="blog-content">
+            <div class="blog-cat">
+              <h5><%= blog.category %></h5>
+            </div>
+            <div class="blog-title">
+              <h3><a href="/learn/view/<%= blog._id %>"><%= blog.title %></a></h3>
+            </div>
+            <div class="blog-summary">
+              <p><%= blog.summary %></p>
+            </div>
+            <!-- <% if (blog.image) { %>
+              <img src="<%= blog.image %>" alt="<%= blog.title %>">
+            <% } %> -->
+          </div>
+        </div>
+
+        <% }) %>
+      </main>
+        <footer>
+    <%- include('../partials/bottomNav') %>
+  </footer>
+    </div>
+        </div>
