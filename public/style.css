@@ -1532,10 +1532,10 @@ button[type=submit] a:hover {
   min-width: 160px;
 }
 
-.family {
+.family, .invite {
   font-family: "Inter", sans-serif;
 }
-.family .error-message, .family .profile .success-message, .profile .family .success-message {
+.family .error-message, .family .profile .success-message, .profile .family .success-message, .invite .error-message, .invite .profile .success-message, .profile .invite .success-message {
   padding: 8px;
   border-radius: 4px;
   margin-bottom: 15px;
@@ -1543,18 +1543,54 @@ button[type=submit] a:hover {
   text-align: center;
   color: #FF585B;
 }
-.family main {
+.family main, .invite main {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  margin-top: 1rem;
+  margin-bottom: 5rem;
 }
-.family h1 {
+.family h1, .invite h1 {
   font-size: 24px;
 }
-.family h2 {
+.family h2, .invite h2 {
   font-size: 16px;
+}
+.family a, .invite a {
+  display: block;
+  margin: 1rem 0;
+}
+.family .backLinks, .invite .backLinks {
+  width: 100%;
+}
+.family .backLinks a, .invite .backLinks a {
+  text-decoration: none;
+}
+.family .backLinks a:hover, .invite .backLinks a:hover {
+  text-decoration: underline;
+}
+
+.inviteLink input, .inviteMembers input {
+  width: 96%;
+  margin-bottom: 1rem;
+  border: 3px solid #714AA8;
+  border-radius: 7px;
+  padding: 0.2rem;
+}
+
+.familyInfo .btn {
+  width: 100%;
+}
+.familyInfo .btn a {
+  text-decoration: none;
+}
+.familyInfo .btn a:hover {
+  text-decoration: underline;
+}
+
+.familyMembers ul {
+  list-style-type: none;
+  margin-left: 0.5rem;
 }
 
 .card {
