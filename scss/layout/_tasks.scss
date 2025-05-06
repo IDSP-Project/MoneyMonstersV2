@@ -97,23 +97,33 @@
   }
 
   .no-tasks-message {
+    display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2.5rem 1.5rem;
+  margin: 2rem 0;
+
+  i {
+    font-size: 3rem;
+    color: $tertiary;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: $font-size-xl;
+    font-weight: bold;
+    color: $tertiary;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: $secondary;
+    font-size: $font-size-md;
     text-align: center;
-    color: $secondary-light;
-    font-family: $primary-font;
-    margin: 3rem 0;
-    i {
-      font-size: 2.5rem;
-      color: $primary;
-      margin-bottom: 1rem;
-    }
-    h2 {
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
-    }
-    p {
-      font-size: 1rem;
-      color: rgb(136, 136, 136);
-    }
+    margin-bottom: 0;
+  }
   }
 }
 

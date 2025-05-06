@@ -100,4 +100,40 @@ router.post('/tasks/assign-goal/:taskId', ensureAuthenticated, async (req, res) 
   }
 });
 
+router.get('/tasks/available', ensureAuthenticated, async (req, res) => {
+  try {
+    const db = getDB();
+    let query = {
+      $or: [
+        { goalId: { $exists: false } },
+        { goalId: null }
+      ],
+      status: { $in: ['new', 'in_progress'] }
+    };
+
+    if (req.session.user.accountType === 'child') {
+      query.assigneeId = new ObjectId(req.session.user.id);
+    } 
+    else if (req.session.user.accountType === 'parent') {
+      query.posterId = new ObjectId(req.session.user.id);
+    }
+
+    const tasks = await db.collection('tasks')
+      .find(query)
+      .sort({ createdAt: -1 })
+      .toArray();
+    
+    tasks.forEach(task => {
+      if (task.dueDate) {
+        task.formattedDue = formatTaskDueDate(task.dueDate);
+      }
+    });
+
+    res.json(tasks);
+  } catch (error) {
+    console.error('Error fetching available tasks:', error);
+    res.status(500).json({ error: 'Failed to fetch available tasks' });
+  }
+});
+
 module.exports = { router, fetchTasksForHome };
