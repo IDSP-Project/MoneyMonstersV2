@@ -3,27 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up</title>
+    <title>Family Sign Up</title>
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
     <div class="register">
       <div class="container">
-
-      <h1>Sign Up</h1>
-
-      <% if (locals.familyData) { %>
+      <h1>Family Sign Up</h1>
+      
+      <% if (familyData) { %>
         <p>You're joining the <%= familyData.name %> family</p>
-        <input type="hidden" name="familyId" value="<%= familyData.id %>">
       <% } else { %>
-      <p>Hi! Let's get you up and going</p>
+        <p>Error: Family not found</p>
       <% } %>
-
 
       <% if (locals.error) { %>
         <div class="error-message" style="display: block;"><%= error %></div>
       <% } %>
-
       
       <form id="registerForm" action="/register" method="POST">
         <label for="fName">First Name:</label>
@@ -33,7 +29,7 @@
         <input type="text" id="lName" name="lName" placeholder="Last Name" required />
 
         <label for="email">Email:</label>
-          <input type="email" id="email" name="email" placeholder="abcd12@gmail.com" required />
+        <input type="email" id="email" name="email" placeholder="abcd12@gmail.com" required />
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" placeholder="*******" required />
@@ -45,19 +41,17 @@
 
         <div class="accountType">
             <label>
-              <input type="radio" name="accountType" value="parent" checked />
+              <input type="radio" name="accountType" value="parent" <%= accountType === 'parent' ? 'checked' : '' %> />
               <span class="radioBtn">I'm a Parent</span>
             </label>
             <label>
-              <input type="radio" name="accountType" value="child" />
+              <input type="radio" name="accountType" value="child" <%= accountType === 'child' ? 'checked' : '' %> />
               <span class="radioBtn">I'm a Child</span>
             </label>
-          </div>
-
-          <% if (locals.familyData) { %>
-            <input type="hidden" name="familyId" value="<%= familyData.id %>">
-          <% } %>
-  
+        </div>
+        
+        <!-- Include the hidden familyId field -->
+        <input type="hidden" name="familyId" value="<%= familyData.id %>">
 
         <button type="submit" class="btn" id="submitButton">Sign Up</button>
       </form>

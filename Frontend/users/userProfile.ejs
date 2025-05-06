@@ -21,11 +21,7 @@
                         <i class="fas fa-user"></i>
                     <% } %>
                     
-                    <% if (user && profileUser && user.id == profileUser.id) { %>
-                        <form id="profilePhotoForm" action="/upload-photo" method="POST" enctype="multipart/form-data" style="display: none;">
-                            <input type="file" id="profilePhotoInput" name="profilePhoto" accept="image/*">
-                        </form>
-                    <% } %>
+    
                 </div>
 
                 <div class="userInfo">

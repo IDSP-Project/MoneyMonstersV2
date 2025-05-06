@@ -1,0 +1,28 @@
+.family {
+    font-family: $primary-font;
+
+    .error-message {
+      padding: 8px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: $font-size-sm;
+      text-align: center;
+      color: $error;
+    }
+    
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    h1 { 
+        font-size: $font-size-lg;
+    }
+
+    h2 {
+        font-size: $font-size-base;
+    }
+}

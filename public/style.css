@@ -287,7 +287,7 @@ html {
   padding: 1rem;
   margin-top: 1rem;
 }
-.profile .profilePhoto {
+.profile .profilePhoto, .profile .profilePhotoUpload {
   cursor: pointer;
   width: 5rem;
   height: 5rem;
@@ -299,11 +299,11 @@ html {
   align-items: center;
   position: relative;
 }
-.profile .profilePhoto i.fas.fa-user {
+.profile .profilePhoto i.fas.fa-user, .profile .profilePhotoUpload i.fas.fa-user {
   font-size: 2.5rem;
   color: #FFFFFF;
 }
-.profile .profilePhoto.loading {
+.profile .profilePhoto.loading, .profile .profilePhotoUpload.loading {
   opacity: 0.6;
 }
 .profile .success-message {
@@ -317,7 +317,14 @@ html {
   object-fit: cover;
 }
 
-.profilePhoto::after {
+.profilePhotoUpload img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profilePhotoUpload::after {
   content: "\f044";
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
@@ -1535,6 +1542,31 @@ button[type=submit] a:hover {
 
 .assign-goal-row .assign-goal-btn {
   min-width: 160px;
+}
+
+.family {
+  font-family: "Inter", sans-serif;
+}
+.family .error-message, .family .profile .success-message, .profile .family .success-message {
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-align: center;
+  color: #FF585B;
+}
+.family main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+.family h1 {
+  font-size: 24px;
+}
+.family h2 {
+  font-size: 16px;
 }
 
 .card {

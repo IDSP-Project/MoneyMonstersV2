@@ -29,12 +29,29 @@ router.get('/goals', ensureAuthenticated, async (req, res) => {
             .toArray();
         }
         else if (req.session.user.accountType === 'parent') {
-          goals = await db.collection('goals')
-            .find({ parentId: req.session.user.id })
-            .sort({ createdAt: -1 }) 
-            .toArray();
+          if (req.session.user.familyId) {
+            const childrenInFamily = await db.collection('users').find({ 
+              familyId: new ObjectId(req.session.user.familyId), 
+              accountType: 'child' 
+            }).toArray();
+            
+            const childIds = childrenInFamily.map(child => child._id.toString());
+            
+            if (childIds.length > 0) {
+              goals = await db.collection('goals')
+                .find({ childId: { $in: childIds } })
+                .sort({ createdAt: -1 }) 
+                .toArray();
+            }
+          } else {
+            goals = await db.collection('goals')
+              .find({ parentId: req.session.user.id })
+              .sort({ createdAt: -1 }) 
+              .toArray();
+          }
         }
       }
+  
   
       res.render('goals/goals', { 
         goals,
@@ -83,57 +100,55 @@ router.post('/add', ensureAuthenticated, async (req, res) => {
         const db = getDB();
         const { title, description, price, purchaseLink, childId } = req.body;
 
-        // Convert childId to ObjectId for MongoDB query
         const childObjectId = new ObjectId(childId);
-        // Fetch the child user document to get parentId(s)
         const childUser = await db.collection('users').findOne({ _id: childObjectId });
         if (!childUser) {
             return res.status(404).json({ success: false, error: 'Child user not found' });
         }
-        let parentIds = childUser.parentId;
-        if (!parentIds || (Array.isArray(parentIds) && parentIds.length === 0)) {
-            return res.status(400).json({ success: false, error: 'You must have a parent to create a goal.' });
-        }
-        if (!Array.isArray(parentIds)) parentIds = [parentIds];
-        parentIds = parentIds.map(id => (typeof id === 'string' ? new ObjectId(id) : id));
-
-        // Validate required fields
-        if (!title) {
-            return res.status(400).json({ success: false, error: 'Title is required' });
-        }
-        if (!price) {
-            return res.status(400).json({ success: false, error: 'Price is required' });
-        }
-        if (!childId) {
-            return res.status(400).json({ success: false, error: 'Child ID is required' });
-        }
-
-        const newGoal = {
-            title,
-            description: description || '',
-            price: parseFloat(price),
-            purchaseLink: purchaseLink || '',
-            parentId: parentIds, // array of ObjectIds
-            childId,
-            status: 'active',
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
-
-        const result = await db.collection('goals').insertOne(newGoal);
-        if (result.acknowledged) {
-            res.json({ success: true, goal: newGoal });
-        } else {
-            throw new Error('Failed to create goal');
-        }
-    } catch (error) {
-        console.error('Error creating goal:', error);
-        res.status(500).json({ success: false, error: error.message || 'Failed to create goal' });
+        let parentIds = [];
+        if (childUser.familyId) {
+          const parentsInFamily = await db.collection('users').find({ 
+              familyId: childUser.familyId, 
+              accountType: 'parent' 
+          }).toArray();
+          
+          parentIds = parentsInFamily.map(parent => parent._id);
+      } 
+      else if (childUser.parentId) {
+        let oldParentIds = childUser.parentId;
+        if (!Array.isArray(oldParentIds)) oldParentIds = [oldParentIds];
+        parentIds = oldParentIds.map(id => (typeof id === 'string' ? new ObjectId(id) : id));
     }
+    
+    if (parentIds.length === 0) {
+        return res.status(400).json({ success: false, error: 'You must have a parent to create a goal.' });
+    }
+
+    const newGoal = {
+        title,
+        description: description || '',
+        price: parseFloat(price),
+        purchaseLink: purchaseLink || '',
+        parentId: parentIds, 
+        childId,
+        status: 'active',
+        createdAt: new Date(),
+        updatedAt: new Date()
+    };
+
+    const result = await db.collection('goals').insertOne(newGoal);
+    if (result.acknowledged) {
+        res.json({ success: true, goal: newGoal });
+    } else {
+        throw new Error('Failed to create goal');
+    }
+} catch (error) {
+    console.error('Error creating goal:', error);
+    res.status(500).json({ success: false, error: error.message || 'Failed to create goal' });
+}
 });
 
 
-// why put?
 router.post('/update/:goalId', ensureAuthenticated, async (req, res) => {
     try {
       const db = getDB();

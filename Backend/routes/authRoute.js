@@ -8,13 +8,18 @@ const {
   checkEmailExists,
   retrieveProfile,
   updateUserProfile,
-  updateUserPhotoUrl, removeUserPhotoUrl
+  updateUserPhotoUrl, removeUserPhotoUrl,
+  assignUserToFamily,
+  removeUserFromFamily,
+  getFamilyMembers
 } = require("../helpers/authHelpers");
 const { uploadProfileImage, deleteProfileImage } = require('../helpers/photoHelpers');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
+// Add missing Family model import
+const Family = require('../db/familyModel.js');
 
 router.get("/login", forwardAuthenticated, (req, res) => {
   let error = null;
@@ -93,9 +98,34 @@ router.get("/register", forwardAuthenticated, (req, res) => {
   res.render("users/userRegister", { error: null, success: null });
 });
 
+
+router.get("/register/family/:familyId", forwardAuthenticated, async (req, res) => {
+  try {
+    const family = await Family.findById(req.params.familyId);
+    
+    if (family) {
+      const familyData = {
+        id: family._id,
+        name: family.name
+      };
+      
+      res.render("users/familyRegister", { 
+        error: null, 
+        success: null,
+        familyData: familyData,
+        accountType: req.query.type
+      });
+    } else {
+      return res.redirect('/register');
+    }
+  } catch (error) {
+    return res.redirect('/register');
+  }
+});
+
 router.post("/register", forwardAuthenticated, async (req, res) => {
   try {
-    const { fName, lName, email, password, confirmPassword, accountType, parentId } = req.body;
+    const { fName, lName, email, password, confirmPassword, accountType, familyMembers } = req.body;
     
     const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
     
@@ -139,7 +169,7 @@ router.post("/register", forwardAuthenticated, async (req, res) => {
       });
     }
     
-    const result = await registerUser(fName, lName, email, password, accountType, parentId);
+    const result = await registerUser(fName, lName, email, password, accountType, familyMembers);
     
     if (!result.success) {
       if (isAjax) {
@@ -179,6 +209,133 @@ router.post("/register", forwardAuthenticated, async (req, res) => {
     });
   }
 });
+
+
+router.post("/register/family", forwardAuthenticated, async (req, res) => {
+  try {
+    const { fName, lName, email, password, confirmPassword, accountType, familyId } = req.body;
+    
+    const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+    
+    const family = await Family.findById(familyId);
+    if (!family) {
+      return res.redirect('/register');
+    }
+    
+    const familyData = {
+      id: family._id,
+      name: family.name
+    };
+    
+    if (password !== confirmPassword) {
+      if (isAjax) {
+        return res.status(400).json({
+          success: false,
+          error: "Passwords do not match"
+        });
+      }
+      return res.render("users/familyRegister", {
+        error: "Passwords do not match",
+        success: null,
+        familyData: familyData,
+        accountType: accountType
+      });
+    }
+
+    if (email === password) {
+      if (isAjax) {
+        return res.status(400).json({
+          success: false,
+          error: "Your password cannot be the same as your email"
+        });
+      }
+      return res.render("users/familyRegister", {
+        error: "Your password cannot be the same as your email",
+        success: null,
+        familyData: familyData,
+        accountType: accountType
+      });
+    }
+    
+    const emailExists = await checkEmailExists(email);
+    if (emailExists) {
+      if (isAjax) {
+        return res.status(400).json({
+          success: false,
+          error: "This email is already registered"
+        });
+      }
+      return res.render("users/familyRegister", {
+        error: "This email is already registered",
+        success: null,
+        familyData: familyData,
+        accountType: accountType
+      });
+    }
+    
+    const result = await registerUser(fName, lName, email, password, accountType, familyId);
+    
+    if (!result.success) {
+      if (isAjax) {
+        return res.status(400).json({
+          success: false,
+          error: result.error
+        });
+      }
+      return res.render("users/familyRegister", {
+        error: result.error,
+        success: null,
+        familyData: familyData,
+        accountType: accountType
+      });
+    }
+    
+    if (result.success) {
+      await authenticateUser(email, password, req);
+      
+      if (isAjax) {
+        return res.json({
+          success: true,
+          redirect: "/"
+        });
+      }
+    }
+
+    res.redirect("/dashboard");
+  } catch (error) {
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+    
+    let familyData = null;
+    try {
+      const family = await Family.findById(req.body.familyId);
+      if (family) {
+        familyData = {
+          id: family._id,
+          name: family.name
+        };
+      }
+    } catch (err) {
+      return res.redirect('/register');
+    }
+    
+    if (!familyData) {
+      return res.redirect('/register');
+    }
+    
+    res.render("users/familyRegister", {
+      error: error.message,
+      success: null,
+      familyData: familyData,
+      accountType: req.body.accountType
+    });
+  }
+});
+
 
 router.get("/profile/:id", ensureAuthenticated, async (req, res) => {
   try {
@@ -490,6 +647,199 @@ router.post('/remove-photo', ensureAuthenticated, async (req, res) => {
       error: error.message,
       success: null
     });
+  }
+});
+
+// Helper route to redirect from profile page to family management
+router.get("/add-family", ensureAuthenticated, (req, res) => {
+  res.redirect("/family");
+});
+
+// Family management
+router.get("/family", ensureAuthenticated, async (req, res) => {
+  try {
+    let family = null;
+    let familyMembers = [];
+    
+    if (req.session.user.familyId) {
+      family = await Family.findById(req.session.user.familyId);
+      
+      if (family) {
+        const membersResult = await getFamilyMembers(req.session.user.familyId);
+        
+        if (membersResult.success) {
+          familyMembers = membersResult.members;
+        }
+      }
+    }
+    
+    res.render("users/viewFamily", {
+      user: req.session.user,
+      family: family,
+      familyMembers: familyMembers,
+      error: null,
+      success: null,
+      currentPage: 'family'
+    });
+  } catch (error) {
+    res.status(500).send(`Error loading family: ${error.message}`);
+  }
+});
+
+router.post("/create-family", ensureAuthenticated, async (req, res) => {
+  try {
+    if (req.session.user.accountType !== "parent") {
+      return res.status(403).send("Only parents can create families");
+    }
+    
+    const { familyName } = req.body;
+    
+    const family = new Family(familyName);
+    const result = await family.save();
+    
+    await assignUserToFamily(req.session.user.id, result.insertedId);
+    
+    req.session.user.familyId = result.insertedId;
+    
+    req.session.flash = {
+      message: "Family created successfully!",
+      type: "success"
+    };
+    
+    res.redirect("/family");
+  } catch (error) {
+    res.status(500).send(`Error creating family: ${error.message}`);
+  }
+});
+
+router.post("/update-family", ensureAuthenticated, async (req, res) => {
+  try {
+    if (req.session.user.accountType !== "parent") {
+      return res.status(403).send("Only parents can update family information");
+    }
+    
+    if (!req.session.user.familyId) {
+      throw new Error("You need to create a family first");
+    }
+    
+    const { familyName } = req.body;
+    
+    await Family.updateFamily(req.session.user.familyId, {
+      name: familyName,
+      updatedAt: new Date()
+    });
+    
+    req.session.flash = {
+      message: "Family name updated successfully!",
+      type: "success"
+    };
+    
+    res.redirect("/family");
+  } catch (error) {
+    res.status(500).send(`Error updating family: ${error.message}`);
+  }
+});
+
+router.post("/add-family-member", ensureAuthenticated, async (req, res) => {
+  try {
+    if (req.session.user.accountType !== "parent") {
+      return res.status(403).send("Only parents can add family members");
+    }
+    
+    if (!req.session.user.familyId) {
+      throw new Error("You need to create a family first");
+    }
+    
+    const { email } = req.body;
+    
+    const User = require("../db/userModel");
+    const userToAdd = await User.findByEmail(email);
+    
+    if (!userToAdd) {
+      throw new Error("User not found with that email");
+    }
+    
+    await assignUserToFamily(userToAdd._id, req.session.user.familyId);
+
+    req.session.flash = {
+      message: "Family member added successfully!",
+      type: "success"
+    };
+    
+    res.redirect("/family");
+  } catch (error) {
+    let family = null;
+    let familyMembers = [];
+    
+    if (req.session.user.familyId) {
+      family = await Family.findById(req.session.user.familyId);
+      
+      if (family) {
+        const membersResult = await getFamilyMembers(req.session.user.familyId);
+        
+        if (membersResult.success) {
+          familyMembers = membersResult.members;
+        }
+      }
+    }
+    
+    res.render("users/viewFamily", {
+      user: req.session.user,
+      family: family,
+      familyMembers: familyMembers,
+      error: error.message,
+      success: null,
+      currentPage: 'family'
+    });
+  }
+});
+
+router.post("/remove-from-family", ensureAuthenticated, async (req, res) => {
+  try {
+    if (req.session.user.accountType !== "parent") {
+      return res.status(403).send("Only parents can remove family members");
+    }
+    
+    const { userId } = req.body;
+    
+    await removeUserFromFamily(userId);
+    
+    req.session.flash = {
+      message: "Family member removed successfully!",
+      type: "success"
+    };
+    
+    res.redirect("/family");
+  } catch (error) {
+    res.status(500).send(`Error removing family member: ${error.message}`);
+  }
+});
+
+router.get("/generate-invite-link", ensureAuthenticated, async (req, res) => {
+  try {
+    if (req.session.user.accountType !== "parent") {
+      return res.status(403).send("Only parents can generate invite links");
+    }
+    
+    if (!req.session.user.familyId) {
+      const familyName = `${req.session.user.lastName} Family`;
+      const family = new Family(familyName);
+      const result = await family.save();
+      
+      await assignUserToFamily(req.session.user.id, result.insertedId);
+      
+      req.session.user.familyId = result.insertedId;
+    }
+    
+    const inviteLink = `${req.protocol}://${req.get('host')}/register/family/${req.session.user.familyId}?type=child`;
+    
+    res.render("users/inviteLink", {
+      user: req.session.user,
+      inviteLink: inviteLink,
+      currentPage: 'family'
+    });
+  } catch (error) {
+    res.status(500).send(`Error generating invite link: ${error.message}`);
   }
 });
 

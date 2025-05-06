@@ -14,7 +14,7 @@
                 <%- include('../partials/header') %>
             </header>
             <main>
-                <div class="profilePhoto">
+                <div class="profilePhotoUpload">
                     <% if (profileUser.profilePhoto && profileUser.profilePhoto.url) { %>
                         <img src="<%= profileUser.profilePhoto.url %>" alt="Profile Photo">
                     <% } else { %>
@@ -63,7 +63,7 @@
 
                   <div class="addFamily">
                     <% if (profileUser.accountType === "parent") { %>
-                        <a href="/add-family" class="btn">Add Members</a>
+                        <a href="/family" class="btn">Add Members</a>
                     <% } %>
                 </div>
             </div>
