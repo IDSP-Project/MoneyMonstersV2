@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
+<body data-goal-id="<%= goal._id %>">
   <div class="container">
     <header>
       <%- include('../partials/header') %>
@@ -17,27 +17,36 @@
         <% if (error) { %>
           <div class="error-message"><%= error %></div>
         <% } else if (goal) { %>
-          <div class="goal-progress-graphic" style="text-align:center; margin: 2rem 0 1rem 0;">
-            <div style="font-size:2.2rem; font-weight:700; color:#714AA8; font-family: 'Inter', sans-serif;">80%</div>
-            <div style="color:#888; font-size:1rem; font-family: 'Inter', sans-serif;">Completed</div>
+          <div class="goal-progress-graphic">
+            <div class="progress-percentage">80%</div>
+            <div class="progress-label">Completed</div>
           </div>
-          <div class="goal-details-card" style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+          <div class="goal-details-card">
             <% if (goal.purchaseLink) { %>
-              <img src="/images/goal.png" alt="Goal Image" class="goal-image" style="width:60px; height:60px; object-fit:cover; border-radius:10px;" />
+              <img src="/images/goal.png" alt="Goal Image" class="goal-image" />
             <% } else { %>
-              <div class="initials-avatar" style="width:60px; height:60px; font-size:1.5rem;"><%= goal.title ? goal.title.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) : '' %></div>
+              <div class="initials-avatar"><%= goal.title ? goal.title.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) : '' %></div>
             <% } %>
             <div>
-              <h2 style="margin:0 0 0.2rem 0; font-size:1.2rem;"><%= goal.title %></h2>
-              <p class="goal-source" style="margin:0; color:#888; font-size:0.95rem;"><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
-              <p class="goal-description" style="margin:0.2rem 0 0.2rem 0; color:#444; font-size:0.98rem;"><%= goal.description %></p>
-              <div class="goal-price" style="color:#714AA8; font-weight:600;">Target: $<%= goal.price ? goal.price.toFixed(2) : '0.00' %></div>
+              <h2 class="goal-title"><%= goal.title %></h2>
+              <p class="goal-source"><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
+              <% if (goal.description && goal.description.trim() !== '' && goal.description !== 'Custom goal') { %>
+                <p class="goal-description"><%= goal.description %></p>
+              <% } else { %>
+                <p class="goal-description missing">No Description Added</p>
+              <% } %>
+              <div class="goal-price">Target: $<%= goal.price ? goal.price.toFixed(2) : '0.00' %></div>
             </div>
           </div>
           <div class="tasks-container">
             <div class="section-tabs">
               <span class="tab tasks-tab">Tasks</span>
               <span class="tab status-tab">Status</span>
+            </div>
+            <div class="assign-task-container">
+              <button class="assign-task-btn" onclick="openAssignTaskModal()">
+                <i class="fas fa-plus"></i> Assign Task
+              </button>
             </div>
             <% if (assignedTasks && assignedTasks.length > 0) { %>
               <div class="task-list">
@@ -70,8 +79,7 @@
               <div class="no-tasks-message">
                 <i class="fas fa-tasks"></i>
                 <h2>No Tasks Yet</h2>
-                <p>There are no tasks assigned to this goal yet.</p>
-                <button class="btn add-task-btn" onclick="alert('Add Task functionality coming soon!')">Add Task</button>
+                <p>There are no tasks assigned to this goal yet. You can assign tasks to your goal by clicking the "Assign Task" button.</p>
               </div>
             <% } %>
           </div>
@@ -83,5 +91,21 @@
     </footer>
   </div>
   <script src="/dynamic/formatDueDates.js"></script>
+  <script src="/dynamic/goalDetails.js"></script>
+
+  <!-- Assign Task Modal -->
+  <div id="assignTaskModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Assign Task to Goal</h2>
+        <span class="close" onclick="closeAssignTaskModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="task-list">
+          <!-- Tasks will be loaded here dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
