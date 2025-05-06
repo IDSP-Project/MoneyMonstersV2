@@ -69,7 +69,7 @@ router.post("/login", forwardAuthenticated, async (req, res) => {
   }
 });
 
-router.post("/check-email", forwardAuthenticated, async (req, res) => {
+router.post("/users/check-email", forwardAuthenticated, async (req, res) => {
   try {
     const { email } = req.body;
     
@@ -125,7 +125,7 @@ router.get("/register/family/:familyId", forwardAuthenticated, async (req, res) 
 
 router.post("/register", forwardAuthenticated, async (req, res) => {
   try {
-    const { fName, lName, email, password, confirmPassword, accountType, familyMembers } = req.body;
+    const { fName, lName, email, password, confirmPassword, accountType, familyId } = req.body;
     
     const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
     
@@ -169,7 +169,7 @@ router.post("/register", forwardAuthenticated, async (req, res) => {
       });
     }
     
-    const result = await registerUser(fName, lName, email, password, accountType, familyMembers);
+    const result = await registerUser(fName, lName, email, password, accountType, familyId);
     
     if (!result.success) {
       if (isAjax) {
@@ -650,11 +650,6 @@ router.post('/remove-photo', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Helper route to redirect from profile page to family management
-router.get("/add-family", ensureAuthenticated, (req, res) => {
-  res.redirect("/family");
-});
-
 // Family management
 router.get("/family", ensureAuthenticated, async (req, res) => {
   try {
@@ -833,7 +828,7 @@ router.get("/generate-invite-link", ensureAuthenticated, async (req, res) => {
     
     const inviteLink = `${req.protocol}://${req.get('host')}/register/family/${req.session.user.familyId}?type=child`;
     
-    res.render("users/inviteLink", {
+    res.render("users/inviteFamily", {
       user: req.session.user,
       inviteLink: inviteLink,
       currentPage: 'family'
@@ -842,5 +837,142 @@ router.get("/generate-invite-link", ensureAuthenticated, async (req, res) => {
     res.status(500).send(`Error generating invite link: ${error.message}`);
   }
 });
+
+
+router.post("/register/family/:familyId", forwardAuthenticated, async (req, res) => {
+  try {
+    const { fName, lName, email, password, confirmPassword, accountType } = req.body;
+    const familyId = req.params.familyId;
+    
+    const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+
+
+    const family = await Family.findById(familyId);
+    if (!family) {
+      if (isAjax) {
+        return res.status(400).json({
+          success: false,
+          error: "Family not found"
+        });
+      }
+      return res.redirect('/register');
+    }
+
+    const familyData = {
+      id: family._id,
+      name: family.name
+    };
+    console.log(familyData);
+    
+    if (password !== confirmPassword) {
+      if (isAjax) {
+        return res.status(400).json({
+          success: false,
+          error: "Passwords do not match"
+        });
+      }
+      return res.render("users/userRegister", {
+        error: "Passwords do not match",
+        success: null,
+        familyData: familyData,
+        accountType: accountType
+      });
+    }
+
+    if (email === password) {
+      if (isAjax) {
+        return res.status(400).json({
+          success: false,
+          error: "Your password cannot be the same as your email"
+        });
+      }
+      return res.render("users/userRegister", {
+        error: "Your password cannot be the same as your email",
+        success: null,
+        familyData: familyData,
+        accountType: accountType
+      });
+    }
+    
+    const emailExists = await checkEmailExists(email);
+    if (emailExists) {
+      if (isAjax) {
+        return res.status(400).json({
+          success: false,
+          error: "This email is already registered"
+        });
+      }
+      return res.render("users/userRegister", {
+        error: "This email is already registered",
+        success: null,
+        familyData: familyData,
+        accountType: accountType
+      });
+    }
+    
+    const result = await registerUser(fName, lName, email, password, accountType, familyId);
+    console.log(result);
+    
+    if (!result.success) {
+      if (isAjax) {
+        return res.status(400).json({
+          success: false,
+          error: result.error
+        });
+      }
+      return res.render("users/userRegister", {
+        error: result.error,
+        success: null,
+        familyData: familyData,
+        accountType: accountType
+      });
+    }
+    
+    if (result.success) {
+      await authenticateUser(email, password, req);
+      
+      if (isAjax) {
+        return res.json({
+          success: true,
+          redirect: "/"
+        });
+      }
+    }
+
+    res.redirect("/dashboard");
+  } catch (error) {
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+    let familyData = null;
+    try {
+      const family = await Family.findById(req.params.familyId);
+      if (family) {
+        familyData = {
+          id: family._id,
+          name: family.name
+        };
+      }
+    } catch (err) {
+      return res.redirect('/register');
+    }
+    
+    if (!familyData) {
+      return res.redirect('/register');
+    }
+    
+    res.render("users/familyRegister", {
+      error: error.message,
+      success: null,
+      familyData: familyData,
+      accountType: req.body.accountType
+    });
+  }
+});
+
+
 
 module.exports = router;

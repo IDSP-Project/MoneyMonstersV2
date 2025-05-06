@@ -21,7 +21,7 @@
         <div class="error-message" style="display: block;"><%= error %></div>
       <% } %>
       
-      <form id="registerForm" action="/register" method="POST">
+      <form id="registerForm" action="/register/family/<%= familyData.id %>" method="POST">
         <label for="fName">First Name:</label>
         <input type="text" id="fName" name="fName" placeholder="First Name" required />
 
@@ -41,16 +41,15 @@
 
         <div class="accountType">
             <label>
-              <input type="radio" name="accountType" value="parent" <%= accountType === 'parent' ? 'checked' : '' %> />
+              <input type="radio" name="accountType" value="parent" />
               <span class="radioBtn">I'm a Parent</span>
             </label>
             <label>
-              <input type="radio" name="accountType" value="child" <%= accountType === 'child' ? 'checked' : '' %> />
+              <input type="radio" name="accountType" value="child" checked />
               <span class="radioBtn">I'm a Child</span>
             </label>
         </div>
         
-        <!-- Include the hidden familyId field -->
         <input type="hidden" name="familyId" value="<%= familyData.id %>">
 
         <button type="submit" class="btn" id="submitButton">Sign Up</button>

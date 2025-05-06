@@ -2,6 +2,7 @@
 
 const bcrypt = require("bcrypt");
 const User = require("../db/userModel.js");
+const { ObjectId } = require('mongodb'); 
 
 function isAuthenticated(req) {
   return req.session && req.session.user;
@@ -69,7 +70,7 @@ async function authenticateUser(email, password, req) {
   return { success: true };
 }
 
-async function registerUser(firstName, lastName, email, password, accountType, familyId = nulll) {
+async function registerUser(firstName, lastName, email, password, accountType, familyId = null) {
   if (!email || !password) {
     return {
       success: false,
@@ -84,6 +85,11 @@ async function registerUser(firstName, lastName, email, password, accountType, f
     if (existingUser) {
       return { success: false, error: "Email address already registered" };
     }
+
+    let familyObjectId = null;
+    if (familyId) {
+      familyObjectId = typeof familyId === 'string' ? new ObjectId(familyId) : familyId;
+    }
     
     const newUser = new User(
       firstName || "",
@@ -92,7 +98,7 @@ async function registerUser(firstName, lastName, email, password, accountType, f
       password,
       accountType || "parent",
       null, //profilephoto not set at registration
-      familyId || null,
+      familyObjectId || null,
     );
     
     const result = await newUser.save();
@@ -294,7 +300,8 @@ async function assignUserToFamily(userId, familyId) {
         return {
           success: true,
           members: members.map(member => ({
-            userId: member._id,
+            id: member._id,                
+            _id: member._id,
             firstName: member.firstName,
             lastName: member.lastName,
             email: member.email,
