@@ -22,10 +22,41 @@ router.get('/tasks', ensureAuthenticated, async (req, res) => {
             .toArray();
         }
         else if (req.session.user.accountType === 'parent') {
-          tasks = await db.collection('tasks')
-            .find({ posterId: new ObjectId(req.session.user.id) })
-            .sort({ createdAt: -1 }) 
+          // Get all children in the parent's family
+          const children = await db.collection('users').find({ 
+            familyId: new ObjectId(req.session.user.familyId),
+            accountType: 'child'
+          }).toArray();
+                    
+          const childIds = children.map(child => child._id);
+          
+          // Get tasks assigned to these children or created by the parent
+          const parentTasks = await db.collection('tasks')
+            .find({
+              $or: [
+                { assigneeId: { $in: childIds.map(id => new ObjectId(id)) } },
+                { posterId: new ObjectId(req.session.user._id) }
+              ]
+            })
+            .sort({ createdAt: -1 })
             .toArray();
+
+          // Format tasks
+          const tasks = parentTasks.map(task => ({
+            ...task,
+            formattedDue: formatTaskDueDate(task.dueDate),
+            status: task.status || (task.completed ? 'completed' : 'new')
+          }));
+
+          // Sort tasks by status: new, in_progress, overdue, completed
+          const statusOrder = { new: 0, in_progress: 1, overdue: 2, completed: 3 };
+          tasks.sort((a, b) => (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99));
+
+          return res.render('tasks/tasksParent', { 
+            tasks, 
+            user: req.session.user,
+            currentPage: 'tasks'
+          });
         }
       }
   
