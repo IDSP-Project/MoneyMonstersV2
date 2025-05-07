@@ -23,6 +23,41 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentTaskGoalId = null;
   let pendingAssign = null;
 
+  // Add New Task modal logic for parent tasks page
+  const addTaskBtn = document.querySelector('.add-task-btn');
+  const selectTaskTypeModal = document.getElementById('selectTaskTypeModal');
+  const cancelTaskTypeBtn = document.getElementById('cancelTaskTypeBtn');
+  const taskTypeIcons = document.querySelectorAll('.task-type-icon');
+
+  if (addTaskBtn && selectTaskTypeModal) {
+    addTaskBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      selectTaskTypeModal.style.display = 'flex';
+    });
+  }
+
+  if (cancelTaskTypeBtn && selectTaskTypeModal) {
+    cancelTaskTypeBtn.addEventListener('click', function() {
+      selectTaskTypeModal.style.display = 'none';
+    });
+  }
+
+  window.addEventListener('click', function(event) {
+    if (event.target === selectTaskTypeModal) {
+      selectTaskTypeModal.style.display = 'none';
+    }
+  });
+
+  // Highlight selected category icon
+  if (taskTypeIcons.length > 0) {
+    taskTypeIcons.forEach(icon => {
+      icon.addEventListener('click', function() {
+        taskTypeIcons.forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
+      });
+    });
+  }
+
   function getIconHTML(category) {
     let iconClass = 'fa-solid ';
     switch(category) {
@@ -84,13 +119,13 @@ document.addEventListener('DOMContentLoaded', function() {
   function closeModal() {
     modal.style.display = 'none';
   }
-  modalCloseBtn.addEventListener('click', closeModal);
-  modalCancelBtn.addEventListener('click', closeModal);
+  if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+  if (modalCancelBtn) modalCancelBtn.addEventListener('click', closeModal);
   window.addEventListener('click', function(e) {
     if (e.target === modal) closeModal();
   });
 
-  modalStartBtn.addEventListener('click', async function() {
+  if (modalStartBtn) modalStartBtn.addEventListener('click', async function() {
     const taskId = modal.dataset.taskId;
     if (!taskId) return;
     try {
@@ -115,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  modalCompleteBtn.addEventListener('click', async function() {
+  if (modalCompleteBtn) modalCompleteBtn.addEventListener('click', async function() {
     const taskId = modal.dataset.taskId;
     if (!taskId) return;
     try {
@@ -145,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  modalAssignGoalBtn.addEventListener('click', function() {
+  if (modalAssignGoalBtn) modalAssignGoalBtn.addEventListener('click', function() {
     modal.style.display = 'none';
     if (currentTaskGoalId) {
       let currentGoalTitle = '';

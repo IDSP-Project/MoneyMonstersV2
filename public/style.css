@@ -1207,6 +1207,22 @@ button[type=submit] a:hover {
 .singleLearn .blog-summary {
   font-size: 16px;
 }
+.singleLearn .complete-button {
+  display: block;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  background-color: #43a047;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.singleLearn .complete-button:hover {
+  background-color: #388e3c;
+}
 
 .tasks-container {
   margin: 0 auto;
@@ -1441,85 +1457,76 @@ button[type=submit] a:hover {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 }
 
-.task-modal-icon .task-icon {
-  font-size: 2rem;
+.task-type-icons-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.1rem;
+  margin-bottom: 1.2rem;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.task-type-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0.1rem;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.task-type-icon i {
+  font-size: 1rem;
+  margin-bottom: 0.05rem;
+  color: #8f8f8f;
+}
+
+.task-type-icon.selected,
+.task-type-icon:hover {
+  background: #f3eafd;
+  box-shadow: 0 2px 8px rgba(113, 74, 168, 0.1);
+}
+
+.task-type-icon.selected i,
+.task-type-icon:hover i {
   color: #714AA8;
 }
 
-#modalTaskTitle {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  text-align: left;
-  width: 100%;
-}
-
-.task-modal-desc {
-  color: #2F2F2F;
-  font-size: 14px;
+.task-type-label {
+  font-size: 0.95rem;
+  color: #444;
+  margin-top: 0.1rem;
   font-family: "Inter", sans-serif;
-  margin-bottom: 1rem;
-  text-align: left;
-  width: 100%;
 }
 
-.task-modal-meta {
-  color: #2F2F2F;
-  font-size: 12px;
-  font-family: "Inter", sans-serif;
-  margin-bottom: 1.5rem;
-  text-align: left;
+.confirm-btn {
+  background: #714AA8;
+  color: #fff;
   width: 100%;
-}
-
-.task-modal-actions {
-  display: flex;
-  gap: 1rem;
-  width: 100%;
-  margin-bottom: 0.5rem;
-  justify-content: flex-start;
-}
-
-.btn.cancel-btn {
-  background: #FFFFFF;
-  color: #2F2F2F;
-  border: 1px solid #ececec;
-  border-radius: 8px;
-  padding: 0.7rem 2.2rem;
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 10px;
+  margin-bottom: 0.7rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.7rem 0;
+  border: none;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.btn.start-btn {
-  background: #714AA8;
-  color: #FFFFFF;
-  border: none;
-  border-radius: 8px;
-  padding: 0.7rem 2.2rem;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.btn.cancel-btn:hover {
-  background: #F1F1F1;
-}
-
-.btn.start-btn:hover {
-  background: rgb(89.1859504132, 58.4049586777, 132.5950413223);
-}
-
-.modal-close {
-  position: absolute;
-  top: 0.7rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #2F2F2F;
+.cancel-btn {
+  background: #fff;
+  color: #000;
+  width: 100%;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.7rem 0;
+  border: 1px solid #ececec;
   cursor: pointer;
 }
 
@@ -1531,6 +1538,48 @@ button[type=submit] a:hover {
 
 .assign-goal-row .assign-goal-btn {
   min-width: 160px;
+}
+
+.add-task-btn-container {
+  position: absolute;
+  left: 50%;
+  bottom: 4rem;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 18rem;
+  z-index: 20;
+  border-radius: 0 0 0.2rem 0.2rem;
+}
+.add-task-btn-container .add-task-btn {
+  width: 100%;
+  color: #FFFFFF;
+  background-color: #714AA8;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  box-sizing: border-box;
+  min-width: unset;
+}
+
+.task-section-box {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(113, 74, 168, 0.07);
+  padding: 1.2rem 1rem 0.5rem 1rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid #ececec;
+}
+
+.task-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #714AA8;
+  margin-bottom: 0.7rem;
+  margin-left: 0.2rem;
+  font-family: "Inter", sans-serif;
 }
 
 .family, .invite {
