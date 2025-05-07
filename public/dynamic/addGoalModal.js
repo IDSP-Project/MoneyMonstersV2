@@ -1,4 +1,3 @@
-// Show modal when Add a New Goal button is clicked
 const addGoalBtn = document.querySelector('.add-goal-btn-container .btn');
 const modal = document.getElementById('addGoalModal');
 const cancelBtn = document.getElementById('cancelGoalModal');
@@ -50,21 +49,18 @@ if (backToTypeModalAmazon && amazonGoalModal && modal) {
   });
 }
 
-// Close modal when clicking outside the modal content
 window.addEventListener('click', function(event) {
   if (event.target === modal) {
     modal.style.display = 'none';
   }
 });
 
-// Close custom modal when clicking outside
 window.addEventListener('click', function(event) {
   if (event.target === customGoalModal) {
     customGoalModal.style.display = 'none';
   }
 });
 
-// Copy to clipboard functionality
 const copyIcon = document.querySelector('.amazon-link-input .copy-icon');
 const amazonLinkInput = document.querySelector('.amazon-link-input input');
 if (copyIcon && amazonLinkInput) {
@@ -76,7 +72,6 @@ if (copyIcon && amazonLinkInput) {
   });
 }
 
-// Close amazon modal when clicking outside
 window.addEventListener('click', function(event) {
   if (event.target === amazonGoalModal) {
     amazonGoalModal.style.display = 'none';
@@ -88,15 +83,9 @@ if (customGoalForm) {
     e.preventDefault();
     const name = customGoalForm.goalName.value;
     const amount = customGoalForm.goalAmount.value;
+    const description = customGoalForm.goalDescription.value.trim();
 
     try {
-      console.log('Sending goal data:', {
-        title: name,
-        description: 'Custom goal',
-        price: parseFloat(amount),
-        childId: document.body.dataset.childId
-      });
-
       const response = await fetch('/add', {
         method: 'POST',
         headers: {
@@ -104,38 +93,41 @@ if (customGoalForm) {
         },
         body: JSON.stringify({
           title: name,
-          description: 'Custom goal',
+          description: description || 'Custom goal',
           price: parseFloat(amount),
           childId: document.body.dataset.childId
         })
       });
 
       const data = await response.json();
-      console.log('Server response:', data);
-
       if (!response.ok) {
         throw new Error(data.error || 'Failed to create goal');
       }
 
-      // Close the modal
-      customGoalModal.style.display = 'none';
-      
-      // Refresh the page to show the new goal
-      window.location.reload();
+      // Show success modal
+      showSuccessGoalModal();
     } catch (error) {
       console.error('Error creating goal:', error);
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack
-      });
-      
-      // Show error message
       const errorMessage = document.createElement('div');
       errorMessage.className = 'error-message';
       errorMessage.textContent = error.message || 'Failed to create goal. Please try again.';
       customGoalForm.insertBefore(errorMessage, customGoalForm.firstChild);
     }
   });
+}
+
+function showSuccessGoalModal() {
+  const modal = document.getElementById('successGoalModal');
+  if (modal) {
+    modal.classList.add('show');
+    const doneBtn = document.getElementById('successGoalDoneBtn');
+    if (doneBtn) {
+      doneBtn.onclick = function() {
+        modal.classList.remove('show');
+        window.location.reload();
+      };
+    }
+  }
 }
 
 if (amazonGoalForm) {

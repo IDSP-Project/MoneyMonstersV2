@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   async function validateEmail(email) {
     try {
-      const response = await fetch('/check-email', {
+      const response = await fetch('/users/check-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

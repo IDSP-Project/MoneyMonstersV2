@@ -1,0 +1,72 @@
+.family, .invite {
+    font-family: $primary-font;
+
+    .error-message {
+      padding: 8px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: $font-size-sm;
+      text-align: center;
+      color: $error;
+    }
+    
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      margin-bottom: 5rem;
+    }
+
+    h1 { 
+        font-size: $font-size-lg;
+    }
+
+    h2 {
+        font-size: $font-size-base;
+    }
+    a {
+      display: block;
+      margin: 1rem 0;
+    }
+
+    .backLinks {
+      width: 100%;
+
+      a {
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.inviteLink input, .inviteMembers input {
+  width: 96%;
+  margin-bottom: 1rem;
+  border: 3px solid $tertiary;
+  border-radius: 7px;
+  padding: 0.2rem
+}
+
+.familyInfo {
+  .btn {
+    width: 100%;
+
+    a {
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+  }
+}
+
+
+.familyMembers ul {
+  list-style-type: none;
+margin-left: 0.5rem;
+}

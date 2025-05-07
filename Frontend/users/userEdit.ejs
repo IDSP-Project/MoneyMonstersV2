@@ -14,14 +14,14 @@
                 <%- include('../partials/header') %>
             </header>
             <main>
-                <div class="profilePhoto">
+                <div class="profilePhotoUpload">
                     <% if (profileUser.profilePhoto && profileUser.profilePhoto.url) { %>
                         <img src="<%= profileUser.profilePhoto.url %>" alt="Profile Photo">
                     <% } else { %>
                         <i class="fas fa-user"></i>
                     <% } %>
                     
-                    <% if (user && profileUser && user.id == profileUser.id) { %>
+                    <% if (user && profileUser && user.id.toString() === profileUser.id.toString()) { %>
                         <form id="profilePhotoForm" action="/upload-photo" method="POST" enctype="multipart/form-data" style="display: none;">
                             <input type="file" id="profilePhotoInput" name="profilePhoto" accept="image/*">
                         </form>
@@ -60,12 +60,6 @@
                     <button type="submit" class="btn" id="submitButton">Save</button>
                   </form>
                   
-
-                  <div class="addFamily">
-                    <% if (profileUser.accountType === "parent") { %>
-                        <a href="/add-family" class="btn">Add Members</a>
-                    <% } %>
-                </div>
             </div>
             <script src="/dynamic/fakeButtons.js"></script>
             <% if (user && profileUser && user.id == profileUser.id) { %>

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const photoForm = document.getElementById('profilePhotoForm');
     const fileInput = document.getElementById('profilePhotoInput');
-    const profilePhoto = document.querySelector('.profilePhoto');
+    const profilePhoto = document.querySelector('.profilePhotoUpload');
     
     if (!photoForm || !fileInput || !profilePhoto) return;
     
