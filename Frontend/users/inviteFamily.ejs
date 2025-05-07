@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Invite Link</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="invite">
+        <div class="container">
+            <header>
+                <%- include('../partials/header') %>
+            </header>
+            <main>
+                <h1>Family Invite Link</h1>
+                <p>Share this link with family members to invite them to join your family:</p>
+                
+                <div class="inviteLink">
+                    <input type="text" id="inviteLink" value="<%= inviteLink %>" readonly>
+                    <button id="copyLink" class="btn">Copy Link</button>
+                </div>
+                
+                <div class="linkInfo">
+                    <p>This link will automatically connect new users to your family account.</p>
+                    <p>If someone already has an account, they can be added directly via the Family Management page.</p>
+                </div>
+                
+                <div class="backLinks">
+                    <a href="/family" class="btn">Back to Family Management</a>
+                    <a href="/profile/<%= user.id %>" class="btn">Back to Profile</a>
+                </div>
+            </main>
+            
+            <footer>
+                <%- include('../partials/bottomNav', { user: user, currentPage: 'family' }) %>
+            </footer>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('copyLink').addEventListener('click', function() {
+            const linkInput = document.getElementById('inviteLink');
+            linkInput.select();
+            document.execCommand('copy');
+            this.textContent = 'Copied!';
+            setTimeout(() => {
+                this.textContent = 'Copy Link';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

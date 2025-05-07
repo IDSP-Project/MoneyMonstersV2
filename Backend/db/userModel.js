@@ -5,13 +5,13 @@ const { ObjectId } = require('mongodb');
 const bcrypt = require('bcrypt');
 
 class User {
-  constructor(firstName, lastName, email, password, accountType, profilePhoto = null, parentId = null) {
+  constructor(firstName, lastName, email, password, accountType, profilePhoto = null, familyId = null) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.password = password;
     this.accountType = accountType;
-    this.parentId = parentId;
+    this.familyId = familyId;
     this.profilePhoto = profilePhoto;
     this.balance = 0;
     this.createdAt = new Date();
@@ -86,23 +86,73 @@ class User {
     return await bcrypt.compare(plainPassword, hashedPassword);
   }
 
-  static async findChildren(parentId) {
+  static async findFamilyMembers(familyId) {
     try {
       const db = getDB();
-      return await db.collection('users').find({ parentId: parentId }).toArray();
+      return await db.collection('users').find({ 
+        familyId: new ObjectId(familyId) 
+      }).toArray();
     } catch (error) {
       throw error;
     }
   }
 
-  static async setParent(userId, parentId) {
+  static async findFamilyParents(familyId) {
+    try {
+      const db = getDB();
+      return await db.collection('users').find({ 
+        familyId: new ObjectId(familyId),
+        accountType: "parent"
+      }).toArray();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async findFamilyChildren(familyId) {
+    try {
+      const db = getDB();
+      return await db.collection('users').find({ 
+        familyId: new ObjectId(familyId),
+        accountType: "child"
+      }).toArray();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async assignToFamily(userId, familyId) {
     try {
       const db = getDB();
       const result = await db.collection('users').updateOne(
         { _id: new ObjectId(userId) },
-        { $set: { parentId: parentId } }
+        { $set: { familyId: new ObjectId(familyId) } }
       );
       return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async removeFromFamily(userId) {
+    try {
+      const db = getDB();
+      const result = await db.collection('users').updateOne(
+        { _id: new ObjectId(userId) },
+        { $set: { familyId: null } }
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async findUsersWithoutFamily() {
+    try {
+      const db = getDB();
+      return await db.collection('users').find({ 
+        familyId: null 
+      }).toArray();
     } catch (error) {
       throw error;
     }

@@ -21,11 +21,7 @@
                         <i class="fas fa-user"></i>
                     <% } %>
                     
-                    <% if (user && profileUser && user.id == profileUser.id) { %>
-                        <form id="profilePhotoForm" action="/upload-photo" method="POST" enctype="multipart/form-data" style="display: none;">
-                            <input type="file" id="profilePhotoInput" name="profilePhoto" accept="image/*">
-                        </form>
-                    <% } %>
+    
                 </div>
 
                 <div class="userInfo">
@@ -47,13 +43,18 @@
                     <div class="editUser">
                         <% if (user && profileUser && user.id == profileUser.id) { %>
                             <a href="/update-profile" class="btn">Update Profile</a>
+                        <% } else { %>
+                            <p> Login to this account to edit profile</p>
                         <% } %>
 
                     </div>
 
-                        <div class="logout">
-                            <a href="/logout/<%= user.id %>"> Logout </a>
-                        </div>
+                    <div class="addFamily">
+                        <% if (profileUser.accountType === "parent") { %>
+                            <a href="/family" class="btn">View Family</a>
+                        <% } %>
+                    </div>
+
                         <script src="/dynamic/fakeButtons.js"></script>
                         <% if (user && profileUser && user.id == profileUser.id) { %>
                             <script src="/dynamic/userPhoto.js"></script>

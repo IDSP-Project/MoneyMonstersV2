@@ -2,6 +2,7 @@
 
 const bcrypt = require("bcrypt");
 const User = require("../db/userModel.js");
+const { ObjectId } = require('mongodb'); 
 
 function isAuthenticated(req) {
   return req.session && req.session.user;
@@ -63,13 +64,13 @@ async function authenticateUser(email, password, req) {
     lastName: user.lastName || "",
     profilePhotoUrl: user.profilePhoto || null,
     accountType: user.accountType,
-    parentId: user.parentId 
-  };
+    familyId: user.familyId 
+    };
   
   return { success: true };
 }
 
-async function registerUser(firstName, lastName, email, password, accountType, parentId = null) {
+async function registerUser(firstName, lastName, email, password, accountType, familyId = null) {
   if (!email || !password) {
     return {
       success: false,
@@ -84,6 +85,11 @@ async function registerUser(firstName, lastName, email, password, accountType, p
     if (existingUser) {
       return { success: false, error: "Email address already registered" };
     }
+
+    let familyObjectId = null;
+    if (familyId) {
+      familyObjectId = typeof familyId === 'string' ? new ObjectId(familyId) : familyId;
+    }
     
     const newUser = new User(
       firstName || "",
@@ -92,7 +98,7 @@ async function registerUser(firstName, lastName, email, password, accountType, p
       password,
       accountType || "parent",
       null, //profilephoto not set at registration
-      parentId || null,
+      familyObjectId || null,
     );
     
     const result = await newUser.save();
@@ -105,7 +111,7 @@ async function registerUser(firstName, lastName, email, password, accountType, p
         lastName,
         email,
         accountType: accountType || "parent",
-        parentId
+        familyId 
       } 
     };
   } catch (error) {
@@ -147,7 +153,7 @@ async function retrieveProfile(profileId, currentUserId) {
         profilePhoto: profileUser.profilePhoto, 
         profilePhotoUrl: profileUser.profilePhoto ? profileUser.profilePhoto.url : null,
         accountType: profileUser.accountType,
-        parentId: profileUser.parentId || null
+        familyId : profileUser.familyId  || null
       }
     };
   } catch (error) {
@@ -191,13 +197,123 @@ async function updateUserProfile(userId, updateData) {
         email: updatedUser.email,
         profilePhotoUrl: updatedUser.profilePhoto ? updatedUser.profilePhoto.url : null,
         accountType: updatedUser.accountType,
-        parentId: updatedUser.parentId || null
+        familyId : updatedUser.familyId  || null
       }
     };
   } catch (error) {
     return { success: false, error: error.message || "Error updating user profile" };
   }
 }
+
+async function assignUserToFamily(userId, familyId) {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return { success: false, error: "User not found" };
+    }
+    const result = await User.assignToFamily(userId, familyId);
+
+    if (result.modifiedCount === 0) {
+      return { success: false, error: "No changes were made"}
+    }
+    return { success: true };
+
+  } catch (error) {
+    return {success: false, error: "Error assigning user to family"};
+  }
+  }
+
+  async function getFamilyParents(familyId) {
+    try {
+      if (!familyId) {
+        return { success: false, error: "Family ID is required" };
+      }
+      
+      const parents = await User.findFamilyParents(familyId);
+      
+      return { 
+        success: true, 
+        parents: parents.map(parent => ({
+          id: parent._id,
+          firstName: parent.firstName,
+          lastName: parent.lastName,
+          email: parent.email,
+          profilePhotoUrl: parent.profilePhoto ? parent.profilePhoto.url : null
+        }))
+      };
+    } catch (error) {
+      return { success: false, error: error.message || "Error retrieving family parents" };
+    }
+  }
+  
+  async function getFamilyChildren(familyId) {
+    try {
+      if (!familyId) {
+        return { success: false, error: "Family ID is required" };
+      }
+      
+      const children = await User.findFamilyChildren(familyId);
+      
+      return { 
+        success: true, 
+        children: children.map(child => ({
+          id: child._id,
+          firstName: child.firstName,
+          lastName: child.lastName,
+          email: child.email,
+          profilePhotoUrl: child.profilePhoto ? child.profilePhoto.url : null
+        }))
+      };
+    } catch (error) {
+      return { success: false, error: error.message || "Error retrieving family children" };
+    }
+  }
+  
+    
+  async function removeUserFromFamily(userId) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return { success: false, error: "User not found" };
+      }
+      const result = await User.removeFromFamily(userId);
+
+      if (result.modifiedCount === 0) {
+        return { success: false, error: "No changes were made" };
+      }     return { success: true };
+
+    } catch (error) {
+      return {success: false, error: "Error removing user from family" 
+
+      };
+    }
+    }
+
+    async function getFamilyMembers(familyId) {
+      try {
+        if (!familyId){
+          return { success: false, error: "Family ID is required" };
+
+        }
+        const members = await User.findFamilyMembers(familyId);
+
+        return {
+          success: true,
+          members: members.map(member => ({
+            id: member._id,                
+            _id: member._id,
+            firstName: member.firstName,
+            lastName: member.lastName,
+            email: member.email,
+            profilePhotoUrl: member.profilePhoto ? member.profilePhotoUrl : null,
+            accountType: member.accountType,
+          }))
+        };
+      } catch (error) {
+        return { success: false, error: "Error retrieving family members" };
+    }
+  }
+
 
 async function updateUserPhotoUrl(userId, photoUrl) {
   try {
@@ -287,5 +403,10 @@ module.exports = {
   updateUserPhotoUrl,
   removeUserPhotoUrl,
   changeUserPassword,
-  checkEmailExists 
+  checkEmailExists,
+  assignUserToFamily,
+  removeUserFromFamily,
+  getFamilyMembers,
+  getFamilyParents,
+  getFamilyChildren
 };
