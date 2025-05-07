@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Management</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="family">
+        <div class="container">
+            <header>
+                <%- include('../partials/header') %>
+            </header>
+            <main>
+                <h1>Family Management</h1>
+                
+                <% if (locals.error) { %>
+                    <div class="error-message" style="display: block;"><%= error %></div>
+                <% } %>
+                
+                <% if (locals.success) { %>
+                    <div class="success-message" style="display: block;"><%= success %></div>
+                <% } %>
+                
+                <div class="familyInfo">
+                    <% if (family) { %>
+                        <h2><%= family.name %></h2>
+                        <p>Created: <%= new Date(family.createdAt).toLocaleDateString() %></p>
+                        
+                        <% if (user.accountType === 'parent') { %>
+                            <form action="/update-family" method="POST">
+                                <label for="familyName">Family Name</label>
+                                <input type="text" id="familyName" name="familyName" value="<%= family.name %>" required>
+                                
+                                <button type="submit" class="btn">Update Family Name</button>
+                            </form>
+                        <% } %>
+                    <% } else { %>
+                        <% if (user.accountType === 'parent') { %>
+                            <h2>Create a Family</h2>
+                            <form action="/create-family" method="POST">
+                                <label for="familyName">Family Name</label>
+                                <input type="text" id="familyName" name="familyName" placeholder="e.g. Smith Family" required>
+                                
+                                <button type="submit" class="btn">Create Family</button>
+                            </form>
+                        <% } else { %>
+                            <p>You are not part of a family yet.</p>
+                        <% } %>
+                    <% } %>
+                </div>
+                
+                <% if (family) { %>
+                    <div class="familyMembers">
+                        <h2>Family Members</h2>
+                        
+                        <% if (familyMembers && familyMembers.length > 0) { %>
+                            <div class="membersList">
+                                <% let parents = familyMembers.filter(member => member.accountType === 'parent'); %>
+                                <% let children = familyMembers.filter(member => member.accountType === 'child'); %>
+                                
+                                <% if (parents.length > 0) { %>
+                                    <h3>Parents</h3>
+                                    <ul>
+                                        <% parents.forEach(parent => { %>
+                                            <li>
+                                                <%= parent.firstName %> <%= parent.lastName %> 
+                                                (<%= parent.email %>)
+                                                <a href="/profile/<%= parent.id %>">View Profile</a>
+                                            </li>
+                                        <% }); %>
+                                    </ul>
+                                <% } %>
+                                
+                                <% if (children.length > 0) { %>
+                                    <h3>Children</h3>
+                                    <ul>
+                                        <% children.forEach(child => { %>
+                                            <li>
+                                                <%= child.firstName %> <%= child.lastName %>
+                                                (<%= child.email %>)
+                                                <a href="/profile/<%= child.id %>">View Profile</a>
+                                        <% }); %>
+                                    </ul>
+                                <% } %>
+                            </div>
+                        <% } else { %>
+                            <p>No family members found.</p>
+                        <% } %>
+                        
+                        <% if (user.accountType === 'parent') { %>
+                            <div class="inviteMembers">
+                                <h3>Add Member by Email</h3>
+                                <form action="/add-family-member" method="POST">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" id="email" name="email" placeholder="Enter email address" required>
+                                    <button type="submit" class="btn">Add Member</button>
+                                </form>
+                                
+                                <h3>Generate Invite Link</h3>
+                                <a href="/generate-invite-link" class="btn">Create Invite Link</a>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } %>
+            </main>
+            
+            <footer>
+                <%- include('../partials/bottomNav', { user: user, currentPage: 'family' }) %>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

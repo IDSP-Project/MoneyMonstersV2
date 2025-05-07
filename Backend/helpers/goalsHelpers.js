@@ -15,7 +15,7 @@ const fetchGoalsForHome = async (req, res, next) => {
             .toArray();
         } else if (req.session.user.accountType === 'parent') {
           res.locals.goals = await db.collection('goals')
-            .find({ parentId: req.session.user.id })
+            .find({ familyMembers: req.session.user.id })
             .sort({ createdAt: -1 })
             .limit(1)
             .toArray();
