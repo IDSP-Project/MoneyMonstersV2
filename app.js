@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const path = require('path');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
