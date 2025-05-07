@@ -1,34 +1,63 @@
 <!DOCTYPE html>
- <html lang="en">
- <head>
-   <meta charset="UTF-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-   <title>Money Monsters Learn</title>
-   <link rel="stylesheet" href="/style.css" />
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
- </head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Money Monsters Learn</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body> 
 <div class="singleLearn">
-    <div class="container">
-      <header class="learn-each-header">
-        <div class="back-button">
-          <a href="/learn">
-            <i class="fas fa-arrow-left"></i> Back
-          </a>
-        </div>
-        <%- include('../partials/header') %>
-      </header>
-<main>
-    <article>
+  <div class="container">
+    <header class="learn-each-header">
+      <div class="back-button">
+        <a href="/learn">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+      </div>
+      <%- include('../partials/header') %>
+    </header>
+
+    <main>
+      <article>
         <h5><%= blog.category %></h5>
         <h1><%= blog.title %></h1>
-        <!-- <% if (blog.image) { %>
-          <img src="<%= blog.image %>" alt="<%= blog.title %>">
-        <% } %> -->
         <%- blog.content.split('\n\n').map(paragraph => `<p>${paragraph}</p>`).join('') %>
       </article>
-</main>
-<footer>
-    <%- include('../partials/bottomNav') %>
-  </footer>
-        </div>
-        </div>
+
+      <form id="completeForm">
+        <input type="hidden" id="blogId" value="<%= blog._id %>" />
+        <button type="submit" class="complete-button">Mark as Complete ✅</button>
+      </form>
+    </main>
+
+    <footer>
+      <%- include('../partials/bottomNav') %>
+    </footer>
+  </div>
+</div>
+
+<script>
+  document.getElementById("completeForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const blogId = document.getElementById("blogId").value;
+
+    const response = await fetch(`/learn/progress/${blogId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ status: "done" }) // ✅ user is NOT needed here
+    });
+
+    if (response.ok) {
+      alert("Marked as complete!");
+      window.location.href = "/learn";
+    } else {
+      alert("❌ Failed to update progress.");
+    }
+  });
+</script>
+</body>
+</html>

@@ -14,7 +14,9 @@
         <%- include('../partials/header') %>
       </header>
         <main><h3>Learn how to manage your money</h3>
-          <% blogs.forEach(blog => { %>
+          <% blogs.forEach(blog => { 
+            const progressStatus = blogProgressMap[blog._id.toString()] || "todo";
+       %>
           <div class="blog-card">
             <div class="blog-content">
             <div class="blog-cat">
@@ -22,6 +24,11 @@
             </div>
             <div class="blog-title">
               <h3><a href="/learn/view/<%= blog._id %>"><%= blog.title %></a></h3>
+              <p>Status:
+                <span class="status-badge <%= blogProgressMap[blog.stringId] || 'todo' %>">
+                  <%= blogProgressMap[blog.stringId] || 'To Do' %>
+                </span>
+              </p>
             </div>
             <div class="blog-summary">
               <p><%= blog.summary %></p>
