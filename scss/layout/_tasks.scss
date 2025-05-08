@@ -1,5 +1,6 @@
 .tasks-container {
   margin: 0 auto;
+  margin-bottom: 4rem;
 
   .section-tabs {
     display: flex;
@@ -42,6 +43,7 @@
     padding: 1rem;
     border-radius: 10px;
     background-color: $white;
+    cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   }
 
@@ -187,15 +189,14 @@
 
 
 
-// Task Modal Styles
 .task-modal {
   display: none;
-  position: fixed;
+  position: absolute;
   z-index: 2000;
   left: 0;
   top: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background: rgba(0,0,0,0.25);
   justify-content: center;
   align-items: center;
@@ -206,8 +207,8 @@
 .task-modal-content {
   background: $white;
   border-radius: 16px;
-  padding: 1.5rem 1rem 1rem 1rem;
-  max-width: 240px;
+  padding: 1.5rem 0.5rem 1rem 0.5rem;
+  max-width: 280px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -218,8 +219,9 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 0.1rem;
-  margin-bottom: 1.2rem;
+  gap: 0.55rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
   width: 100%;
   flex-wrap: wrap;
 }
@@ -229,28 +231,34 @@
   align-items: center;
   cursor: pointer;
   border-radius: 50%;
-  padding: 0.1rem;
-  transition: background 0.15s, box-shadow 0.15s;
+  padding: 0.05rem;
+  transition: color 0.15s;
 }
 .task-type-icon i {
-  font-size: 1rem;
-  margin-bottom: 0.05rem;
+  font-size: 1.5rem;
+  margin-bottom: 0.03rem;
   color: #8f8f8f;
+  transition: color 0.15s;
 }
 .task-type-icon.selected,
 .task-type-icon:hover {
-  background: #f3eafd;
-  box-shadow: 0 2px 8px rgba(113, 74, 168, 0.10);
+  background: none;
+  box-shadow: none;
 }
 .task-type-icon.selected i,
 .task-type-icon:hover i {
-  color: #714AA8;
+  color: $tertiary;
+}
+.task-type-icon.selected .task-type-label,
+.task-type-icon:hover .task-type-label {
+  color: $tertiary;
 }
 .task-type-label {
   font-size: 0.95rem;
   color: #444;
   margin-top: 0.1rem;
   font-family: $primary-font;
+  transition: color 0.15s;
 }
 
 .confirm-btn {
@@ -329,4 +337,263 @@
   margin-bottom: 0.7rem;
   margin-left: 0.2rem;
   font-family: $primary-font;
+}
+
+.add-task-details-modal-content {
+  min-width: 240px;
+  max-width: 320px;
+  padding: 1.5rem 1rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.task-details-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.1rem;
+  width: 100%;
+}
+.task-details-icon-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #f3eafd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: $tertiary;
+}
+.task-details-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  font-family: $primary-font;
+}
+.task-details-input {
+  width: 100%;
+  margin-bottom: 0.8rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: $primary-font;
+  background: #faf9fb;
+  color: #222;
+  outline: none;
+  transition: border 0.2s;
+}
+.task-details-input:focus {
+  border: 1.5px solid $tertiary;
+}
+#confirmAddTaskBtn {
+  background: $tertiary;
+  color: #fff;
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 0.7rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.7rem 0;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#cancelAddTaskBtn {
+  background: #fff;
+  color: #000;
+  width: 100%;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.7rem 0;
+  border: 1px solid #ececec;
+  cursor: pointer;
+}
+
+.modal-error {
+  color: $error;
+  font-size: $font-size-base;
+  margin: 0.3rem 0 0.5rem 0.1rem;
+  min-height: 1.1em;
+  font-weight: 500;
+}
+
+.child-task-modal {
+  display: none;
+  position: absolute;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.25);
+  justify-content: center;
+  align-items: center;
+}
+.child-task-modal[style*="display: flex"] {
+  display: flex !important;
+}
+.child-task-modal-content {
+  background: $white;
+  border-radius: 16px;
+  padding: 1rem 0.5rem 1rem 0.5rem;
+  max-width: 280px;
+  min-width: 240px;
+  min-height: 320px;
+  max-height: 90vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+.child-modal-close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.9rem;
+  background: #f3f3f3;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.15s;
+}
+.child-modal-close:hover {
+  background: #ececec;
+}
+.child-task-modal-icon {
+  margin-top: 2.2rem;
+  margin-bottom: 0.7rem;
+  font-size: 2.1rem;
+  color: $tertiary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.child-task-modal-meta {
+  font-size: 1.05rem;
+  color: #222;
+  margin-bottom: 1.1rem;
+  margin-top: 0.2rem;
+  font-family: $primary-font;
+}
+.child-task-modal-actions {
+  display: flex;
+  gap: 0.7rem;
+  width: 100%;
+  margin-bottom: 0.7rem;
+  justify-content: center;
+}
+.child-cancel-btn, .child-start-btn {
+  min-width: 90px;
+  padding: 0.7rem 0.7rem;
+  font-size: 1.08rem;
+  border-radius: 10px;
+  font-weight: 600;
+  border: 1px solid #ececec;
+  cursor: pointer;
+}
+.child-cancel-btn {
+  background: #fff;
+  font-weight: $font-regular;
+  color: #000;
+}
+.child-start-btn {
+  background: #714AA8;
+  font-weight: $font-regular;
+  color: #fff;
+  border: none;
+}
+.child-complete-btn {
+  background: #714AA8;
+  font-weight: $font-regular;
+  color: #fff;
+  border: none;
+  min-width: 120px;
+  padding: 0.7rem 0.7rem;
+  font-size: 1.08rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.child-assign-goal-row {
+  display: flex;
+  align-self: center;
+  margin-top: 0.5rem;
+  width: 100%;
+  justify-content: center;
+}
+.child-assign-goal-btn {
+  font-weight: $font-regular;
+  min-width: 180px;
+  background: #714AA8;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 1.08rem;
+  padding: 0.7rem 0;
+  border: none;
+  cursor: pointer;
+  margin-top: 0.2rem;
+}
+.child-task-modal-desc {
+  font-size: 1.08rem;
+  color: #222;
+  margin-bottom: 0.7rem;
+  margin-top: 0.2rem;
+  text-align: center;
+  font-family: $primary-font;
+  min-height: 1.2em;
+}
+.child-back-btn {
+  background: #fff;
+  color: #000;
+  width: 100%;
+  border-radius: 10px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  padding: 0.7rem 0;
+  border: 1px solid #ececec;
+  cursor: pointer;
+  margin-top: 1.2rem;
+  margin-bottom: 0.2rem;
+  box-sizing: border-box;
+  display: block;
+}
+
+.child-task-goal-info-row {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  gap: 0.1rem;
+}
+.child-task-goal-info {
+  font-size: 0.97rem;
+  color: #888;
+  font-family: $primary-font;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+#modalGoalInfo {
+  font-weight: $font-bold;
+}
+
+.child-task-confirmed-by {
+  font-size: 0.97rem;
+  color: #888;
+  font-family: $primary-font;
+  text-align: center;
+  display: block;
+  width: 100%;
+  margin-bottom: 0.1rem;
 }

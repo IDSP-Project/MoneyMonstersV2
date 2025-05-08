@@ -110,10 +110,11 @@ async function loadAvailableTasks() {
 
 function getTaskIcon(category) {
   switch(category) {
-    case 'dog': return 'fa-dog';
-    case 'house': return 'fa-house';
-    case 'babysit': return 'fa-baby';
-    case 'plants': return 'fa-leaf';
+    case 'pet': return 'fa-dog';
+    case 'cleaning': return 'fa-broom';
+    case 'garage': return 'fa-warehouse';
+    case 'garden': return 'fa-leaf';
+    case 'misc': return 'fa-circle-check';
     default: return 'fa-list-check';
   }
 }
