@@ -43,10 +43,11 @@
                             <% 
                               let iconClass = 'fa-solid ';
                               switch(task.category) {
-                                case 'dog': iconClass += 'fa-dog'; break;
-                                case 'house': iconClass += 'fa-house'; break;
-                                case 'babysit': iconClass += 'fa-baby'; break;
-                                case 'plants': iconClass += 'fa-leaf'; break;
+                                case 'pet': iconClass += 'fa-dog'; break;
+                                case 'cleaning': iconClass += 'fa-broom'; break;
+                                case 'garage': iconClass += 'fa-warehouse'; break;
+                                case 'garden': iconClass += 'fa-leaf'; break;
+                                case 'misc': iconClass += 'fa-circle-check'; break;
                                 default: iconClass += 'fa-list-check';
                               }
                             %>
@@ -80,35 +81,52 @@
       <footer>
         <%- include('../partials/bottomNav') %>
       </footer>
-    </div>
-  </div>
-  <div id="selectTaskTypeModal" class="task-modal" style="display: none;">
-    <div class="task-modal-content">
-      <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1.2rem;">Select Task Type</h2>
-      <div class="task-type-icons-row">
-        <div class="task-type-icon" data-category="dog">
-          <i class="fa-solid fa-dog"></i>
-          <div class="task-type-label">Pet</div>
-        </div>
-        <div class="task-type-icon" data-category="house">
-          <i class="fa-solid fa-broom"></i>
-          <div class="task-type-label">Cleaning</div>
-        </div>
-        <div class="task-type-icon" data-category="garage">
-          <i class="fa-solid fa-warehouse"></i>
-          <div class="task-type-label">Garage</div>
-        </div>
-        <div class="task-type-icon" data-category="plants">
-          <i class="fa-solid fa-leaf"></i>
-          <div class="task-type-label">Garden</div>
-        </div>
-        <div class="task-type-icon" data-category="misc">
-          <i class="fa-solid fa-circle-check"></i>
-          <div class="task-type-label">Misc.</div>
+      <div id="selectTaskTypeModal" class="task-modal" style="display: none;">
+        <div class="task-modal-content">
+          <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1.2rem;">Select Task Type</h2>
+          <div class="task-type-icons-row">
+            <div class="task-type-icon" data-category="pet">
+              <i class="fa-solid fa-dog"></i>
+              <div class="task-type-label">Pet</div>
+            </div>
+            <div class="task-type-icon" data-category="cleaning">
+              <i class="fa-solid fa-broom"></i>
+              <div class="task-type-label">Cleaning</div>
+            </div>
+            <div class="task-type-icon" data-category="garage">
+              <i class="fa-solid fa-warehouse"></i>
+              <div class="task-type-label">Garage</div>
+            </div>
+            <div class="task-type-icon" data-category="garden">
+              <i class="fa-solid fa-leaf"></i>
+              <div class="task-type-label">Garden</div>
+            </div>
+            <div class="task-type-icon" data-category="misc">
+              <i class="fa-solid fa-circle-check"></i>
+              <div class="task-type-label">Misc.</div>
+            </div>
+          </div>
+          <div id="taskTypeError" class="modal-error"></div>
+          <button class="confirm-btn" id="confirmTaskTypeBtn">Confirm</button>
+          <button class="cancel-btn" id="cancelTaskTypeBtn">Cancel</button>
         </div>
       </div>
-      <button class="confirm-btn" id="confirmTaskTypeBtn">Confirm</button>
-      <button class="cancel-btn" id="cancelTaskTypeBtn">Cancel</button>
+      <div id="addTaskDetailsModal" class="task-modal" style="display: none;">
+        <div class="task-modal-content add-task-details-modal-content">
+          <div class="task-details-icon-row">
+            <span id="taskDetailsIconCircle" class="task-details-icon-circle">
+              <!-- Icon will be injected here -->
+            </span>
+            <span class="task-details-title">Select Task Type</span>
+          </div>
+          <input type="text" id="taskDetailsDescription" class="task-details-input" placeholder="Task details" maxlength="60" />
+          <input type="number" id="taskDetailsAmount" class="task-details-input" placeholder="Amount • $" min="0" step="0.01" />
+          <input type="date" id="taskDetailsDate" class="task-details-input" placeholder="By • Date" />
+          <input type="time" id="taskDetailsTime" class="task-details-input" placeholder="By • Time" />
+          <button class="confirm-btn" id="confirmAddTaskBtn">Confirm</button>
+          <button class="cancel-btn" id="cancelAddTaskBtn">Cancel</button>
+        </div>
+      </div>
     </div>
   </div>
   <script src="/dynamic/formatDueDates.js"></script>
