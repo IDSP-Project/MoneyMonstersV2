@@ -1918,9 +1918,6 @@ button[type=submit] a:hover {
   border: #BDBDBD 1px solid;
   margin-bottom: 0;
 }
-.family a {
-  display: block;
-}
 
 .inviteMembers form {
   border: #BDBDBD 1px solid;
@@ -1945,20 +1942,33 @@ button[type=submit] a:hover {
 }
 
 .joinWithLink {
-  margin-top: 1rem;
   border: #BDBDBD 1px solid;
   margin-bottom: 1rem;
 }
-.joinWithLink h3 {
-  margin: 0 0 0.5rem 0;
+
+.inviteLink {
+  width: 85%;
+  margin: 1rem 0.5rem;
+  background-color: #714AA8;
+  color: #FFFFFF;
+  border-radius: 6px;
+  padding: 0.75rem;
+  text-decoration: none;
+  font-family: "Inter", sans-serif;
+  text-align: center;
 }
-.joinWithLink .btn {
-  width: 96%;
-  margin: 5% 2%;
+.inviteLink a {
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.inviteLink:hover {
+  text-decoration: underline;
 }
 
 .updateFamilyName {
-  width: 96%;
+  width: 95.5%;
   border: #BDBDBD 1px solid;
   padding: 2%;
 }

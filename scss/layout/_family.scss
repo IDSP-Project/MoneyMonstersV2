@@ -37,10 +37,6 @@
     margin-bottom: 0;
   }
   
-  a {
-    display: block;
-  }
-
  }
 
 
@@ -74,25 +70,37 @@
 }
 
 .joinWithLink {
-  margin-top: 1rem;
   border: $secondary-light 1px solid;
+  margin-bottom: 1rem;
+}
 
-  h3 {
-    margin: 0 0 0.5rem 0;;
+.inviteLink {
+  width: 85%;
+  margin: 1rem 0.5rem;
+  background-color: $tertiary;
+  color: $white;
+  border-radius: 6px;
+  padding: 0.75rem;
+  text-decoration: none;
+  font-family: $primary-font;
+  text-align: center;
+
+  a {
+    color: $white;
+    text-decoration: none;
+    font-size: $font-size-sm;
+}
   }
 
-  .btn {
-width: 96%;
-margin: 5% 2%
-}
+  .inviteLink:hover {
+    text-decoration: underline;
+  }
 
-margin-bottom: 1rem;
-}
 
 
 
 .updateFamilyName {
-width: 96%;
+width: 95.5%;
 border: $secondary-light 1px solid;
 padding: 2%;
 
