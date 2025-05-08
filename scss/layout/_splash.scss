@@ -1,38 +1,49 @@
 
 .splash {
-  margin-top: 3rem;
       font-family: $primary-font;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
 
+
       .container {
-        background-color: rgba($inner-coin, 0.1);
-      }
+        background: linear-gradient(180deg, #FFF 32.25%, #D6BBFB 97.74%);
+        justify-items: space-between;
+        display: flex;         
+        flex-direction: column;
+    }
 
     h1 {
-      font-size: 2.3rem;
+      font-size: 1.8rem;
       color: $tertiary;
-      font-style: bold;
+      font-style: normal;
+      font-weight: 600;
       box-shadow: 5px $secondary;
+      text-align: center;
       justify-content: center;
-      margin: 2rem auto 1rem auto;
+      margin-top: 2rem;
     }
     
     a {
       display: block;
       text-align: center;
-      margin: 2rem;
+      margin: 0.5rem;
       text-decoration: none;
       color: $white;
       background-color: $tertiary;
-      padding: 1rem;
+      padding: 0.5rem;
       border-radius: 10px;
     }
     
     a:hover {
       text-decoration: underline;
+    }
+
+    .r1 a {
+      color: $tertiary;
+      background-color: $white;
+      border: $tertiary 1px solid;
     }
 
     svg {

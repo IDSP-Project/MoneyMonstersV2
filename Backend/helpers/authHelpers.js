@@ -293,26 +293,17 @@ async function assignUserToFamily(userId, familyId) {
       try {
         if (!familyId){
           return { success: false, error: "Family ID is required" };
-
         }
         const members = await User.findFamilyMembers(familyId);
-
+    
         return {
           success: true,
-          members: members.map(member => ({
-            id: member._id,                
-            _id: member._id,
-            firstName: member.firstName,
-            lastName: member.lastName,
-            email: member.email,
-            profilePhotoUrl: member.profilePhoto ? member.profilePhotoUrl : null,
-            accountType: member.accountType,
-          }))
+          members: members
         };
       } catch (error) {
         return { success: false, error: "Error retrieving family members" };
+      }
     }
-  }
 
 
 async function updateUserPhotoUrl(userId, photoUrl) {

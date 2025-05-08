@@ -16,6 +16,24 @@ router.get('/tasks', ensureAuthenticated, async (req, res) => {
             .find({ assigneeId: new ObjectId(req.session.user.id) })
             .sort({ createdAt: -1 }) 
             .toArray();
+          // Fetch parent names
+          const parentIds = [...new Set(tasks.map(task => String(task.posterId)))];
+          let parentMap = {};
+          if (parentIds.length > 0) {
+            const parents = await db.collection('users')
+              .find({ _id: { $in: parentIds.map(id => new ObjectId(id)) } })
+              .toArray();
+            parents.forEach(parent => {
+              parentMap[String(parent._id)] =
+                (parent.firstName && parent.lastName)
+                  ? `${parent.firstName} ${parent.lastName}`
+                  : parent.name || parent.fullName || parent.username || 'Parent';
+            });
+          }
+          tasks = tasks.map(task => ({
+            ...task,
+            parentName: parentMap[String(task.posterId)] || '',
+          }));
           activeGoals = await db.collection('goals')
             .find({ childId: req.session.user.id, status: 'active' })
             .sort({ createdAt: -1 })
@@ -164,6 +182,68 @@ router.get('/tasks/available', ensureAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('Error fetching available tasks:', error);
     res.status(500).json({ error: 'Failed to fetch available tasks' });
+  }
+});
+
+router.post('/tasks', ensureAuthenticated, async (req, res) => {
+  try {
+    const db = getDB();
+    const { category, description, amount, dueDate } = req.body;
+    
+    const allowedCategories = ['pet', 'cleaning', 'garage', 'garden', 'misc'];
+    if (!allowedCategories.includes(category)) {
+      return res.status(400).json({ success: false, error: 'Invalid category' });
+    }
+    if (!description || typeof description !== 'string' || !description.trim()) {
+      return res.status(400).json({ success: false, error: 'Description is required' });
+    }
+    if (isNaN(amount) || amount < 0) {
+      return res.status(400).json({ success: false, error: 'Amount must be a positive number' });
+    }
+    if (!dueDate) {
+      return res.status(400).json({ success: false, error: 'Due date is required' });
+    }
+
+    // Find children in the family
+    const children = await db.collection('users').find({
+      familyId: new ObjectId(req.session.user.familyId),
+      accountType: 'child'
+    }).toArray();
+
+    if (!children.length) {
+      return res.status(400).json({ success: false, error: 'No children found in your family to assign the task.' });
+    }
+
+    // For now, assign to the first child in the family will change later.
+    const selectedChild = children[0];
+
+    const newTask = {
+      category,
+      title: description.trim(),
+      description: description.trim(),
+      reward: Number(amount),
+      dueDate: new Date(dueDate),
+      status: 'new',
+      completed: false,
+      completedAt: new Date(0),
+      weeklyRepeat: false,
+      goalId: null,
+      posterId: new ObjectId(req.session.user.id),
+      assigneeId: new ObjectId(selectedChild._id),
+      familyId: new ObjectId(req.session.user.familyId),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const result = await db.collection('tasks').insertOne(newTask);
+    if (result.acknowledged) {
+      res.json({ success: true, task: newTask });
+    } else {
+      throw new Error('Failed to create task');
+    }
+  } catch (error) {
+    console.error('Error creating task:', error);
+    res.status(500).json({ success: false, error: error.message || 'Failed to create task' });
   }
 });
 

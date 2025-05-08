@@ -13,9 +13,7 @@
             <header>
                 <%- include('../partials/header') %>
             </header>
-            <main>
-                <h1>Family Management</h1>
-                
+            <main>                
                 <% if (locals.error) { %>
                     <div class="error-message" style="display: block;"><%= error %></div>
                 <% } %>
@@ -24,19 +22,10 @@
                     <div class="success-message" style="display: block;"><%= success %></div>
                 <% } %>
                 
-                <div class="familyInfo">
+                <div class="familyName">
                     <% if (family) { %>
-                        <h2><%= family.name %></h2>
-                        <p>Created: <%= new Date(family.createdAt).toLocaleDateString() %></p>
-                        
-                        <% if (user.accountType === 'parent') { %>
-                            <form action="/update-family" method="POST">
-                                <label for="familyName">Family Name</label>
-                                <input type="text" id="familyName" name="familyName" value="<%= family.name %>" required>
-                                
-                                <button type="submit" class="btn">Update Family Name</button>
-                            </form>
-                        <% } %>
+                        <h2>Manage Family: <%= family.name %></h2>
+                        <a href=""></a>
                     <% } else { %>
                         <% if (user.accountType === 'parent') { %>
                             <h2>Create a Family</h2>
@@ -52,59 +41,70 @@
                     <% } %>
                 </div>
                 
-                <% if (family) { %>
-                    <div class="familyMembers">
-                        <h2>Family Members</h2>
-                        
-                        <% if (familyMembers && familyMembers.length > 0) { %>
-                            <div class="membersList">
-                                <% let parents = familyMembers.filter(member => member.accountType === 'parent'); %>
-                                <% let children = familyMembers.filter(member => member.accountType === 'child'); %>
-                                
-                                <% if (parents.length > 0) { %>
-                                    <h3>Parents</h3>
-                                    <ul>
-                                        <% parents.forEach(parent => { %>
-                                            <li>
-                                                <%= parent.firstName %> <%= parent.lastName %> 
-                                                (<%= parent.email %>)
-                                                <a href="/profile/<%= parent.id %>">View Profile</a>
-                                            </li>
-                                        <% }); %>
-                                    </ul>
-                                <% } %>
-                                
-                                <% if (children.length > 0) { %>
-                                    <h3>Children</h3>
-                                    <ul>
-                                        <% children.forEach(child => { %>
-                                            <li>
-                                                <%= child.firstName %> <%= child.lastName %>
-                                                (<%= child.email %>)
-                                                <a href="/profile/<%= child.id %>">View Profile</a>
-                                        <% }); %>
-                                    </ul>
-                                <% } %>
+          
+<% if (family) { %>
+    <div class="familyMembers">
+        <h3><%= family.name %> Household</h3>
+        
+        <% if (familyMembers && familyMembers.length > 0) { %>
+            <div class="listMembers">
+                <% for (let i = 0; i < familyMembers.length; i++) { 
+                    let member = familyMembers[i];
+                    
+                    if (member.id === user.id) continue;
+                %>
+                    <div class="memberCard">
+                        <div class="avatar">
+                            <% if (member.profilePhoto && member.profilePhoto.url) { %>
+                                <img src="<%= member.profilePhoto.url %>" alt="Profile Photo" class="avatar-img">
+                            <% } else { %>
+                                <i class="fas fa-user avatar-icon"></i>
+                            <% } %>
+                        </div>
+                        <div class="memberInfo">
+                            <div class="memberName"><%= member.firstName %></div>
+                            <div class="memberActions">
+                                <a href="/dashboard/<%= member._id %>">Progress</a> | 
+                                <a href="/profile/<%= member._id %>">Profile</a> | 
+                                <a href="/remove-from-family/<%= member._id %>" class="remove-link">Remove</a>
                             </div>
-                        <% } else { %>
-                            <p>No family members found.</p>
-                        <% } %>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        <% } else { %>
+            <p>No family members found.</p>
+        <% } %>
                         
                         <% if (user.accountType === 'parent') { %>
                             <div class="inviteMembers">
-                                <h3>Add Member by Email</h3>
+                                <h3>Join the Family</h3>
+                                <div class="joinWithEmail">
                                 <form action="/add-family-member" method="POST">
-                                    <label for="email">Email Address</label>
+                                    <label for="email">Add via Email Address</label>
                                     <input type="email" id="email" name="email" placeholder="Enter email address" required>
                                     <button type="submit" class="btn">Add Member</button>
                                 </form>
-                                
+                            </div>
+                               <div class="joinWithLink">
                                 <h3>Generate Invite Link</h3>
                                 <a href="/generate-invite-link" class="btn">Create Invite Link</a>
                             </div>
+                        </div> 
+                        <% } %>
+                        
+                        <div class="updateFamilyName">
+                        <% if (user.accountType === 'parent') { %>
+                            <h3>Change Family Name</h3>
+                            <form action="/update-family" method="POST">
+                                <input type="text" id="familyName" name="familyName" value="<%= family.name %>" required>
+                                
+                                <button type="submit" class="btn">Update</button>
+                            </form>
                         <% } %>
                     </div>
-                <% } %>
+                </div>
+                <% } %> 
             </main>
             
             <footer>
