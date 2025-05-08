@@ -1085,6 +1085,40 @@ button[type=submit] a:hover {
   background: rgb(101.0929752066, 66.2024793388, 150.2975206612);
 }
 
+.progress-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.progressBar {
+  margin-bottom: 0;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.progress-text {
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.progress-percentage {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.progress-label {
+  font-size: 16px;
+  color: #666;
+}
+
 .splash {
   font-family: "Inter", sans-serif;
   display: flex;
@@ -1458,6 +1492,30 @@ button[type=submit] a:hover {
   align-items: center;
 }
 
+.task-type-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  border: 4px solid transparent;
+  border-radius: 50%;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.task-type-icon svg {
+  width: 32px;
+  height: 32px;
+  padding: 2px;
+}
+
+.task-type-icon.selected {
+  border-color: #714AA8;
+}
+
 .task-modal[style*="display: flex"] {
   display: flex !important;
 }
@@ -1465,64 +1523,33 @@ button[type=submit] a:hover {
 .task-modal-content {
   background: #FFFFFF;
   border-radius: 16px;
-  padding: 1.5rem 0.5rem 1rem 0.5rem;
+  padding: 1rem 0.5rem 1rem 0.5rem;
   max-width: 280px;
   position: relative;
-  display: flex;
+  display: block;
   flex-direction: column;
   align-items: center;
 }
 
 .task-type-icons-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 0.55rem;
-  margin-bottom: 1.5rem;
-  margin-top: 0.5rem;
-  width: 100%;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  margin: 0.5rem;
+  width: 85%;
 }
 
-.task-type-icon {
+.taskType {
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: pointer;
-  border-radius: 50%;
-  padding: 0.05rem;
-  transition: color 0.15s;
-}
-
-.task-type-icon i {
-  font-size: 1.5rem;
-  margin-bottom: 0.03rem;
-  color: #8f8f8f;
-  transition: color 0.15s;
-}
-
-.task-type-icon.selected,
-.task-type-icon:hover {
-  background: none;
-  box-shadow: none;
-}
-
-.task-type-icon.selected i,
-.task-type-icon:hover i {
-  color: #714AA8;
-}
-
-.task-type-icon.selected .task-type-label,
-.task-type-icon:hover .task-type-label {
-  color: #714AA8;
 }
 
 .task-type-label {
-  font-size: 0.95rem;
+  font-size: 12px;
   color: #444;
   margin-top: 0.1rem;
   font-family: "Inter", sans-serif;
-  transition: color 0.15s;
 }
 
 .confirm-btn {
@@ -1650,7 +1677,6 @@ button[type=submit] a:hover {
   background: #faf9fb;
   color: #222;
   outline: none;
-  transition: border 0.2s;
 }
 
 .task-details-input:focus {
@@ -1963,7 +1989,22 @@ button[type=submit] a:hover {
   font-size: 14px;
 }
 
-.inviteLink:hover {
+.shareLink {
+  width: 96%;
+  margin: 1rem auto;
+  color: #FFFFFF;
+  border-radius: 6px;
+  padding: 0.75rem;
+  text-decoration: none;
+  font-family: "Inter", sans-serif;
+  text-align: center;
+}
+.shareLink a {
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 14px;
+}
+.shareLink .shareLink:hover {
   text-decoration: underline;
 }
 

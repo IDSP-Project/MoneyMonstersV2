@@ -731,3 +731,38 @@
     }
   }
 }
+
+
+.progress-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.progressBar {
+  margin-bottom: 0;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.progress-text {
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.progress-percentage {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.progress-label {
+  font-size: 16px;
+  color: #666;
+}

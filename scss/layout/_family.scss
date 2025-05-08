@@ -92,11 +92,26 @@
 }
   }
 
-  .inviteLink:hover {
+.shareLink {
+  width: 96%;
+  margin: 1rem auto;
+  color: $white;
+  border-radius: 6px;
+  padding: 0.75rem;
+  text-decoration: none;
+  font-family: $primary-font;
+  text-align: center;
+
+  a {
+    color: $white;
+    text-decoration: none;
+    font-size: $font-size-sm;
+}
+
+  .shareLink:hover {
     text-decoration: underline;
   }
-
-
+}
 
 
 .updateFamilyName {
