@@ -17,8 +17,8 @@ const { uploadProfileImage, deleteProfileImage } = require('../helpers/photoHelp
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
+const User = require("../db/userModel.js");
 
-// Add missing Family model import
 const Family = require('../db/familyModel.js');
 
 router.get("/login", forwardAuthenticated, (req, res) => {
@@ -789,6 +789,59 @@ router.post("/add-family-member", ensureAuthenticated, async (req, res) => {
   }
 });
 
+
+router.get("/remove-from-family/:id", ensureAuthenticated, async (req, res) => {
+  try {
+    if (req.session.user.accountType !== "parent") {
+      return res.status(403).send("Only parents can remove family members");
+    }
+    
+    const userId = req.params.id;
+    
+    const membersResult = await getFamilyMembers(req.session.user.familyId);
+    
+    if (!membersResult.success) {
+      throw new Error("Could not retrieve family members");
+    }
+    
+
+    const memberToRemove = membersResult.members.find(member => {
+      const memberId = member.id ? member.id.toString() : '';
+      const member_Id = member._id ? member._id.toString() : '';
+      const paramId = userId.toString();
+      
+      
+      return memberId === paramId || member_Id === paramId;
+    });
+    
+    if (!memberToRemove) {
+      throw new Error(`User with ID ${userId} not found in this family`);
+    }
+    
+    
+    const family = await Family.findById(req.session.user.familyId);
+    
+    if (!family) {
+      throw new Error("Family not found");
+    }
+    
+    res.render("users/removeFamily", {
+      user: req.session.user,
+      memberToRemove: memberToRemove,
+      family: family,
+      error: null,
+      currentPage: 'family'
+    });
+  } catch (error) {
+    console.error("Error in remove-from-family route:", error);
+    req.session.flash = {
+      message: error.message,
+      type: "error"
+    };
+    res.redirect("/family");
+  }
+});
+
 router.post("/remove-from-family", ensureAuthenticated, async (req, res) => {
   try {
     if (req.session.user.accountType !== "parent") {
@@ -806,9 +859,14 @@ router.post("/remove-from-family", ensureAuthenticated, async (req, res) => {
     
     res.redirect("/family");
   } catch (error) {
-    res.status(500).send(`Error removing family member: ${error.message}`);
+    req.session.flash = {
+      message: error.message,
+      type: "error"
+    };
+    res.redirect("/family");
   }
 });
+
 
 router.get("/generate-invite-link", ensureAuthenticated, async (req, res) => {
   try {
@@ -862,7 +920,6 @@ router.post("/register/family/:familyId", forwardAuthenticated, async (req, res)
       id: family._id,
       name: family.name
     };
-    console.log(familyData);
     
     if (password !== confirmPassword) {
       if (isAjax) {
@@ -911,7 +968,6 @@ router.post("/register/family/:familyId", forwardAuthenticated, async (req, res)
     }
     
     const result = await registerUser(fName, lName, email, password, accountType, familyId);
-    console.log(result);
     
     if (!result.success) {
       if (isAjax) {

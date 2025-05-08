@@ -42,15 +42,17 @@
                 
                     <div class="editUser">
                         <% if (user && profileUser && user.id == profileUser.id) { %>
-                            <a href="/update-profile" class="btn">Update Profile</a>
+                            <div class="thisUser"><a href="/update-profile" class="btn">Update Profile</a></div>
                         <% } else { %>
-                            <p> Login to this account to edit profile</p>
+                            <div class="notUser">
+                            <p> Cannot edit</p>
+                        </div>
                         <% } %>
 
                     </div>
 
                     <div class="addFamily">
-                        <% if (profileUser.accountType === "parent") { %>
+                        <% if (user.accountType === "parent") { %>
                             <a href="/family" class="btn">View Family</a>
                         <% } %>
                     </div>

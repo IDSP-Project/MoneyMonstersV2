@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Invite Link</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="remove">
+        <div class="container">
+            <header>
+                <%- include('../partials/header') %>
+            </header>
+            <main>
+                <h1>Please Confirm</h1>
+                <p>Are you sure you want to remove this family member?</p>
+                    <p><div class="userDetails"><%= memberToRemove.firstName %> <%= memberToRemove.lastName %></div></p>
+                <p><div class="warning">This action cannot be undone</div></p>
+                
+                <div class="confirmation-buttons">
+                    <a href="/family" class="btn">Nevermind, Cancel</a>
+                    
+                    <form action="/remove-from-family" method="POST" style="display: inline;">
+                        <input type="hidden" name="userId" value="<%= memberToRemove._id %>">
+                        <button type="submit" class="btn">Yes, Remove</button>
+                    </form>
+                </div>
+            </main>
+            
+            <footer>
+                <%- include('../partials/bottomNav', { user: user, currentPage: 'family' }) %>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

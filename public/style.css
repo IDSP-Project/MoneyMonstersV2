@@ -379,7 +379,7 @@ html {
   box-sizing: border-box;
 }
 
-.editUser,
+.thisUser,
 .btn,
 button[type=submit] {
   width: 100%;
@@ -393,13 +393,13 @@ button[type=submit] {
   text-align: center;
   box-sizing: border-box;
 }
-.editUser a,
+.thisUser a,
 .btn a,
 button[type=submit] a {
   color: #FFFFFF;
   text-decoration: none;
 }
-.editUser a:hover,
+.thisUser a:hover,
 .btn a:hover,
 button[type=submit] a:hover {
   text-decoration: underline;
@@ -451,6 +451,10 @@ button[type=submit] a:hover {
 }
 .confirmLogout a:hover, .addFamily a:hover {
   text-decoration: underline;
+}
+
+.notUser {
+  color: #FFFFFF;
 }
 
 .goal-page {
@@ -1084,7 +1088,6 @@ button[type=submit] a:hover {
 }
 
 .splash {
-  margin-top: 3rem;
   font-family: "Inter", sans-serif;
   display: flex;
   flex-direction: column;
@@ -1092,28 +1095,38 @@ button[type=submit] a:hover {
   justify-content: center;
 }
 .splash .container {
-  background-color: rgba(225, 148, 38, 0.1);
+  background: linear-gradient(180deg, #FFF 32.25%, #D6BBFB 97.74%);
+  justify-items: space-between;
+  display: flex;
+  flex-direction: column;
 }
 .splash h1 {
-  font-size: 2.3rem;
+  font-size: 1.8rem;
   color: #714AA8;
-  font-style: bold;
+  font-style: normal;
+  font-weight: 600;
   box-shadow: 5px #2F2F2F;
+  text-align: center;
   justify-content: center;
-  margin: 2rem auto 1rem auto;
+  margin-top: 2rem;
 }
 .splash a {
   display: block;
   text-align: center;
-  margin: 2rem;
+  margin: 0.5rem;
   text-decoration: none;
   color: #FFFFFF;
   background-color: #714AA8;
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 10px;
 }
 .splash a:hover {
   text-decoration: underline;
+}
+.splash .r1 a {
+  color: #714AA8;
+  background-color: #FFFFFF;
+  border: #714AA8 1px solid;
 }
 .splash svg {
   margin: 1rem;
@@ -1582,10 +1595,7 @@ button[type=submit] a:hover {
   font-family: "Inter", sans-serif;
 }
 
-.family, .invite {
-  font-family: "Inter", sans-serif;
-}
-.family .error-message, .family .profile .success-message, .profile .family .success-message, .invite .error-message, .invite .profile .success-message, .profile .invite .success-message {
+.family .error-message, .family .profile .success-message, .profile .family .success-message {
   padding: 8px;
   border-radius: 4px;
   margin-bottom: 15px;
@@ -1593,54 +1603,226 @@ button[type=submit] a:hover {
   text-align: center;
   color: #FF585B;
 }
-.family main, .invite main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.family .success-message {
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-align: center;
+  color: #31D22B;
+}
+.family main {
   padding: 1rem;
-  margin-bottom: 5rem;
+  margin-bottom: 3rem;
 }
-.family h1, .invite h1 {
-  font-size: 24px;
-}
-.family h2, .invite h2 {
+.family h2 {
   font-size: 16px;
+  text-align: left;
+  color: #2F2F2F;
 }
-.family a, .invite a {
+.family h3 {
+  font-size: 14px;
+  color: #626262;
+  background-color: #F1F1F1;
+  padding: 0.5rem;
+  border: #BDBDBD 1px solid;
+  margin-bottom: 0;
+}
+.family a {
   display: block;
-  margin: 1rem 0;
-}
-.family .backLinks, .invite .backLinks {
-  width: 100%;
-}
-.family .backLinks a, .invite .backLinks a {
-  text-decoration: none;
-}
-.family .backLinks a:hover, .invite .backLinks a:hover {
-  text-decoration: underline;
 }
 
-.inviteLink input, .inviteMembers input {
+.inviteMembers form {
+  border: #BDBDBD 1px solid;
+  padding: 0.5rem;
+}
+.inviteMembers label {
+  font-size: 14px;
+}
+.inviteMembers input {
   width: 96%;
-  margin-bottom: 1rem;
+  margin: 0.6rem 0;
   border: 3px solid #714AA8;
   border-radius: 7px;
   padding: 0.2rem;
 }
-
-.familyInfo .btn {
-  width: 100%;
-}
-.familyInfo .btn a {
+.inviteMembers .btn {
   text-decoration: none;
+  margin-bottom: 0.5rem;
 }
-.familyInfo .btn a:hover {
+.inviteMembers .btn:hover {
   text-decoration: underline;
 }
 
+.joinWithLink {
+  margin-top: 1rem;
+  border: #BDBDBD 1px solid;
+}
+.joinWithLink h3 {
+  margin: 0 0 0.5rem 0;
+}
+.joinWithLink .btn {
+  width: 96%;
+  margin: 5% 2%;
+}
+
+.updateFamilyName {
+  width: 96%;
+  margin-top: 1rem;
+  border: #BDBDBD 1px solid;
+  padding: 2%;
+}
+.updateFamilyName label {
+  font-size: 14px;
+  margin-bottom: 0;
+  width: 100%;
+}
+.updateFamilyName input {
+  width: 96%;
+  margin: 0.6rem 0;
+  border: 3px solid #714AA8;
+  border-radius: 7px;
+  padding: 0.2rem;
+}
+.updateFamilyName .btn {
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+}
+.updateFamilyName .btn:hover {
+  text-decoration: underline;
+}
+
+.familyMembers {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
 .familyMembers ul {
   list-style-type: none;
   margin-left: 0.5rem;
+}
+.familyMembers .listMembers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 0.8rem;
+  padding: 0.8rem;
+  border: 1px solid #BDBDBD;
+  border-top: none;
+}
+.familyMembers .memberCard {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 0;
+  border-bottom: 1px dashed #BDBDBD;
+  background-color: white;
+}
+.familyMembers .memberCard:hover {
+  background-color: rgb(253.75, 253.75, 253.75);
+}
+.familyMembers .avatar {
+  margin-right: 0.8rem;
+}
+.familyMembers .avatar .avatar-img, .familyMembers .avatar .avatar-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.familyMembers .avatar .avatar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #BDBDBD;
+  color: #2F2F2F;
+  font-size: 20px;
+}
+.familyMembers .memberInfo {
+  flex: 1;
+}
+.familyMembers .memberInfo .memberName {
+  font-weight: 500;
+  color: #2F2F2F;
+  margin-bottom: 0.3rem;
+}
+.familyMembers .memberInfo .memberActions {
+  font-size: 0.9rem;
+}
+.familyMembers .memberInfo .memberActions a {
+  display: inline;
+  margin: 0;
+  color: #714AA8;
+  text-decoration: none;
+}
+.familyMembers .memberInfo .memberActions a:hover {
+  text-decoration: underline;
+}
+.familyMembers .memberInfo .memberActions .remove-link {
+  color: #FF585B;
+}
+
+.invite main {
+  padding: 1rem;
+  text-align: center;
+}
+.invite main h1 {
+  font-family: "Inter", sans-serif;
+  font-size: 24px;
+  color: #2F2F2F;
+}
+.invite main p {
+  font-size: 14px;
+  color: #2F2F2F;
+}
+.invite main input {
+  width: 88%;
+  border: #714AA8 1px solid;
+  border-radius: 5px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.invite main .btn, .invite main .backLinks {
+  margin: 0.5rem;
+  display: block;
+  width: 96%;
+}
+.invite main .btn a, .invite main .backLinks a {
+  text-decoration: none;
+}
+.invite main .btn a:hover, .invite main .backLinks a:hover {
+  text-decoration: underline;
+}
+.invite main .btn button:hover, .invite main .backLinks button:hover {
+  text-decoration: underline;
+}
+
+.remove main {
+  padding: 1rem;
+  text-align: center;
+}
+.remove main h1 {
+  font-family: "Inter", sans-serif;
+  font-size: 24px;
+  color: #2F2F2F;
+}
+.remove main p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #2F2F2F;
+  margin: 1rem;
+}
+.remove main .userDetails {
+  font-weight: 700;
+  color: #714AA8;
+}
+.remove main .btn {
+  margin: 1rem;
+  display: block;
+  width: 96%;
+  text-decoration: none;
+}
+.remove main .btn:hover {
+  text-decoration: underline;
+}
+.remove main .warning {
+  color: #FF585B;
 }
 
 .card {
