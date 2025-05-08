@@ -115,7 +115,7 @@
       box-sizing: border-box;
     }
 
-    .editUser,
+    .thisUser,
     .btn,
     button[type="submit"] {
       width: 100%;
@@ -137,7 +137,6 @@
       a:hover {
         text-decoration: underline;
       }
-
     }
 
 
@@ -196,3 +195,6 @@
     }
 
 
+.notUser {
+  color: $white;
+}
