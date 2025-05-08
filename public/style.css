@@ -1657,6 +1657,7 @@ button[type=submit] a:hover {
 .joinWithLink {
   margin-top: 1rem;
   border: #BDBDBD 1px solid;
+  margin-bottom: 1rem;
 }
 .joinWithLink h3 {
   margin: 0 0 0.5rem 0;
@@ -1668,14 +1669,8 @@ button[type=submit] a:hover {
 
 .updateFamilyName {
   width: 96%;
-  margin-top: 1rem;
   border: #BDBDBD 1px solid;
   padding: 2%;
-}
-.updateFamilyName label {
-  font-size: 14px;
-  margin-bottom: 0;
-  width: 100%;
 }
 .updateFamilyName input {
   width: 96%;
@@ -1823,6 +1818,27 @@ button[type=submit] a:hover {
 }
 .remove main .warning {
   color: #FF585B;
+  font-weight: 700;
+}
+
+.selectChild main {
+  margin: 1rem;
+}
+.selectChild .avatar {
+  margin-right: 0.8rem;
+}
+.selectChild .avatar .avatar-img, .selectChild .avatar .avatar-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.selectChild .avatar .avatar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #BDBDBD;
+  color: #2F2F2F;
+  font-size: 20px;
 }
 
 .card {

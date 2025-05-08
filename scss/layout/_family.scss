@@ -85,21 +85,17 @@
 width: 96%;
 margin: 5% 2%
 }
+
+margin-bottom: 1rem;
 }
 
 
 
 .updateFamilyName {
 width: 96%;
-margin-top: 1rem;
 border: $secondary-light 1px solid;
 padding: 2%;
 
-label {
-      font-size: $font-size-sm;
-      margin-bottom: 0;
-      width: 100%;
-  };
 
   input {
   width: 96%;
@@ -282,6 +278,33 @@ main {
 
     .warning {
       color: $error;
+      font-weight: 700;
     }
   }
   }
+
+  .selectChild {
+
+    main {
+    margin: 1rem;
+  }
+
+  .avatar {
+    margin-right: 0.8rem;
+    
+    .avatar-img, .avatar-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+    
+    .avatar-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: $secondary-light;
+      color: $secondary;
+      font-size: 20px;
+    }
+  }
+}

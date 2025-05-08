@@ -4,6 +4,8 @@ const { getDB } = require('../db/connection');
 const { ObjectId } = require('mongodb');
 const { ensureAuthenticated } = require('../helpers/authHelpers');
 const { fetchGoalsForHome } = require('../helpers/goalsHelpers');
+const User = require("../db/userModel.js");
+
 
 // Helper to get initials from a string for initials avatar
 function getInitials(name) {
