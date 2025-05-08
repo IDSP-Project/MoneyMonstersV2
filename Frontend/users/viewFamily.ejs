@@ -93,9 +93,9 @@
                         </div> 
                         <% } %>
                         
+                        <h3>Change Family Name</h3>
                         <div class="updateFamilyName">
                         <% if (user.accountType === 'parent') { %>
-                            <h3>Change Family Name</h3>
                             <form action="/update-family" method="POST">
                                 <input type="text" id="familyName" name="familyName" value="<%= family.name %>" required>
                                 

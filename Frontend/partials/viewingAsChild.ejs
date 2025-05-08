@@ -1,0 +1,9 @@
+<% if (locals.viewingAsChild && locals.viewingChildName) { %>
+    <div class="viewing-as-child-banner">
+      <div class="viewing-as-container">
+        <div class="viewing-as-text">
+          <i class="fas fa-eye"></i> You are viewing as <strong><%= viewingChildName %></strong>
+        </div>
+      </div>
+    </div>
+  <% } %>

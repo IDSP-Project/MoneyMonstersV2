@@ -21,6 +21,7 @@ const User = require("../db/userModel.js");
 
 const Family = require('../db/familyModel.js');
 
+
 router.get("/login", forwardAuthenticated, (req, res) => {
   let error = null;
   
@@ -51,13 +52,36 @@ router.post("/login", forwardAuthenticated, async (req, res) => {
     }
     
     if (isAjax) {
+      const redirectUrl = req.session.user.accountType === 'parent' ? "/select-child" : "/dashboard";
       return res.json({
         success: true,
-        redirect: "/"
+        redirect: redirectUrl
       });
     }
     
-    res.redirect("/dashboard");
+    if (req.session.user.accountType === 'parent') {
+      let familyMembers = [];
+      
+      if (req.session.user.familyId) {
+        const membersResult = await getFamilyMembers(req.session.user.familyId);
+        
+        if (membersResult.success) {
+          familyMembers = membersResult.members.filter(member => 
+            member.accountType === "child"
+          );
+        }
+      }
+      
+      return res.render("dashboard/selectChild", {
+        user: req.session.user,
+        familyMembers: familyMembers,
+        currentPage: 'family',
+        error: null,
+        success: null
+      });
+    } else {
+      return res.redirect("/dashboard");
+    }
   } catch (error) {
     if (req.xhr || req.headers.accept.indexOf('json') > -1) {
       return res.status(400).json({
@@ -68,6 +92,8 @@ router.post("/login", forwardAuthenticated, async (req, res) => {
     res.render("users/userLogin", { error: error.message });
   }
 });
+
+
 
 router.post("/users/check-email", forwardAuthenticated, async (req, res) => {
   try {

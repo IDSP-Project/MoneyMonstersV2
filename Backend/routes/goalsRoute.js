@@ -22,51 +22,61 @@ router.get('/goals', ensureAuthenticated, async (req, res) => {
     try {
       const db = getDB();
       let goals = [];
+      let userId;
+      let userType;
       
-      if (req.session.user) {
-        if (req.session.user.accountType === 'child') {
-          goals = await db.collection('goals')
-            .find({ childId: req.session.user.id })
-            .sort({ createdAt: -1 }) 
-            .toArray();
-        }
-        else if (req.session.user.accountType === 'parent') {
-          if (req.session.user.familyId) {
-            const childrenInFamily = await db.collection('users').find({ 
-              familyId: new ObjectId(req.session.user.familyId), 
-              accountType: 'child' 
-            }).toArray();
-            
-            const childIds = childrenInFamily.map(child => child._id.toString());
-            
-            if (childIds.length > 0) {
-              goals = await db.collection('goals')
-                .find({ childId: { $in: childIds } })
-                .sort({ createdAt: -1 }) 
-                .toArray();
-            }
-          } else {
+      if (req.viewingChild) {
+        userId = req.viewingChild._id || req.viewingChild.id;
+        userType = 'child';
+      } else {
+        userId = req.session.user._id || req.session.user.id;
+        userType = req.session.user.accountType;
+      }
+      
+      if (userType === 'child') {
+        goals = await db.collection('goals')
+          .find({ childId: userId.toString() })
+          .sort({ createdAt: -1 })
+          .toArray();
+      } else if (userType === 'parent') {
+        if (req.session.user.familyId) {
+          const childrenInFamily = await db.collection('users').find({ 
+            familyId: new ObjectId(req.session.user.familyId), 
+            accountType: 'child' 
+          }).toArray();
+          
+          const childIds = childrenInFamily.map(child => child._id.toString());
+          
+          if (childIds.length > 0) {
             goals = await db.collection('goals')
-              .find({ parentId: req.session.user.id })
-              .sort({ createdAt: -1 }) 
+              .find({ childId: { $in: childIds } })
+              .sort({ createdAt: -1 })
               .toArray();
           }
+        } else {
+          goals = await db.collection('goals')
+            .find({ parentId: req.session.user.id })
+            .sort({ createdAt: -1 })
+            .toArray();
         }
       }
-  
   
       res.render('goals/goals', { 
         goals,
         user: req.session.user,
         currentPage: 'goals',
-        getInitials
+        getInitials,
+        viewingAsChild: req.viewingChild ? true : false,
+        viewingChildName: req.viewingChild ? req.viewingChild.firstName : null
       });
     } catch (error) {
       console.error('Error fetching goals:', error);
       res.status(500).render('goals/goals', { 
         goals: [], 
         user: req.session.user,
-        error: 'Failed to fetch goals' 
+        error: 'Failed to fetch goals', 
+        viewingAsChild: req.viewingChild ? true : false,
+        viewingChildName: req.viewingChild ? req.viewingChild.firstName : null
       });
     }
   });
