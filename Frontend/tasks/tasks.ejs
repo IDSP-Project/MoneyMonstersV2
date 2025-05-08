@@ -22,15 +22,16 @@
       </div>
       <div class="task-list">
         <% tasks.forEach(function(task) { %>
-          <div class="task-card" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>">
+          <div class="task-card" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>" data-parent-name="<%= task.parentName || '' %>">
             <div class="task-info">
               <% 
                 let iconClass = 'fa-solid ';
                 switch(task.category) {
-                  case 'dog': iconClass += 'fa-dog'; break;
-                  case 'house': iconClass += 'fa-house'; break;
-                  case 'babysit': iconClass += 'fa-baby'; break;
-                  case 'plants': iconClass += 'fa-leaf'; break;
+                  case 'pet': iconClass += 'fa-dog'; break;
+                  case 'cleaning': iconClass += 'fa-broom'; break;
+                  case 'garage': iconClass += 'fa-warehouse'; break;
+                  case 'garden': iconClass += 'fa-leaf'; break;
+                  case 'misc': iconClass += 'fa-circle-check'; break;
                   default: iconClass += 'fa-list-check';
                 }
               %>
@@ -61,24 +62,29 @@
     <footer>
       <%- include('../partials/bottomNav') %>
     </footer>
-    <div id="taskModal" class="task-modal" style="display:none;">
-      <div class="task-modal-content">
-        <div class="task-modal-icon" id="modalTaskIcon"></div>
+    <div id="taskModal" class="child-task-modal" style="display:none;">
+      <div class="child-task-modal-content">
+        <button class="child-modal-close" id="modalCloseBtn">&times;</button>
+        <div class="child-task-modal-icon" id="modalTaskIcon"></div>
         <h2 id="modalTaskTitle"></h2>
-        <p class="task-modal-desc" id="modalTaskDesc"></p>
-        <div class="task-modal-meta">
+        <p class="child-task-modal-desc" id="modalTaskDesc"></p>
+        <div class="child-task-modal-meta">
           <span id="modalTaskReward"></span> |
           <span id="modalTaskDue"></span>
         </div>
-        <div class="task-modal-actions" id="modalTaskActions">
-          <button class="btn cancel-btn" id="modalCancelBtn">Cancel</button>
-          <button class="btn start-btn" id="modalStartBtn">Start</button>
-          <button class="btn complete-btn" id="modalCompleteBtn" style="display:none;">Mark Completed</button>
+        <div class="child-task-goal-info-row">
+          <span id="modalConfirmedBy" class="child-task-confirmed-by"></span>
+          <span id="modalGoalInfo" class="child-task-goal-info"></span>
         </div>
-        <div class="assign-goal-row" style="margin-top: 0.5rem; text-align: right;">
-          <button class="btn assign-goal-btn" id="modalAssignGoalBtn" style="display:none;">Assign to Goal</button>
+        <div class="child-task-modal-actions" id="modalTaskActions">
+          <button class="btn child-cancel-btn" id="modalCancelBtn">Cancel</button>
+          <button class="btn child-start-btn" id="modalStartBtn">Start</button>
+          <button class="btn child-complete-btn" id="modalCompleteBtn" style="display:none;">Mark Completed</button>
         </div>
-        <button class="modal-close" id="modalCloseBtn">&times;</button>
+        <div class="child-assign-goal-row" style="margin-top: 0.5rem; text-align: right;">
+          <button class="btn child-assign-goal-btn" id="modalAssignGoalBtn" style="display:none;">Assign to Goal</button>
+        </div>
+        <button class="btn child-back-btn" id="modalBackBtn" style="display:none;">Back</button>
       </div>
     </div>
     <div id="assignGoalModal" class="goal-modal" style="display:none;">

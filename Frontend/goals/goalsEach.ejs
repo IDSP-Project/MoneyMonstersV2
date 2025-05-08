@@ -53,10 +53,11 @@
                 <% assignedTasks.forEach(function(task) { %>
                   <% let iconClass = 'fa-solid '; %>
                   <% switch(task.category) {
-                    case 'dog': iconClass += 'fa-dog'; break;
-                    case 'house': iconClass += 'fa-house'; break;
-                    case 'babysit': iconClass += 'fa-baby'; break;
-                    case 'plants': iconClass += 'fa-leaf'; break;
+                    case 'pet': iconClass += 'fa-dog'; break;
+                    case 'cleaning': iconClass += 'fa-broom'; break;
+                    case 'garage': iconClass += 'fa-warehouse'; break;
+                    case 'garden': iconClass += 'fa-leaf'; break;
+                    case 'misc': iconClass += 'fa-circle-check'; break;
                     default: iconClass += 'fa-list-check';
                   } %>
                   <div class="task-card" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>">
