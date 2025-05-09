@@ -17,7 +17,7 @@ const { uploadProfileImage, deleteProfileImage } = require('../helpers/photoHelp
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
-const User = require("../db/userModel.js");
+const user = require("../db/userModel.js");
 
 const Family = require('../db/familyModel.js');
 

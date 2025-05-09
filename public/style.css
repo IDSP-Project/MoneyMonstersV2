@@ -1140,12 +1140,12 @@ button[type=submit] a:hover {
   box-shadow: 5px #2F2F2F;
   text-align: center;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 7rem;
 }
 .splash a {
   display: block;
   text-align: center;
-  margin: 0.5rem;
+  margin: 2rem 1rem;
   text-decoration: none;
   color: #FFFFFF;
   background-color: #714AA8;
@@ -1161,7 +1161,7 @@ button[type=submit] a:hover {
   border: #714AA8 1px solid;
 }
 .splash svg {
-  margin: 1rem;
+  margin: 3rem 1rem 2rem 1rem;
 }
 
 .learn {
