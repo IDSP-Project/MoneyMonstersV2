@@ -17,10 +17,19 @@
         <% if (error) { %>
           <div class="error-message"><%= error %></div>
         <% } else if (goal) { %>
-          <div class="goal-progress-graphic">
-            <div class="progress-percentage">80%</div>
-            <div class="progress-label">Completed</div>
+          <div class="progress-container">
+            <div class="progressBar">
+              <svg width="280" height="154" viewBox="0 0 280 154" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M266 139.091C266 122.675 262.741 106.421 256.409 91.2556C250.077 76.09 240.796 62.31 229.095 50.7028C217.395 39.0954 203.505 29.888 188.218 23.6061C172.931 17.3243 156.547 14.0911 140 14.0911C123.453 14.0911 107.069 17.3243 91.782 23.606C76.4949 29.8879 62.6048 39.0953 50.9046 50.7027C39.2044 62.31 29.9233 76.0899 23.5912 91.2555C17.2591 106.421 14 122.675 14 139.091" stroke="#E0E0E0" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 139.091C14 112.698 22.4242 86.9834 38.0655 65.6296C53.707 44.276 75.7629 28.3795 101.073 20.2179C126.384 12.0564 153.65 12.0486 178.965 20.1955C204.281 28.3424 226.345 44.2262 242 65.5708" stroke="#7F56D9" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="progress-text">
+              <span class="progress-percentage">80%</span>
+              <span class="progress-label">Completed</span>
+            </div>
           </div>
+
           <div class="goal-details-card">
             <% if (goal.purchaseLink) { %>
               <img src="/images/goal.png" alt="Goal Image" class="goal-image" />
@@ -93,6 +102,8 @@
   </div>
   <script src="/dynamic/formatDueDates.js"></script>
   <script src="/dynamic/goalDetails.js"></script>
+  <script src="/dynamic/progressBar.js"></script>
+
 
   <!-- Assign Task Modal -->
   <div id="assignTaskModal" class="modal">

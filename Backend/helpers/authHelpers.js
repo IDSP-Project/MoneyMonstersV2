@@ -382,6 +382,42 @@ async function changeUserPassword(userId, currentPassword, newPassword) {
   }
 }
 
+
+// Parent helpers
+const checkViewingAsChild = async (req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+  
+  if (req.session.user.accountType !== 'parent') {
+    return next();
+  }
+  
+  if (req.session.viewingAsChild) {
+    try {
+      const childId = req.session.viewingAsChild;
+      
+      const childUser = await User.findById(childId);
+      
+      if (!childUser) {
+        delete req.session.viewingAsChild;
+      } else {
+        req.viewingChild = childUser;
+        
+        res.locals.viewingAsChild = true;
+        res.locals.viewingChildName = childUser.firstName;
+      }
+    } catch (error) {
+      console.error('Error in checkViewingAsChild middleware:', error);
+      delete req.session.viewingAsChild;
+    }
+  }
+  
+  next();
+};
+
+
+
 module.exports = {
   isAuthenticated,
   forwardAuthenticated,
@@ -399,5 +435,5 @@ module.exports = {
   removeUserFromFamily,
   getFamilyMembers,
   getFamilyParents,
-  getFamilyChildren
+  getFamilyChildren, checkViewingAsChild
 };

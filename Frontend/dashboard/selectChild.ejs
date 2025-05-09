@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Child to View</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<body>
+    <div class="selectChild">
+        <div class="container">
+            <header>
+                <%- include('../partials/header') %>
+            </header>
+            
+            <main>
+                <% if (locals.error) { %>
+                    <div class="error-message" style="display: block;"><%= error %></div>
+                <% } %>
+                
+                <% if (locals.success) { %>
+                    <div class="success-message" style="display: block;"><%= success %></div>
+                <% } %>
+                
+                    <div class="familyMembers">
+                        <h2>Who Would You Like to View?</h2>
+                        <p>Select a child to view their dashboard, tasks, and goals.</p>
+                    </div>
+                    
+                    <% if (familyMembers && familyMembers.length > 0) { %>
+                        <div class="listMembers">
+                            <% familyMembers.forEach(function(child) { %>
+                                <div class="memberCard">
+                                    <div class="avatar">
+                                        <% if (child.profilePhoto && child.profilePhoto.url) { %>
+                                            <img src="<%= child.profilePhoto.url %>" alt="Profile Photo">
+                                        <% } else { %>
+                                            <i class="fas fa-user avatar-icon"></i>
+                                            <% } %>
+                                    </div>
+                                    <div class="memberInfo">
+                                        <div class="memberName"><%= child.firstName %></div>
+                                    </div>
+                                    <form action="/view-as-child" method="POST" style="margin: 0;">
+                                        <input type="hidden" name="childId" value="<%= child._id %>">
+                                        <button type="submit" class="view-as-btn">View As</button>
+                                    </form>
+                                </div>
+                            <% }); %>
+                        
+                        <div class="viewSelf">
+                            <form action="/view-as-child" method="POST">
+                                <input type="hidden" name="childId" value="none">
+                                <button type="submit" class="btn">View as Myself</button>
+                            </form>
+                        </div>
+                        </div>
+                    <% } else { %>
+                        <div class="noChildren">
+                            <p>No children found in your family.</p>
+                            <p><a href="/family" class="btn">Manage Family</a></p>
+                        </div>
+                    <% } %>
+                </div>
+            </main>
+            
+            <footer>
+                <%- include('../partials/bottomNav', { user: user, currentPage: 'family' }) %>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>
