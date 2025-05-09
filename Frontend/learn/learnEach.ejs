@@ -26,9 +26,8 @@
         <%- blog.content.split('\n\n').map(paragraph => `<p>${paragraph}</p>`).join('') %>
       </article>
 
-      <form id="completeForm">
-        <input type="hidden" id="blogId" value="<%= blog._id %>" />
-        <button type="submit" class="complete-button">Mark as Complete ✅</button>
+      <form action="/complete/<%= blog._id %>" method="POST">
+        <button type="submit">Mark as Complete</button>
       </form>
     </main>
 
