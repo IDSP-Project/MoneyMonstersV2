@@ -66,4 +66,30 @@ function formatTaskDueDate(dueDate) {
   }
 }
 
-module.exports = { fetchTasksForHome, formatTaskDueDate }; 
+
+const fetchFamilyTasksForHome = async (familyId) => {
+  try {
+    const db = getDB();
+    
+    let tasks = await db.collection('tasks')
+      .find({ familyId: new ObjectId(familyId) })
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .toArray();
+    
+    return tasks.map(task => {
+      return {
+        ...task,
+        price: task.reward,
+        formattedDue: formatTaskDueDate(task.dueDate),
+        status: task.status || (task.completed ? 'completed' : 'new')
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching family tasks:', error);
+    return [];
+  }
+};
+
+module.exports = { fetchTasksForHome, formatTaskDueDate, fetchFamilyTasksForHome };
+

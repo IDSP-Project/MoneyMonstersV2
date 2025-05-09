@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Money Monsters - Dashboard</title>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -12,34 +12,46 @@
     <main class="container">
       <header>
         <%- include('../partials/header') %>
+        <% if (locals.viewingAsChild && locals.viewingChildName) { %>
+          <%- include('../partials/viewingAsChild') %>
+        <% } %>
       </header>
 
       <section class="card-section">
-        <h2><a href="/goals" style="text-decoration: none; color: inherit;">Goal</a></h2>
+        <h2><a href="/goals" style="text-decoration: none; color: inherit;">Goals</a></h2>
         <% if (goals && goals.length > 0) { %>
           <% goals.forEach(function(goal) { %>
             <div class="card">
               <div class="card-left">
-                <% if (goal.purchaseLink) { %>
-                  <img src="/images/goal.png" alt="Goal Image" class="icon" />
+                <% if (goal.imageUrl) { %>
+                  <img src="<%= goal.imageUrl %>" alt="Goal Image" class="icon">
                 <% } else { %>
-                  <div class="initials-avatar"><%= getInitials(goal.title) %></div>
+                  <div class="initials-avatar">
+                    <%= goal.title ? goal.title.charAt(0).toUpperCase() : 'G' %>
+                  </div>
                 <% } %>
                 <div>
                   <h3><%= goal.title %></h3>
-                  <p>$<%= goal.price.toFixed(2) %></p>
+                  <p>$<%= goal.targetAmount ? goal.targetAmount.toFixed(2) : '0.00' %></p>
                 </div>
               </div>
-              <div class="progress-wrapper">
-                <div class="progress-bar" style="width: 80%"></div>
-                <span>80%</span>
+              <div class="goal-status">
+                <% 
+                  const progressPercent = goal.targetAmount > 0 
+                    ? Math.round((goal.progress / goal.targetAmount) * 100) 
+                    : 0;
+                %>
+                <span class="goal-progress">
+                  $<%= goal.progress ? goal.progress.toFixed(2) : '0.00' %> of $<%= goal.targetAmount ? goal.targetAmount.toFixed(2) : '0.00' %>
+                  (<%= progressPercent %>%)
+                </span>
               </div>
             </div>
           <% }); %>
         <% } else { %>
           <div class="card">
             <div class="card-left">
-              <img src="/images/default-goal.png" alt="Goal Image" class="icon" />
+              <img src="/images/default-goal.png" alt="Goal Image" class="icon">
               <div>
                 <h3>No goals yet</h3>
                 <p>Click to add goals</p>
@@ -53,8 +65,8 @@
         <h2><a href="/tasks" style="text-decoration: none; color: inherit;">Earn</a></h2>
         <% if (tasks && tasks.length > 0) { %>
           <% const statusOrder = { new: 0, in_progress: 1, overdue: 2, completed: 3 };
-             tasks = tasks.slice().sort((a, b) => (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99)); %>
-          <% tasks.forEach(function(task) { %>
+             const sortedTasks = tasks.slice().sort((a, b) => (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99)); %>
+          <% sortedTasks.forEach(function(task) { %>
             <div class="card earn">
               <% 
                 let iconClass = 'fa-solid ';
@@ -70,7 +82,9 @@
               <i class="<%= iconClass %> task-icon"></i>
               <div class="task-text">
                 <p><%= task.title %></p>
-                <small class="due-date" data-due="<%= task.dueDate && task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> | </small>
+                <small class="due-date" data-due="<%= task.dueDate && task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">
+                  $<%= task.reward ? task.reward.toFixed(2) : '0.00' %> | <%= task.formattedDue || 'No due date' %>
+                </small>
               </div>
               <div class="task-status">
                 <span class="status-badge <%= task.status %>">
@@ -91,27 +105,38 @@
       </section>
 
       <section class="card-section">
-        <h2>Learn</h2>
-        <div class="card learn">
-          <p>Earning Money..</p>
-          <small>Earning Basics</small>
-          <div class="progress-wrapper">
-            <div class="progress-bar" style="width: 50%"></div>
-            <span>50%</span>
+        <h2><a href="/learning" style="text-decoration: none; color: inherit;">Learn</a></h2>
+        <% if (learningProgress && learningProgress.length > 0) { %>
+          <% learningProgress.forEach(function(module) { %>
+            <div class="card learn">
+              <i class="fa-solid fa-book-open-reader learn-icon"></i>
+              <div class="learn-content">
+                <p><%= module.title %></p>
+                <small><%= module.category || 'Financial Education' %></small>
+              </div>
+              <div class="learn-status">
+                <% if (module.completed) { %>
+                  <span class="status-badge completed"><i class="fa-solid fa-check"></i> Complete</span>
+                <% } else { %>
+                  <span class="status-badge in-progress"><%= module.percentComplete %>% Complete</span>
+                <% } %>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="card learn">
+            <i class="fa-solid fa-book learn-icon"></i>
+            <div class="learn-content">
+              <p>No learning modules</p>
+              <small>Check back soon!</small>
+            </div>
           </div>
-        </div>
-        <div class="card learn">
-          <p>Needs vs Wants..</p>
-          <small>Smart Spending</small>
-          <div class="progress-wrapper">
-            <div class="progress-bar" style="width: 90%"></div>
-            <span>90%</span>
-          </div>
-        </div>
+        <% } %>
       </section>
+      
       <%- include('../partials/bottomNav') %>
     </main>
   </div>
   <script src="/dynamic/formatDueDates.js"></script>
 </body>
-</html> 
+</html>

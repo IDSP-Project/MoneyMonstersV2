@@ -10,9 +10,12 @@
 
 <div class="learn">
     <div class="container">
-      <header>
-        <%- include('../partials/header') %>
-      </header>
+    <header>
+      <%- include('../partials/header') %>
+      <% if (locals.viewingAsChild && locals.viewingChildName) { %>
+        <%- include('../partials/viewingAsChild') %>
+      <% } %>
+    </header>
         <main><h3>Learn how to manage your money</h3>
           <% blogs.forEach(blog => { 
             const progressStatus = blogProgressMap[blog._id.toString()] || "todo";

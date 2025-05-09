@@ -11,7 +11,9 @@
   <div class="container">
     <header>
       <%- include('../partials/header') %>
-      <%- include('../partials/viewingAsChild') %>
+      <% if (locals.viewingAsChild && locals.viewingChildName) { %>
+        <%- include('../partials/viewingAsChild') %>
+      <% } %>
     </header>
     <div class="goal-page">
       <div class="goals-container">
