@@ -2,7 +2,7 @@
 
 const { getDB } = require('../db/connection');
 const { ObjectId } = require('mongodb');
-const User = require("../db/userModel.js");
+const user = require("../db/userModel.js");
 
 const fetchGoalsForHome = async (req, res, next) => {
     if (req.session.user) {
