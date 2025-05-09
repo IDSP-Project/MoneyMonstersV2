@@ -265,9 +265,119 @@ html {
 .homepage {
   background-color: #F1F1F1;
 }
+.homepage .card-section, .homepage .card-section-goals, .homepage .card-section-tasks {
+  margin-bottom: 1rem;
+}
+.homepage .card-section h2, .homepage .card-section-goals h2, .homepage .card-section-tasks h2 {
+  font-size: 14px;
+  color: #626262;
+  background-color: #F1F1F1;
+  padding: 0.5rem;
+  border: #BDBDBD 1px solid;
+  margin-bottom: 0;
+}
+.homepage .card-section-goals .card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.homepage .card-section-goals .card .card-left {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+.homepage .card-section-goals .card .goal-status {
+  justify-self: end;
+}
+.homepage .card-section-tasks .task-icon-home {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.homepage .card-section-tasks .task-icon-home .task-text p {
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+}
+.homepage .card-section-tasks .task-icon-home .task-text small {
+  color: #2F2F2F;
+  font-size: 0.75rem;
+}
+.homepage .card-section-tasks .task-icon-home .task-status {
+  justify-self: end;
+}
+.homepage .card-section-tasks .card.earn {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+.homepage .card-section .card.learn {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  margin-bottom: 4rem;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.homepage .card-section .card.learn .learn-content p {
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+}
+.homepage .card-section .card.learn .learn-content small {
+  color: #2F2F2F;
+  font-size: 0.75rem;
+}
+.homepage .card-section .card.learn .learn-status {
+  justify-self: end;
+}
+.homepage .status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
+}
+.homepage .status-badge.in_progress, .homepage .status-badge.in-progress {
+  background-color: #714AA8;
+  color: #2F2F2F;
+}
+.homepage .status-badge.completed {
+  background-color: #31D22B;
+  color: #2F2F2F;
+}
+.homepage .status-badge.overdue {
+  background-color: #FF585B;
+  color: #2F2F2F;
+}
+.homepage .table-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 0.75rem 1rem;
+  background-color: #2F2F2F;
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 0.5rem;
+}
+.homepage .table-header.tasks-header {
+  grid-template-columns: auto 1fr auto;
+}
 
 .card-section {
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .profile {
@@ -458,7 +568,7 @@ button[type=submit] a:hover {
 }
 
 .goal-page {
-  margin-bottom: 2rem;
+  margin-bottom: 5rem;
 }
 .goal-page .goals-container {
   margin: 0 auto;
