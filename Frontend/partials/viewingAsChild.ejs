@@ -1,9 +1,18 @@
+
+<div class="viewAsChild">
+        <div class="memberCard">
+           <div class="avatar">
 <% if (locals.viewingAsChild && locals.viewingChildName) { %>
-    <div class="viewing-as-child-banner">
-      <div class="viewing-as-container">
-        <div class="viewing-as-text">
-          <i class="fas fa-eye"></i> You are viewing as <strong><%= viewingChildName %></strong>
-        </div>
+              <% if (child.profilePhoto && child.profilePhoto.url) { %>
+              <img src="<%= child.profilePhoto.url %>" alt="Profile Photo">
+              <% } else { %>
+              <i class="fas fa-user avatar-icon"></i>
+           <% } %>
+             </div>
+            <div class="memberInfo">
+        <div class="memberName">Viewing as <%= child.firstName %></div>
+ </div>
       </div>
     </div>
+
   <% } %>

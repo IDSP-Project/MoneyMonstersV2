@@ -12,7 +12,9 @@
   <div class="container">
     <header>
       <%- include('../partials/header') %>
-    </header>
+  <% if (locals.viewAsChild && locals.viewingChildName) { %>}
+        <%- include('../partials/viewingAsChild') %>
+        <% } %>    </header>
  <main>
   <div class="tasks-container">
     <% if (tasks && tasks.length > 0) { %>

@@ -35,7 +35,10 @@ router.get('/learn', ensureAuthenticated, async (req, res) => {
       blogs,
       blogProgressMap,
       user: req.session.user,
-      currentPage: 'learn'
+      currentPage: 'learn',
+      viewingAsChild: req.viewingChild ? true : false,
+      viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+      child: req.viewingChild,
     });
   } catch (error) {
     console.error('Error fetching blogs:', error);
@@ -44,8 +47,11 @@ router.get('/learn', ensureAuthenticated, async (req, res) => {
       user: req.session.user,
       blogProgressMap: {},
       error: 'Failed to fetch blogs',
-      currentPage: 'learn'
-    });
+      currentPage: 'learn',
+      viewingAsChild: req.viewingChild ? true : false,
+      viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+      child: req.viewingChild,
+        });
   }
 });
 

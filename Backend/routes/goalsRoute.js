@@ -62,21 +62,23 @@ router.get('/goals', ensureAuthenticated, async (req, res) => {
       }
   
       res.render('goals/goals', { 
-        goals,
-        user: req.session.user,
-        currentPage: 'goals',
-        getInitials,
-        viewingAsChild: req.viewingChild ? true : false,
-        viewingChildName: req.viewingChild ? req.viewingChild.firstName : null
-      });
+      goals,
+      user: req.session.user,
+      currentPage: 'goals',
+      getInitials,
+      viewingAsChild: req.viewingChild ? true : false,
+      viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+      child: req.viewingChild 
+    });
+
     } catch (error) {
-      console.error('Error fetching goals:', error);
-      res.status(500).render('goals/goals', { 
-        goals: [], 
-        user: req.session.user,
-        error: 'Failed to fetch goals', 
-        viewingAsChild: req.viewingChild ? true : false,
-        viewingChildName: req.viewingChild ? req.viewingChild.firstName : null
+   res.status(500).render('goals/goals', { 
+    goals: [], 
+    user: req.session.user,
+    error: 'Failed to fetch goals', 
+    viewingAsChild: req.viewingChild ? true : false,
+    viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+    child: req.viewingChild,
       });
     }
   });

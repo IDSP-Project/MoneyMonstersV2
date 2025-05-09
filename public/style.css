@@ -2283,6 +2283,51 @@ button[type=submit] a:hover {
   text-decoration: underline;
 }
 
+.viewAsChild {
+  margin-left: 4rem;
+}
+.viewAsChild .memberCard {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 0;
+  background-color: white;
+}
+.viewAsChild .memberCard:hover {
+  background-color: rgb(253.75, 253.75, 253.75);
+}
+.viewAsChild .avatar {
+  margin-right: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #BDBDBD;
+}
+.viewAsChild .avatar img, .viewAsChild .avatar .avatar-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.viewAsChild .avatar .avatar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #BDBDBD;
+  color: #2F2F2F;
+  font-size: 20px;
+}
+.viewAsChild .memberInfo {
+  flex: 1;
+}
+.viewAsChild .memberInfo .memberName {
+  font-weight: 500;
+  color: #2F2F2F;
+  margin-bottom: 0.3rem;
+}
+
 .card {
   background-color: #FFFFFF;
   border-radius: 12px;
