@@ -201,64 +201,66 @@
   justify-content: center;
   align-items: center;
 }
+
+.task-type-icon {
+  position: relative;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  cursor: pointer;
+  width: 44px; 
+  height: 44px; 
+  border: 4px solid transparent; 
+  border-radius: 50%; 
+  box-sizing: border-box; 
+  margin: 0 auto;
+}
+
+.task-type-icon svg {
+  width: 32px;
+  height: 32px;
+  padding: 2px;
+}
+
+.task-type-icon.selected {
+  border-color:$tertiary;
+}
+
 .task-modal[style*="display: flex"] {
   display: flex !important;
 }
 .task-modal-content {
   background: $white;
   border-radius: 16px;
-  padding: 1.5rem 0.5rem 1rem 0.5rem;
+  padding: 1rem 0.5rem 1rem 0.5rem;
   max-width: 280px;
   position: relative;
-  display: flex;
+  display: block;
   flex-direction: column;
   align-items: center;
 }
 
 .task-type-icons-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 0.55rem;
-  margin-bottom: 1.5rem;
-  margin-top: 0.5rem;
-  width: 100%;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem; 
+  margin: 0.5rem;
+  width: 85%; 
 }
-.task-type-icon {
+
+
+.taskType {
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: pointer;
-  border-radius: 50%;
-  padding: 0.05rem;
-  transition: color 0.15s;
 }
-.task-type-icon i {
-  font-size: 1.5rem;
-  margin-bottom: 0.03rem;
-  color: #8f8f8f;
-  transition: color 0.15s;
-}
-.task-type-icon.selected,
-.task-type-icon:hover {
-  background: none;
-  box-shadow: none;
-}
-.task-type-icon.selected i,
-.task-type-icon:hover i {
-  color: $tertiary;
-}
-.task-type-icon.selected .task-type-label,
-.task-type-icon:hover .task-type-label {
-  color: $tertiary;
-}
+
+
 .task-type-label {
-  font-size: 0.95rem;
+  font-size: $font-size-xs;
   color: #444;
   margin-top: 0.1rem;
   font-family: $primary-font;
-  transition: color 0.15s;
 }
 
 .confirm-btn {
@@ -382,7 +384,7 @@
   background: #faf9fb;
   color: #222;
   outline: none;
-  transition: border 0.2s;
+  // transition: border 0.2s;
 }
 .task-details-input:focus {
   border: 1.5px solid $tertiary;

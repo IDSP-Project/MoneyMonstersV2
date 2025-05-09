@@ -1,77 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Money Monsters Learn</title>
-  <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <title>Money Monsters Learn</title>
+   <link rel="stylesheet" href="/style.css" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ </head>
 
-<body>
-  <div class="learn">
+<div class="learn">
     <div class="container">
-      <header>
-        <%- include('../partials/header') %>
-      </header>
+    <header>
+      <%- include('../partials/header') %>
+      <% if (locals.viewingAsChild && locals.viewingChildName) { %>
+        <%- include('../partials/viewingAsChild') %>
+      <% } %>
+    </header>
+        <main><h3>Learn how to manage your money</h3>
+          <% blogs.forEach(blog => { 
+            const progressStatus = blogProgressMap[blog._id.toString()] || "todo";
+       %>
+          <div class="blog-card">
+            <div class="blog-content">
+            <div class="blog-cat">
+              <h5><%= blog.category %></h5>
+            </div>
+            <div class="blog-title">
+              <h3><a href="/learn/view/<%= blog._id %>"><%= blog.title %></a></h3>
+              <p>Status:
+                <span class="status-badge <%= blogProgressMap[blog.stringId] || 'todo' %>">
+                  <%= blogProgressMap[blog.stringId] || 'To Do' %>
+                </span>
+              </p>
+            </div>
+            <div class="blog-summary">
+              <p><%= blog.summary %></p>
+            </div>
+            <!-- <% if (blog.image) { %>
+              <img src="<%= blog.image %>" alt="<%= blog.title %>">
+            <% } %> -->
+          </div>
+        </div>
 
-      <main>
-        <h3>Learn how to manage your money</h3>
-      
-        <section>
-          <h4>To Do</h4>
-          <% if (todoBlogs.length === 0) { %>
-            <p>No articles to complete.</p>
-          <% } else { %>
-            <% todoBlogs.forEach(blog => { %>
-              <div class="blog-card">
-                <div class="blog-content">
-                  <div class="blog-cat">
-                    <h5><%= blog.category %></h5>
-                  </div>
-                  <div class="blog-title">
-                    <h3><a href="/learn/view/<%= blog._id %>"><%= blog.title %></a></h3>
-                    <p>Status: <span class="status-badge todo">To Do</span></p>
-                  </div>
-                  <div class="blog-summary">
-                    <p><%= blog.summary %></p>
-                  </div>
-                </div>
-              </div>
-            <% }) %>
-          <% } %>
-        </section>
-      
-        <section>
-          <h4>Completed</h4>
-          <% if (completedBlogs.length === 0) { %>
-            <p>No articles completed yet.</p>
-          <% } else { %>
-            <% completedBlogs.forEach(blog => { %>
-              <div class="blog-card">
-                <div class="blog-content">
-                  <div class="blog-cat">
-                    <h5><%= blog.category %></h5>
-                  </div>
-                  <div class="blog-title">
-                    <h3><a href="/learn/view/<%= blog._id %>"><%= blog.title %></a></h3>
-                    <p>Status: <span class="status-badge complete">Completed</span></p>
-                  </div>
-                  <div class="blog-summary">
-                    <p><%= blog.summary %></p>
-                  </div>
-                </div>
-              </div>
-            <% }) %>
-          <% } %>
-        </section>
+        <% }) %>
       </main>
-      
-
-      <footer>
-        <%- include('../partials/bottomNav') %>
-      </footer>
+        <footer>
+    <%- include('../partials/bottomNav') %>
+  </footer>
     </div>
-  </div>
-</body>
-</html>
+        </div>

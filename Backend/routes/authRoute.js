@@ -17,9 +17,10 @@ const { uploadProfileImage, deleteProfileImage } = require('../helpers/photoHelp
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
-const User = require("../db/userModel.js");
+const user = require("../db/userModel.js");
 
 const Family = require('../db/familyModel.js');
+
 
 router.get("/login", forwardAuthenticated, (req, res) => {
   let error = null;
@@ -51,13 +52,36 @@ router.post("/login", forwardAuthenticated, async (req, res) => {
     }
     
     if (isAjax) {
+      const redirectUrl = req.session.user.accountType === 'parent' ? "/select-child" : "/dashboard";
       return res.json({
         success: true,
-        redirect: "/"
+        redirect: redirectUrl
       });
     }
     
-    res.redirect("/dashboard");
+    if (req.session.user.accountType === 'parent') {
+      let familyMembers = [];
+      
+      if (req.session.user.familyId) {
+        const membersResult = await getFamilyMembers(req.session.user.familyId);
+        
+        if (membersResult.success) {
+          familyMembers = membersResult.members.filter(member => 
+            member.accountType === "child"
+          );
+        }
+      }
+      
+      return res.render("dashboard/selectChild", {
+        user: req.session.user,
+        familyMembers: familyMembers,
+        currentPage: 'family',
+        error: null,
+        success: null
+      });
+    } else {
+      return res.redirect("/dashboard");
+    }
   } catch (error) {
     if (req.xhr || req.headers.accept.indexOf('json') > -1) {
       return res.status(400).json({
@@ -68,6 +92,8 @@ router.post("/login", forwardAuthenticated, async (req, res) => {
     res.render("users/userLogin", { error: error.message });
   }
 });
+
+
 
 router.post("/users/check-email", forwardAuthenticated, async (req, res) => {
   try {
@@ -1027,6 +1053,113 @@ router.post("/register/family/:familyId", forwardAuthenticated, async (req, res)
       accountType: req.body.accountType
     });
   }
+});
+
+
+// parents routes
+
+router.get("/select-child", ensureAuthenticated, async (req, res) => {
+  try {
+    if (req.session.user.accountType !== "parent") {
+      return res.redirect("/dashboard");
+    }
+    
+    let familyMembers = [];
+    
+    if (req.session.user.familyId) {
+      const membersResult = await getFamilyMembers(req.session.user.familyId);
+      
+      if (membersResult.success) {
+        familyMembers = membersResult.members.filter(member => 
+          member.accountType === "child"
+        );
+      }
+    }
+    
+    res.render("dashboard/selectChild", {
+      user: req.session.user,
+      familyMembers: familyMembers,
+      currentPage: 'family',
+      error: null,
+      success: null
+    });
+  } catch (error) {
+    req.session.flash = {
+      message: error.message,
+      type: "error"
+    };
+    res.redirect("/dashboard");
+  }
+});
+
+router.post("/view-as-child", ensureAuthenticated, async (req, res) => {
+  try {
+    if (req.session.user.accountType !== "parent") {
+      return res.status(403).send("Only parents can use this feature");
+    }
+    
+    const { childId } = req.body;
+    
+    if (childId === "none") {
+      if (req.session.viewingAsChild) {
+        delete req.session.viewingAsChild;
+      }
+      
+      req.session.flash = {
+        message: "Now viewing as yourself",
+        type: "success"
+      };
+      
+      return res.redirect("/dashboard");
+    }
+    
+    const membersResult = await getFamilyMembers(req.session.user.familyId);
+    
+    if (!membersResult.success) {
+      throw new Error("Could not retrieve family members");
+    }
+    
+    const childExists = membersResult.members.some(member => 
+      (member.id === childId || member._id?.toString() === childId) && 
+      member.accountType === "child"
+    );
+    
+    if (!childExists) {
+      throw new Error("Child not found in your family");
+    }
+    
+    req.session.viewingAsChild = childId;
+    
+    const childMember = membersResult.members.find(member => 
+      (member.id === childId || member._id?.toString() === childId)
+    );
+    
+    req.session.flash = {
+      message: `Now viewing as ${childMember.firstName}`,
+      type: "success"
+    };
+    
+    res.redirect("/dashboard");
+  } catch (error) {
+    req.session.flash = {
+      message: error.message,
+      type: "error"
+    };
+    res.redirect("/select-child");
+  }
+});
+
+router.get("/clear-view-as", ensureAuthenticated, (req, res) => {
+  if (req.session.viewingAsChild) {
+    delete req.session.viewingAsChild;
+    
+    req.session.flash = {
+      message: "Now viewing as yourself",
+      type: "success"
+    };
+  }
+  
+  res.redirect("/dashboard");
 });
 
 

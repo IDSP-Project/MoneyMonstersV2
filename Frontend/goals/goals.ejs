@@ -11,6 +11,9 @@
   <div class="container">
     <header>
       <%- include('../partials/header') %>
+      <% if (locals.viewingAsChild && locals.viewingChildName) { %>
+        <%- include('../partials/viewingAsChild') %>
+      <% } %>
     </header>
     <div class="goal-page">
       <div class="goals-container">
@@ -63,18 +66,19 @@
     <footer>
       <%- include('../partials/bottomNav') %>
     </footer>
+
+    <!-- Success Modal for Adding Goal -->
+    <div id="successGoalModal" class="success-goal-modal" style="display: none;">
+      <div class="success-goal-modal-content">
+        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+        <h2>Goal Added!</h2>
+        <p>Your new goal was added successfully.</p>
+        <button class="done-btn" id="successGoalDoneBtn">Done</button>
+      </div>
+    </div>
   </div>
 
   <%- include('./addGoalModal') %>
   <script src="/dynamic/addGoalModal.js"></script>
-  <!-- Success Modal for Adding Goal -->
-  <div id="successGoalModal" class="success-goal-modal">
-    <div class="success-goal-modal-content">
-      <div class="success-icon"><i class="fas fa-check-circle"></i></div>
-      <h2>Goal Added!</h2>
-      <p>Your new goal was added successfully.</p>
-      <button class="done-btn" id="successGoalDoneBtn">Done</button>
-    </div>
-  </div>
 </body>
 </html>

@@ -99,13 +99,33 @@ if (customGoalForm) {
         })
       });
 
-      const data = await response.json();
+      const data = await response.json();      
       if (!response.ok) {
         throw new Error(data.error || 'Failed to create goal');
       }
 
+      customGoalModal.style.display = 'none';
+      
       // Show success modal
-      showSuccessGoalModal();
+      const successModal = document.getElementById('successGoalModal');
+      if (!successModal) {
+        console.error('Success modal element not found');
+        return;
+      }
+      
+      successModal.style.display = 'flex';
+      
+      const doneBtn = document.getElementById('successGoalDoneBtn');
+      if (!doneBtn) {
+        console.error('Done button not found');
+        return;
+      }
+      
+      doneBtn.onclick = function() {
+        successModal.style.display = 'none';
+        window.location.reload();
+      };
+      
     } catch (error) {
       console.error('Error creating goal:', error);
       const errorMessage = document.createElement('div');
@@ -114,20 +134,6 @@ if (customGoalForm) {
       customGoalForm.insertBefore(errorMessage, customGoalForm.firstChild);
     }
   });
-}
-
-function showSuccessGoalModal() {
-  const modal = document.getElementById('successGoalModal');
-  if (modal) {
-    modal.classList.add('show');
-    const doneBtn = document.getElementById('successGoalDoneBtn');
-    if (doneBtn) {
-      doneBtn.onclick = function() {
-        modal.classList.remove('show');
-        window.location.reload();
-      };
-    }
-  }
 }
 
 if (amazonGoalForm) {

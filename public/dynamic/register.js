@@ -9,30 +9,23 @@ document.addEventListener('DOMContentLoaded', function() {
     originalEmail = emailInput.value;
   }
   
-  document.addEventListener('click', function(e) {
-    const toggleElement = e.target.closest('[data-toggle-password]');
-    if (toggleElement) {
-      e.preventDefault();
-      alert("Show password functionality coming soon!");
+document.addEventListener('click', function(e) {
+  const toggleElement = e.target.closest('[data-toggle-password]');
+  if (toggleElement) {
+    e.preventDefault();
+    
+    const passwordInputId = toggleElement.getAttribute('data-toggle-password');
+    const passwordInput = document.getElementById(passwordInputId);
+    
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      toggleElement.textContent = 'Hide password?';
+    } else {
+      passwordInput.type = 'password';
+      toggleElement.textContent = 'Show password?';
     }
-  });
-  
-  if (confirmPasswordInput) {
-    confirmPasswordInput.addEventListener('input', function() {
-      if (passwordInput.value && this.value) {
-        if (passwordInput.value !== this.value) {
-          showErrorMessage('Passwords do not match');
-          confirmPasswordInput.classList.add('validated-invalid');
-          confirmPasswordInput.classList.remove('validated-valid');
-        } else {
-          hideErrorMessage();
-          confirmPasswordInput.classList.add('validated-valid');
-          confirmPasswordInput.classList.remove('validated-invalid');
-        }
-      }
-    });
   }
-  
+});
   if (emailInput) {
     emailInput.addEventListener('blur', async function() {
       const email = this.value.trim();
