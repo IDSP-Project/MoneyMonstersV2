@@ -45,8 +45,6 @@ const learnRoute = require('./Backend/routes/learnRoute.js');
 const dashboardRoute = require('./Backend/routes/dashboardRoute');
 
 app.use(checkViewingAsChild);
-app.use(fetchGoalsForHome);
-app.use(fetchTasksForHome);
 
 
 app.use('/', authRoute);         
