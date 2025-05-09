@@ -12,7 +12,7 @@
         justify-items: space-between;
         display: flex;         
         flex-direction: column;
-    }
+      }
 
     h1 {
       font-size: 1.8rem;
@@ -22,13 +22,13 @@
       box-shadow: 5px $secondary;
       text-align: center;
       justify-content: center;
-      margin-top: 2rem;
+      margin-top: 7rem;
     }
     
     a {
       display: block;
       text-align: center;
-      margin: 0.5rem;
+      margin: 2rem 1rem;
       text-decoration: none;
       color: $white;
       background-color: $tertiary;
@@ -47,6 +47,6 @@
     }
 
     svg {
-      margin: 1rem;
+      margin: 3rem 1rem 2rem 1rem;
     }
 }

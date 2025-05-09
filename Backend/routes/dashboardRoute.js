@@ -2,10 +2,12 @@ const express = require('express');
 const router = express.Router();
 const { getDB } = require('../db/connection');
 const { ensureAuthenticated, checkViewingAsChild } = require('../helpers/authHelpers');
-const { fetchGoalsForHome } = require('../helpers/goalsHelpers')
+const { fetchGoalsForHome } = require('../helpers/goalsHelpers');
+const { fetchFamilyTasksForParent } = require('../helpers/taskHelpers');
+const user = require('../db/userModel');
 
 
-router.get('/dashboard', ensureAuthenticated, checkViewingAsChild, async (req, res) => {
+router.get('/dashboard', ensureAuthenticated, async (req, res) => {
   try {
     let userId;
     let userType;
@@ -22,15 +24,11 @@ router.get('/dashboard', ensureAuthenticated, checkViewingAsChild, async (req, r
     let goals = [];
     let learningProgress = [];
     
-    if (userType === 'child') {
-      // tasks = await fetchTasksForHome(userId, 'child');
-      goals = await fetchGoalsForHome(userId);
-      // learningProgress = await fetchLearningProgressForHome(userId);
-    } else if (userType === 'parent') {
-      // const familyTasks = await fetchFamilyTasksForParent(req.session.user.familyId);
-      tasks = familyTasks;
-    }
-    
+ if (userType === 'child') {
+  goals = await fetchGoalsForHome(userId, 'child');
+} else if (userType === 'parent') {
+  goals = await fetchGoalsForHome(userId, 'parent');
+}
     res.render('dashboard/home', {
       user: req.session.user,
       tasks,
