@@ -1,0 +1,27 @@
+<div id="learnedModel" class="learned-modal" style="display: none;">
+  <div class="learned-modal-content">
+    <h2>What did you learn?</h2>
+    <p>What did you learn from reading this article?</p>
+    <form id="learnedTypeForm">
+      <label class="learned-radio">
+        <input type="radio" name="learnedType" value="custom">
+        <span>Learned</span>
+      </label>
+      <button type="submit" class="btn confirm-btn">Confirm</button>
+      <button type="button" class="btn cancel-btn" id="cancelLearnedModal">Cancel</button>
+    </form>
+  </div>
+</div>
+</div>
+<!-- Custom Learned Modal -->
+<div id="customLearnedModal" class="learned-modal" style="display: none;">
+  <div class="learned-modal-content">
+    <h2>Learned</h2>
+    <p>Enter the details of what you learned from this article</p>
+    <form id="customLearnedForm">
+      <input type="text" name="learnedDescription" placeholder="Description (optional)" class="learned-input" />
+      <button type="submit" class="btn confirm-btn">Create Goal</button>
+      <button type="button" class="btn cancel-btn" id="backToTypeModal">Back</button>
+    </form>
+  </div>
+</div>
