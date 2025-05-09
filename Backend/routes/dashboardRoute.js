@@ -150,4 +150,41 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
   }
 });
 
+
+// POST /balance/add
+router.post("/balance/add", ensureAuthenticated, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const user = await User.findById(userId);
+    const amount = Number(req.body.amount);
+
+    const newBalance = (user.balance || 0) + amount;
+
+    await User.updateUser(userId, { balance: newBalance });
+
+    res.redirect("/dashboard");
+  } catch (error) {
+    console.error("Error adding balance:", error);
+    res.redirect("/dashboard");
+  }
+});
+
+// POST /balance/remove
+router.post("/balance/remove", ensureAuthenticated, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const user = await User.findById(userId);
+    const amount = Number(req.body.amount);
+
+    const newBalance = Math.max(0, (user.balance || 0) - amount); // prevent negative
+
+    await User.updateUser(userId, { balance: newBalance });
+
+    res.redirect("/dashboard");
+  } catch (error) {
+    console.error("Error removing balance:", error);
+    res.redirect("/dashboard");
+  }
+});
+
 module.exports = router;
