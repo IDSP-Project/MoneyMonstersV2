@@ -24,7 +24,7 @@
       </div>
       <div class="task-list">
         <% tasks.forEach(function(task) { %>
-          <div class="task-card" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>" data-parent-name="<%= task.parentName || '' %>">
+          <div class="task-card" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>" data-parent-name="<%= task.parentName || '' %>" data-category="<%= task.category || 'misc' %>">
             <div class="task-info">
             <div class="task-icon">
                 <% switch(task.category) { 
