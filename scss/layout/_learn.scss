@@ -117,6 +117,29 @@
     }
     
   }
+.learn-admin-actions {
+  text-align: right;
+  margin-bottom: 1rem;
+}
+.learn-admin-actions .btn {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+}
+form label {
+  display: block;
+  margin-top: 1rem;
+}
+form input, form textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+}
+form button {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: bold;
+}
+
 
 
   

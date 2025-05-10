@@ -181,6 +181,36 @@ router.post('/response/:articleId', ensureAuthenticated, async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+router.get('/learn/new', ensureAuthenticated, (req, res) => {
+  if (req.session.user.accountType !== 'parent') {
+    return res.redirect('/learn'); 
+  }
+  res.render('learn/learnNew'); 
+});
+router.post('/learn/new', ensureAuthenticated, async (req, res) => {
+  if (req.session.user.accountType !== 'parent') {
+    return res.redirect('/learn');
+  }
+
+  const db = getDB();
+  const { title, category, summary, content, image } = req.body;
+
+  const newArticle = {
+    title,
+    category,
+    summary,
+    content,
+    image: image || null,
+    createdAt: new Date(),
+    completedBy: []
+  };
+
+  await db.collection('learnings').insertOne(newArticle);
+
+  res.redirect('/learn');
+});
+
+
 
 
 

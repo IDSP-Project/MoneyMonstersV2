@@ -17,6 +17,12 @@
       <% } %>
     </header>
         <main><h3>Learn how to manage your money</h3>
+          <% if (user.accountType === 'parent') { %>
+            <div class="learn-admin-actions">
+              <a href="/learn/new" class="btn">Add New Learn Article</a>
+            </div>
+          <% } %>
+
           <% blogs.forEach(blog => { 
             const progressStatus = blogProgressMap[blog._id.toString()] || "todo";
        %>
@@ -28,13 +34,13 @@
             <div class="blog-title">
               <h3><a href="/learn/view/<%= blog._id %>"><%= blog.title %></a></h3>
               <% const blogIdStr = blog._id.toString(); const status = blogProgressMap[blogIdStr] || 'To Do'; %>
-<span id="status-<%= blogIdStr %>" class="status-badge <%= status === 'Complete' ? 'complete' : 'todo' %>">
-  <%= status === 'Complete' ? 'Complete' : 'To Do' %>
-</span>
+            <span id="status-<%= blogIdStr %>" class="status-badge <%= status === 'Complete' ? 'complete' : 'todo' %>">
+              <%= status === 'Complete' ? 'Complete' : 'To Do' %>
+            </span>
 
-<button class="mark-complete-btn" onclick="markLearningComplete('<%= blogIdStr %>')">
-  <%= status === 'Complete' ? 'Undo' : 'Mark as Complete' %>
-</button>
+            <!-- <button class="mark-complete-btn" onclick="markLearningComplete('<%= blogIdStr %>')">
+              <%= status === 'Complete' ? 'Undo' : 'Mark as Complete' %>
+            </button> -->
 
 
             </div>
@@ -48,6 +54,7 @@
         </div>
 
         <% }) %>
+
       </main>
         <footer>
     <%- include('../partials/bottomNav') %>
