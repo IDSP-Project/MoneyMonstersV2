@@ -262,12 +262,287 @@ html {
   outline: 2px solid rgba(113, 74, 168, 0.5);
 }
 
+.forgotPassword {
+  font-family: "Inter", sans-serif;
+}
+.forgotPassword h1 {
+  font-size: 24px;
+  text-align: center;
+  margin: 3rem 2rem;
+  color: #2F2F2F;
+}
+.forgotPassword p {
+  text-align: center;
+  color: rgb(123.5, 123.5, 123.5);
+  font-size: 14px;
+  margin: 1rem 2rem;
+}
+.forgotPassword form {
+  display: flex;
+  flex-direction: column;
+  grid-gap: 0.5rem;
+  width: 80%;
+  margin: 1rem 2rem;
+}
+.forgotPassword label {
+  display: block;
+  align-items: center;
+  color: #2F2F2F;
+  margin: 0.5rem;
+}
+.forgotPassword input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #714AA8;
+  border-radius: 50px;
+  font-size: 14px;
+  margin: 1rem 0;
+  color: #2F2F2F;
+}
+.forgotPassword .input:focus {
+  outline: none;
+  border-color: #714AA8;
+}
+.forgotPassword .form-actions {
+  align-items: center;
+  background-color: #714AA8;
+  color: #FFFFFF;
+  padding: auto;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 80%;
+  height: 2rem;
+  margin: 1rem auto;
+}
+.forgotPassword .submitButton:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+.forgotPassword a {
+  margin-left: 1rem;
+  text-decoration: none;
+}
+.forgotPassword a:hover {
+  text-decoration: underline;
+}
+.forgotPassword input.validated-valid {
+  border-color: #714AA8;
+}
+.forgotPassword .auth-links {
+  margin-top: 2rem;
+  font-size: 12px;
+}
+
+.setPassword {
+  font-family: "Inter", sans-serif;
+}
+.setPassword h1 {
+  font-size: 24px;
+  text-align: center;
+  margin: 3rem 2rem;
+  color: #2F2F2F;
+}
+.setPassword p {
+  text-align: center;
+  color: rgb(123.5, 123.5, 123.5);
+  font-size: 12px;
+  margin: 1rem 0.5rem;
+}
+.setPassword form {
+  display: flex;
+  flex-direction: column;
+  grid-gap: 0.5rem;
+  width: 80%;
+  margin: 1rem 2rem;
+}
+.setPassword label {
+  display: block;
+  align-items: center;
+  color: #2F2F2F;
+  margin: 0.5rem;
+}
+.setPassword input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #714AA8;
+  border-radius: 50px;
+  font-size: 14px;
+  margin: 1rem 0 0.2 0;
+  color: #2F2F2F;
+}
+.setPassword .input:focus {
+  outline: none;
+  border-color: #714AA8;
+}
+.setPassword .resetAction {
+  align-items: center;
+  background-color: #714AA8;
+  color: #FFFFFF;
+  padding: auto;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  height: 2rem;
+  margin: 1rem auto;
+}
+.setPassword .resetAction button:hover {
+  text-decoration: underline;
+}
+.setPassword .resetAction:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+.setPassword a {
+  margin-left: 1rem;
+  text-decoration: none;
+}
+.setPassword a:hover {
+  text-decoration: underline;
+}
+.setPassword input.validated-valid {
+  border-color: #714AA8;
+}
+.setPassword .auth-links {
+  margin-top: 2rem;
+  font-size: 12px;
+}
+.setPassword .showPassword a {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #714AA8;
+  margin: 0.2rem 0 0 9rem;
+}
+.setPassword .error-message, .setPassword .profile .success-message, .profile .setPassword .success-message {
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-align: center;
+  color: #FF585B;
+}
+
 .homepage {
   background-color: #F1F1F1;
 }
+.homepage .card-section, .homepage .card-section-goals, .homepage .card-section-tasks {
+  margin-bottom: 1rem;
+}
+.homepage .card-section h2, .homepage .card-section-goals h2, .homepage .card-section-tasks h2 {
+  font-size: 14px;
+  color: #626262;
+  background-color: #F1F1F1;
+  padding: 0.5rem;
+  border: #BDBDBD 1px solid;
+  margin-bottom: 0;
+}
+.homepage .card-section-goals .card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.homepage .card-section-goals .card .card-left {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+.homepage .card-section-goals .card .goal-status {
+  justify-self: end;
+}
+.homepage .card-section-tasks .task-icon-home {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.homepage .card-section-tasks .task-icon-home .task-text p {
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+}
+.homepage .card-section-tasks .task-icon-home .task-text small {
+  color: #2F2F2F;
+  font-size: 0.75rem;
+}
+.homepage .card-section-tasks .task-icon-home .task-status {
+  justify-self: end;
+}
+.homepage .card-section-tasks .card.earn {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+.homepage .card-section .card.learn {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  margin-bottom: 4rem;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.homepage .card-section .card.learn .learn-content p {
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+}
+.homepage .card-section .card.learn .learn-content small {
+  color: #2F2F2F;
+  font-size: 0.75rem;
+}
+.homepage .card-section .card.learn .learn-status {
+  justify-self: end;
+}
+.homepage .status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
+}
+.homepage .status-badge.in_progress, .homepage .status-badge.in-progress {
+  background-color: #714AA8;
+  color: #2F2F2F;
+}
+.homepage .status-badge.completed {
+  background-color: #31D22B;
+  color: #2F2F2F;
+}
+.homepage .status-badge.overdue {
+  background-color: #FF585B;
+  color: #2F2F2F;
+}
+.homepage .table-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 0.75rem 1rem;
+  background-color: #2F2F2F;
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 0.5rem;
+}
+.homepage .table-header.tasks-header {
+  grid-template-columns: auto 1fr auto;
+}
 
 .card-section {
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .profile {
@@ -458,7 +733,7 @@ button[type=submit] a:hover {
 }
 
 .goal-page {
-  margin-bottom: 2rem;
+  margin-bottom: 5rem;
 }
 .goal-page .goals-container {
   margin: 0 auto;
@@ -1140,7 +1415,7 @@ button[type=submit] a:hover {
   box-shadow: 5px #2F2F2F;
   text-align: center;
   justify-content: center;
-  margin-top: 7rem;
+  margin-top: 6.5rem;
 }
 .splash a {
   display: block;
@@ -1951,6 +2226,18 @@ button[type=submit] a:hover {
   padding: 0.5rem;
   border: #BDBDBD 1px solid;
   margin-bottom: 0;
+}
+.family .createNewFamily {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+.family .createNewFamily input {
+  width: 88%;
+  border: #714AA8 1px solid;
+  border-radius: 5px;
+  padding: 0.5rem;
+  margin: 1rem 0.5rem;
 }
 
 .inviteMembers form {

@@ -5,18 +5,20 @@ const { ObjectId } = require('mongodb');
 const bcrypt = require('bcrypt');
 
 class User {
-  constructor(firstName, lastName, email, password, accountType, profilePhoto = null, familyId = null) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
-    this.password = password;
-    this.accountType = accountType;
-    this.familyId = familyId;
-    this.profilePhoto = profilePhoto;
-    this.balance = 0;
-    this.createdAt = new Date();
-    this.lastLogin = null;
-  }
+constructor(firstName, lastName, email, password, accountType, profilePhoto = null, familyId = null) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.email = email;
+  this.password = password;
+  this.accountType = accountType;
+  this.familyId = familyId;
+  this.profilePhoto = profilePhoto;
+  this.balance = 0;
+  this.createdAt = new Date();
+  this.lastLogin = null;
+  this.resetPasswordToken = null; 
+  this.resetPasswordExpires = null;
+}
 
   async save() {
     try {
@@ -226,6 +228,58 @@ class User {
       throw error;
     }
   }
+  static async findByResetToken(token) {
+  try {
+    const db = getDB();
+    return await db.collection('users').findOne({ 
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: new Date() }
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+static async setPasswordResetToken(userId, token, expiryTime) {
+  try {
+    const db = getDB();
+    const result = await db.collection('users').updateOne(
+      { _id: new ObjectId(userId) },
+      { 
+        $set: { 
+          resetPasswordToken: token,
+          resetPasswordExpires: expiryTime 
+        } 
+      }
+    );
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+static async resetPassword(userId, newPassword) {
+  try {
+    const db = getDB();
+    
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    
+    const result = await db.collection('users').updateOne(
+      { _id: new ObjectId(userId) },
+      { 
+        $set: { 
+          password: hashedPassword,
+          resetPasswordToken: null,
+          resetPasswordExpires: null
+        } 
+      }
+    );
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
 }
 
 module.exports = User;
