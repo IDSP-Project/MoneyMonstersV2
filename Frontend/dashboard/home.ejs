@@ -17,17 +17,6 @@
         <% } %>
       </header>
 
-      <section class="actions-section">
-        <form action="/balance/remove" method="POST" style="display: inline;">
-          <input type="hidden" name="amount" value="1" />
-          <button type="submit">Remove $1</button>
-        </form>
-
-        <% if (user.accountType === 'parent') { %>
-          <a href="/dashboard/responses" class="btn">View What Your Children Learned</a>
-        <% } %>
-      </section>
-
       <section class="card-section-goals">
         <h2><a href="/goals" style="text-decoration: none; color: inherit;">Goals</a></h2>
         <% if (goals && goals.length > 0) { %>
