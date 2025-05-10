@@ -160,6 +160,8 @@ router.post("/balance/add", ensureAuthenticated, async (req, res) => {
     const queryId = typeof userId === 'string' ? new ObjectId(userId) : userId;
 
     const user = await db.collection('users').findOne({ _id: queryId });
+//     const user = await user.findById(userId);
+//     changed the code so balance add works
     const amount = Number(req.body.amount);
 
     const newBalance = (user?.balance || 0) + amount;

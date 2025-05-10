@@ -120,20 +120,64 @@ async function registerUser(firstName, lastName, email, password, accountType, f
 }
 
 async function checkEmailExists(email) {
-  if (!email) {
-    return false;
-  }
-  
-  email = email.toLowerCase();
-  
+  console.log(`Checking email existence for: ${email}`);
   try {
     const existingUser = await User.findByEmail(email);
+    console.log(`Email check result:`, existingUser ? "Found user" : "No user found");
     return !!existingUser; 
   } catch (error) {
-    console.error("Error checking email existence:", error);
-    throw new Error("Unable to verify email availability");
+    console.error("Error in checkEmailExists:", error);
+    throw new Error(`Unable to verify email availability: ${error.message}`);
   }
 }
+
+function validatePassword(password) {
+  if (!password || password.length < 8) {
+    return {
+      valid: false,
+      message: "Password must be at least 8 characters long"
+    };
+  }
+  
+  const specialChars = "!@#$%^&*()_+-=[]{}\\|;:'\",.<>/?`~";
+  
+  let hasNumber = false;
+  let hasSpecialChar = false;
+  
+  for (let i = 0; i < password.length; i++) {
+    const char = password[i];
+    
+    if (char >= '0' && char <= '9') {
+      hasNumber = true;
+    }
+    
+    if (specialChars.includes(char)) {
+      hasSpecialChar = true;
+    }
+    
+    if (hasNumber && hasSpecialChar) {
+      break;
+    }
+  }
+  
+  if (!hasNumber) {
+    return {
+      valid: false,
+      message: "Password must include at least one number"
+    };
+  }
+  
+  if (!hasSpecialChar) {
+    return {
+      valid: false,
+      message: "Password must include at least one special character"
+    };
+  }
+   return {
+    valid: true
+  };
+}
+
 
 async function retrieveProfile(profileId, currentUserId) {
   try {
@@ -435,5 +479,5 @@ module.exports = {
   removeUserFromFamily,
   getFamilyMembers,
   getFamilyParents,
-  getFamilyChildren, checkViewingAsChild
+  getFamilyChildren, checkViewingAsChild, validatePassword
 };

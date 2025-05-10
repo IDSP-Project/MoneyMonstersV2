@@ -5,7 +5,7 @@ const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const { connectDB, getDB } = require('./Backend/db/connection.js');
 const { forwardAuthenticated, checkViewingAsChild } = require('./Backend/helpers/authHelpers.js');
-
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
