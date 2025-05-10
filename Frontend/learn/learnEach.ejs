@@ -26,39 +26,42 @@
         <%- blog.content.split('\n\n').map(paragraph => `<p>${paragraph}</p>`).join('') %>
       </article>
 
-      <form action="/complete/<%= blog._id %>" method="POST">
-        <button type="submit">Mark as Complete</button>
-      </form>
+      <p>Status:
+  <span id="status-<%= blog._id %>" class="status-badge <%= hasSubmitted ? 'complete' : 'todo' %>">
+    <%= hasSubmitted ? 'Complete' : 'To Do' %>
+  </span>
+</p>
+
+<button onclick="completeAndRedirect('<%= blog._id %>')">Mark as Complete</button>
+
+      <!-- works at bottom need to figure out how to use button above to open popup-->
         <%- include('./whatLearned') %>
-    <!-- <script src="/dynamic/addGoalModal.js"></script> -->
     </main>
 
     <footer>
       <%- include('../partials/bottomNav') %>
     </footer>
+    
+<script>
+  async function completeAndRedirect(blogId) {
+    try {
+      const res = await fetch(`/progress/${blogId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Complete" })
+      });
+
+      if (res.ok) {
+        window.location.href = "/learn";
+      } else {
+        alert("Something went wrong marking this complete.");
+      }
+    } catch (err) {
+      console.error("❌ Failed to complete article:", err);
+    }
+  }
+</script>
   </div>
 </div>
-
-<script>
-  document.getElementById("completeForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const blogId = document.getElementById("blogId").value;
-
-    const response = await fetch(`/learn/progress/${blogId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ status: "done" }) // ✅ user is NOT needed here
-    });
-
-    if (response.ok) {
-      alert("Marked as complete!");
-      window.location.href = "/learn";
-    } else {
-      alert("❌ Failed to update progress.");
-    }
-  });
-</script>
 </body>
 </html>

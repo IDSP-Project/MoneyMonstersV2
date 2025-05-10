@@ -93,6 +93,7 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
       try {
         
         const childUser = await db.collection('users').findOne({ _id: new ObjectId(userId) });
+        req.session.user.balance = childUser?.balance ?? 0;
         const ageGroup = childUser?.ageGroup || 'all';
         
         const modules = await db.collection('learningModules')
@@ -154,13 +155,21 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
 // POST /balance/add
 router.post("/balance/add", ensureAuthenticated, async (req, res) => {
   try {
-    const userId = req.session.user.id;
-    const user = await user.findById(userId);
+    const db = getDB();
+    const userId = req.session.user._id || req.session.user.id;
+    const queryId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+
+    const user = await db.collection('users').findOne({ _id: queryId });
+//     const user = await user.findById(userId);
+//     changed the code so balance add works
     const amount = Number(req.body.amount);
 
-    const newBalance = (user.balance || 0) + amount;
+    const newBalance = (user?.balance || 0) + amount;
 
-    await User.updateUser(userId, { balance: newBalance });
+    await db.collection('users').updateOne(
+      { _id: queryId },
+      { $set: { balance: newBalance } }
+    );
 
     res.redirect("/dashboard");
   } catch (error) {
@@ -169,16 +178,23 @@ router.post("/balance/add", ensureAuthenticated, async (req, res) => {
   }
 });
 
+
 // POST /balance/remove
 router.post("/balance/remove", ensureAuthenticated, async (req, res) => {
   try {
-    const userId = req.session.user.id;
-    const user = await User.findById(userId);
+    const db = getDB();
+    const userId = req.session.user._id || req.session.user.id;
+    const queryId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+
+    const user = await db.collection('users').findOne({ _id: queryId });
     const amount = Number(req.body.amount);
 
-    const newBalance = Math.max(0, (user.balance || 0) - amount); // prevent negative
+    const newBalance = Math.max(0, (user?.balance || 0) - amount);
 
-    await User.updateUser(userId, { balance: newBalance });
+    await db.collection('users').updateOne(
+      { _id: queryId },
+      { $set: { balance: newBalance } }
+    );
 
     res.redirect("/dashboard");
   } catch (error) {
@@ -186,5 +202,56 @@ router.post("/balance/remove", ensureAuthenticated, async (req, res) => {
     res.redirect("/dashboard");
   }
 });
+
+
+router.get('/dashboard/responses', ensureAuthenticated, async (req, res) => {
+  try {
+    const db = getDB();
+
+    const user = req.session.user;
+    if (!user || user.accountType !== 'parent' || !user.familyId) {
+      return res.status(403).send("Unauthorized or no family assigned");
+    }
+
+    const familyId = typeof user.familyId === 'string'
+      ? new ObjectId(user.familyId)
+      : user.familyId;
+
+    // Find all child users in this family
+    const children = await db.collection('users').find({
+      accountType: 'child',
+      familyId: familyId
+    }).toArray();
+
+    const childMap = Object.fromEntries(children.map(child => [child._id.toString(), child.firstName]));
+    const childIds = children.map(c => c._id);
+
+    // Get all responses from children in the family
+    const responses = await db.collection('responses').find({
+      userId: { $in: childIds }
+    }).toArray();
+
+    const blogIds = [...new Set(responses.map(r => r.blogId))];
+    const blogs = await db.collection('learnings').find({
+      _id: { $in: blogIds }
+    }).toArray();
+    const blogMap = Object.fromEntries(blogs.map(b => [b._id.toString(), b.title]));
+
+    const responseDetails = responses.map(r => ({
+      content: r.content,
+      createdAt: r.createdAt,
+      blogTitle: blogMap[r.blogId.toString()],
+      childName: childMap[r.userId?.toString()] || "Unknown"
+    }));
+
+    res.render('dashboard/parentResponses', { responses: responseDetails });
+  } catch (error) {
+    console.error('Error loading parent responses:', error);
+    res.status(500).render('dashboard/parentResponses', { responses: [] });
+  }
+});
+
+
+
 
 module.exports = router;
