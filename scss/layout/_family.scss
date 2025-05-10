@@ -36,6 +36,20 @@
     border: $secondary-light 1px solid;
     margin-bottom: 0;
   }
+
+  .createNewFamily {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  input {
+    width: 88%;
+    border: $tertiary 1px solid;
+    border-radius: 5px;
+    padding: 0.5rem;
+    margin: 1rem 0.5rem;
+  }
+}
   
  }
 
