@@ -26,7 +26,7 @@
         <% tasks.forEach(function(task) { %>
           <div class="task-card" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>" data-parent-name="<%= task.parentName || '' %>" data-category="<%= task.category || 'misc' %>">
             <div class="task-info">
-            <div class="task-icon">
+              <div class="task-icon">
                 <% switch(task.category) { 
                   case 'pet': %>
                     <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -65,9 +65,9 @@
                     </svg>
                   <% } %>
               </div>
-                            <div class="task-text">
+              <div class="task-text">
                 <h3><%= task.title %></h3>
-                <small class="due-date" data-due="<%= task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> |<%= task.formattedDue %></small>
+                <small class="due-date" data-due="<%= task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> | <%= task.formattedDue %></small>
               </div>
             </div>
             <div class="task-status">

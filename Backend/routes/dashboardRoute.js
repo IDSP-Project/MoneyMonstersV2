@@ -155,7 +155,7 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
 router.post("/balance/add", ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.session.user.id;
-    const user = await User.findById(userId);
+    const user = await user.findById(userId);
     const amount = Number(req.body.amount);
 
     const newBalance = (user.balance || 0) + amount;

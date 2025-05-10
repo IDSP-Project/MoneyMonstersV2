@@ -39,22 +39,38 @@ router.get('/tasks', ensureAuthenticated, async (req, res) => {
             .toArray();
         }
         else if (req.session.user.accountType === 'parent') {
-          const children = await db.collection('users').find({ 
-            familyId: new ObjectId(req.session.user.familyId),
-            accountType: 'child'
-          }).toArray();
-                    
-          const childIds = children.map(child => child._id);
+          let parentTasks = [];
           
-          const parentTasks = await db.collection('tasks')
-            .find({
-              $or: [
-                { assigneeId: { $in: childIds.map(id => new ObjectId(id)) } },
-                { posterId: new ObjectId(req.session.user._id) }
-              ]
-            })
-            .sort({ createdAt: -1 })
-            .toArray();
+          if (req.viewingChild) {
+            // If parent is viewing as a specific child, only show that child's tasks
+            parentTasks = await db.collection('tasks')
+              .find({
+                $or: [
+                  { assigneeId: new ObjectId(req.viewingChild._id) },
+                  { posterId: new ObjectId(req.session.user._id) }
+                ]
+              })
+              .sort({ createdAt: -1 })
+              .toArray();
+          } else {
+            // If parent is not viewing as any child, show all children's tasks
+            const children = await db.collection('users').find({ 
+              familyId: new ObjectId(req.session.user.familyId),
+              accountType: 'child'
+            }).toArray();
+                      
+            const childIds = children.map(child => child._id);
+            
+            parentTasks = await db.collection('tasks')
+              .find({
+                $or: [
+                  { assigneeId: { $in: childIds.map(id => new ObjectId(id)) } },
+                  { posterId: new ObjectId(req.session.user._id) }
+                ]
+              })
+              .sort({ createdAt: -1 })
+              .toArray();
+          }
 
           const tasks = parentTasks.map(task => ({
             ...task,
@@ -66,13 +82,13 @@ router.get('/tasks', ensureAuthenticated, async (req, res) => {
           tasks.sort((a, b) => (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99));
 
           return res.render('tasks/tasksParent', { 
-          tasks, 
-          user: req.session.user,
-          currentPage: 'tasks',
-          activeGoals,
-          viewingAsChild: req.viewingChild ? true : false,
-          viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
-          child: req.viewingChild
+            tasks, 
+            user: req.session.user,
+            currentPage: 'tasks',
+            activeGoals,
+            viewingAsChild: req.viewingChild ? true : false,
+            viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+            child: req.viewingChild
           });
         }
       }
@@ -163,7 +179,13 @@ router.get('/tasks/available', ensureAuthenticated, async (req, res) => {
       query.assigneeId = new ObjectId(req.session.user.id);
     } 
     else if (req.session.user.accountType === 'parent') {
-      query.posterId = new ObjectId(req.session.user.id);
+      if (req.viewingChild) {
+        // If parent is viewing as a specific child, only show that child's tasks
+        query.assigneeId = new ObjectId(req.viewingChild._id);
+      } else {
+        // If not viewing as any child, show tasks posted by the parent
+        query.posterId = new ObjectId(req.session.user.id);
+      }
     }
 
     const tasks = await db.collection('tasks')
@@ -187,14 +209,14 @@ router.get('/tasks/available', ensureAuthenticated, async (req, res) => {
 router.post('/tasks', ensureAuthenticated, async (req, res) => {
   try {
     const db = getDB();
-    const { category, description, amount, dueDate } = req.body;
+    const { category, title, description, amount, dueDate } = req.body;
     
     const allowedCategories = ['pet', 'cleaning', 'garage', 'garden', 'misc'];
     if (!allowedCategories.includes(category)) {
       return res.status(400).json({ success: false, error: 'Invalid category' });
     }
-    if (!description || typeof description !== 'string' || !description.trim()) {
-      return res.status(400).json({ success: false, error: 'Description is required' });
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      return res.status(400).json({ success: false, error: 'Title is required' });
     }
     if (isNaN(amount) || amount < 0) {
       return res.status(400).json({ success: false, error: 'Amount must be a positive number' });
@@ -203,23 +225,28 @@ router.post('/tasks', ensureAuthenticated, async (req, res) => {
       return res.status(400).json({ success: false, error: 'Due date is required' });
     }
 
-    // Find children in the family
-    const children = await db.collection('users').find({
-      familyId: new ObjectId(req.session.user.familyId),
-      accountType: 'child'
-    }).toArray();
+    // Get the child to assign the task to
+    let selectedChild;
+    if (req.viewingChild) {
+      // If parent is viewing as a specific child, assign to that child
+      selectedChild = req.viewingChild;
+    } else {
+      // If not viewing as any child, find children in the family
+      const children = await db.collection('users').find({
+        familyId: new ObjectId(req.session.user.familyId),
+        accountType: 'child'
+      }).toArray();
 
-    if (!children.length) {
-      return res.status(400).json({ success: false, error: 'No children found in your family to assign the task.' });
+      if (!children.length) {
+        return res.status(400).json({ success: false, error: 'No children found in your family to assign the task.' });
+      }
+      selectedChild = children[0];
     }
-
-    // For now, assign to the first child in the family will change later.
-    const selectedChild = children[0];
 
     const newTask = {
       category,
-      title: description.trim(),
-      description: description.trim(),
+      title: title.trim(),
+      description: description ? description.trim() : 'NO DESCRIPTION',
       reward: Number(amount),
       dueDate: new Date(dueDate),
       status: 'new',

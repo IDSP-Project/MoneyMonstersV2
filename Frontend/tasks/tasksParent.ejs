@@ -85,6 +85,9 @@
                             <div class="task-text">
                               <h3><%= task.title %></h3>
                               <small class="due-date" data-due="<%= task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> | <%= task.formattedDue %></small>
+                              <% if (task.description === 'No description') { %>
+                                <small class="no-description">No description</small>
+                              <% } %>
                             </div>
                           </div>
                           <div class="task-status">
@@ -184,10 +187,11 @@
             </span>
             <span class="task-details-title">Select Task Type</span>
           </div>
-          <input type="text" id="taskDetailsDescription" class="task-details-input" placeholder="Task details" maxlength="60" />
-          <input type="number" id="taskDetailsAmount" class="task-details-input" placeholder="Amount • $" min="0" step="0.01" />
-          <input type="date" id="taskDetailsDate" class="task-details-input" placeholder="By • Date" />
-          <input type="time" id="taskDetailsTime" class="task-details-input" placeholder="By • Time" />
+          <input type="text" id="taskDetailsTitle" class="task-details-input" placeholder="Task title" maxlength="60" required/>
+          <input type="text" id="taskDetailsDescription" class="task-details-input" placeholder="Task description" maxlength="200" required/>
+          <input type="number" id="taskDetailsAmount" class="task-details-input" placeholder="Amount • $" min="0" step="0.01" required/>
+          <input type="date" id="taskDetailsDate" class="task-details-input" placeholder="By • Date" required/>
+          <input type="time" id="taskDetailsTime" class="task-details-input" placeholder="By • Time" required/>
           <button class="confirm-btn" id="confirmAddTaskBtn">Confirm</button>
           <button class="cancel-btn" id="cancelAddTaskBtn">Cancel</button>
         </div>
