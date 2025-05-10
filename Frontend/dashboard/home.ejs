@@ -33,6 +33,11 @@
             <input type="hidden" name="amount" value="1" />
             <button type="submit">Remove $1</button>
           </form>
+
+          <% if (user.accountType === 'parent') { %>
+            <a href="/dashboard/responses" class="btn">View What Your Children Learned</a>
+          <% } %>
+
         </div>
         </section>
       <section class="card-section">

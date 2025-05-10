@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Responses from Your Children</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>What Your Children Learned</h1>
+    <% if (responses.length === 0) { %>
+      <p>No responses submitted yet.</p>
+    <% } else { %>
+      <% responses.forEach(response => { %>
+        <div class="response-card">
+          <h3><%= response.childName %> - <%= response.blogTitle %></h3>
+          <p><%= response.content %></p>
+          <small>Submitted on <%= new Date(response.createdAt).toLocaleString() %></small>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+</body>
+</html>

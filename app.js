@@ -46,7 +46,7 @@ const dashboardRoute = require('./Backend/routes/dashboardRoute');
 
 app.use(checkViewingAsChild);
 
-
+app.use(express.json());
 app.use('/', authRoute);         
 app.use('/', goalsRoute);  
 app.use('/', taskRoute);
