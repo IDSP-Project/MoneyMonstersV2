@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const taskDetailsIconCircle = document.getElementById('taskDetailsIconCircle');
   const cancelAddTaskBtn = document.getElementById('cancelAddTaskBtn');
   const confirmAddTaskBtn = document.getElementById('confirmAddTaskBtn');
+  const taskDetailsTitle = document.getElementById('taskDetailsTitle');
   const taskDetailsDescription = document.getElementById('taskDetailsDescription');
   const taskDetailsAmount = document.getElementById('taskDetailsAmount');
   const taskDetailsDate = document.getElementById('taskDetailsDate');
@@ -144,6 +145,7 @@ if (confirmTaskTypeBtn && addTaskDetailsModal) {
     cancelAddTaskBtn.addEventListener('click', function() {
       addTaskDetailsModal.style.display = 'none';
       // Optionally clear fields
+      taskDetailsTitle.value = '';
       taskDetailsDescription.value = '';
       taskDetailsAmount.value = '';
       taskDetailsDate.value = '';
@@ -157,6 +159,7 @@ if (confirmTaskTypeBtn && addTaskDetailsModal) {
   if (confirmAddTaskBtn && addTaskDetailsModal) {
     confirmAddTaskBtn.addEventListener('click', async function() {
       // Collect values
+      const title = taskDetailsTitle.value.trim();
       const description = taskDetailsDescription.value.trim();
       const amount = parseFloat(taskDetailsAmount.value);
       const dueDateValue = taskDetailsDate.value;
@@ -169,8 +172,8 @@ if (confirmTaskTypeBtn && addTaskDetailsModal) {
       } else {
         dueDate = null;
       }
-      if (!selectedCategory || !description || isNaN(amount) || amount < 0 || !dueDate) {
-        alert('Please fill in all fields with valid values.');
+      if (!selectedCategory || !title || isNaN(amount) || amount < 0 || !dueDate) {
+        alert('Please fill in all required fields with valid values.');
         return;
       }
       try {
@@ -179,7 +182,8 @@ if (confirmTaskTypeBtn && addTaskDetailsModal) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             category: selectedCategory,
-            description,
+            title,
+            description: description || null,
             amount,
             dueDate
           })
@@ -187,6 +191,7 @@ if (confirmTaskTypeBtn && addTaskDetailsModal) {
         if (response.ok) {
           addTaskDetailsModal.style.display = 'none';
           // Optionally clear fields
+          taskDetailsTitle.value = '';
           taskDetailsDescription.value = '';
           taskDetailsAmount.value = '';
           taskDetailsDate.value = '';
@@ -214,6 +219,7 @@ if (confirmTaskTypeBtn && addTaskDetailsModal) {
     // Details modal
     if (addTaskDetailsModal && event.target === addTaskDetailsModal) {
       addTaskDetailsModal.style.display = 'none';
+      taskDetailsTitle.value = '';
       taskDetailsDescription.value = '';
       taskDetailsAmount.value = '';
       taskDetailsDate.value = '';
@@ -282,6 +288,22 @@ if (confirmTaskTypeBtn && addTaskDetailsModal) {
         modalCompleteBtn.style.display = status === 'in_progress' ? 'inline-block' : 'none';
         modalAssignGoalBtn.style.display = 'inline-block';
         if (modalBackBtn) modalBackBtn.style.display = 'none';
+        // Set goal info for new and in_progress status
+        if (modalGoalInfo) {
+          if (card.dataset.goalId && card.dataset.goalId !== '') {
+            let goalTitle = '';
+            if (assignGoalForm) {
+              const goalRadio = assignGoalForm.querySelector(`input[value='${card.dataset.goalId}']`);
+              if (goalRadio) {
+                const span = goalRadio.parentElement.querySelector('span');
+                if (span) goalTitle = span.textContent;
+              }
+            }
+            modalGoalInfo.textContent = `Assigned to: ${goalTitle || 'Goal'}`;
+          } else {
+            modalGoalInfo.textContent = "NO GOAL ASSIGNED";
+          }
+        }
       } else if (status === 'completed') {
         modalActions.style.display = 'none';
         modalStartBtn.style.display = 'none';
