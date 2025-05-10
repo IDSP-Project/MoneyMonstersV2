@@ -1,21 +1,149 @@
-// formatting for homepage
 .homepage {
+  background-color: $primary;
+
+  .card-section, .card-section-goals, .card-section-tasks {
+    margin-bottom: 1rem;
+    
+
+  h2 {
+    font-size: $font-size-sm;
+    color: lighten($secondary, 20%);
     background-color: $primary;
+    padding: 0.5rem;
+    border: $secondary-light 1px solid;
+    margin-bottom: 0;
+    }
+  }
+  
+  .card-section-goals {
+    .card {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      background-color: $white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      
+      .card-left {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        align-items: center;
+      }
+      
+      .goal-status {
+        justify-self: end;
+      }
+    }
+  }
+  
+  .card-section-tasks {
+    .task-icon-home {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      background-color: $white;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      padding: 1rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      
+      .task-text {
+        p {
+          margin: 0 0 0.25rem 0;
+          font-weight: 500;
+        }
+        
+        small {
+          color: $secondary;
+          font-size: 0.75rem;
+        }
+      }
+      
+      .task-status {
+        justify-self: end;
+      }
+    }
+    
+    .card.earn {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem;
+      align-items: center;
+    }
   }
   
   .card-section {
-    margin-bottom: 2rem;
+    .card.learn {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      background-color: $white;
+      border-radius: 8px;
+      margin-bottom: 4rem;
+      padding: 1rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      
+      .learn-content {
+        p {
+          margin: 0 0 0.25rem 0;
+          font-weight: 500;
+        }
+        
+        small {
+          color: $secondary;
+          font-size: 0.75rem;
+        }
+      }
+      
+      .learn-status {
+        justify-self: end;
+      }
+    }
   }
   
-  // .container {
-  //   width: 100%;
-  //   max-width: 25rem;
-  //   background-color: white;
-  //   border-radius: 15px;
-  //   overflow: hidden;
-  //   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  //   margin: 20px auto;
-  //   height: 650px;
-  //   display: flex;
-  //   flex-direction: column;
-  // }
+  .status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
+    
+    &.in_progress, &.in-progress {
+      background-color: $tertiary;
+      color: $secondary;
+    }
+    
+    &.completed {
+      background-color: $success;
+      color: $secondary;
+    }
+    
+    &.overdue {
+      background-color: $error;
+      color: $secondary;
+    }
+  }
+  
+  .table-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding: 0.75rem 1rem;
+    background-color: $secondary;
+    color: $white;
+    font-weight: 600;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 0.5rem;
+    
+    &.tasks-header {
+      grid-template-columns: auto 1fr auto;
+    }
+  }
+}
+
+.card-section {
+  margin-bottom: 0.5rem;
+}
+

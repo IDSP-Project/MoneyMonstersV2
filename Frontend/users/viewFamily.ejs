@@ -29,12 +29,14 @@
                     <% } else { %>
                         <% if (user.accountType === 'parent') { %>
                             <h2>Create a Family</h2>
+                        <div class="createNewFamily">
                             <form action="/create-family" method="POST">
                                 <label for="familyName">Family Name</label>
                                 <input type="text" id="familyName" name="familyName" placeholder="e.g. Smith Family" required>
                                 
                                 <button type="submit" class="btn">Create Family</button>
                             </form>
+                            </div>
                         <% } else { %>
                             <p>You are not part of a family yet.</p>
                         <% } %>

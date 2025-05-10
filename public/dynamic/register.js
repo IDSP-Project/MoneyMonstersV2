@@ -77,7 +77,7 @@ document.addEventListener('click', function(e) {
   
   async function validateEmail(email) {
     try {
-      const response = await fetch('/users/check-email', {
+      const response = await fetch('/check-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
