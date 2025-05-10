@@ -746,6 +746,7 @@ button[type=submit] a:hover {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-bottom: 6rem;
 }
 .goal-page .goals-container .section-tabs {
   display: flex;
@@ -1253,7 +1254,6 @@ button[type=submit] a:hover {
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 10px;
-  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   font-family: "Inter", sans-serif;
@@ -1593,15 +1593,23 @@ button[type=submit] a:hover {
   display: flex;
   align-items: center;
   gap: 0.8rem;
+  flex: 1;
 }
 .tasks-container .task-info .task-icon {
-  font-size: 1.5rem;
-  color: #714AA8;
   width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.5rem;
+}
+.tasks-container .task-info .task-icon svg {
+  width: 50px;
+  height: 50px;
+}
+.tasks-container .task-info .task-text {
+  flex: 1;
 }
 .tasks-container .task-info .task-text h3 {
   font-size: 1rem;

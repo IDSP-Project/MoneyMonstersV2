@@ -99,12 +99,7 @@
                       <path d="M21.375 6.75C13.2759 6.75 6.75 13.2759 6.75 21.375C6.75 29.4741 13.2759 36 21.375 36C29.4741 36 36 29.4741 36 21.375C36 19.8018 35.7891 18.2329 35.2266 16.7695L33.3984 18.5625C33.6226 19.4634 33.75 20.3643 33.75 21.375C33.75 28.2393 28.2393 33.75 21.375 33.75C14.5107 33.75 9 28.2393 9 21.375C9 14.5107 14.5107 9 21.375 9C24.75 9 27.7822 10.3447 29.918 12.4805L31.5 10.8984C28.9116 8.31006 25.3125 6.75 21.375 6.75ZM34.0664 11.5664L21.375 24.2578L16.5586 19.4414L14.9414 21.0586L20.5664 26.6836L21.375 27.457L22.1836 26.6836L35.6836 13.1836L34.0664 11.5664Z" fill="#5F0002"/>
                     </svg>
                   <% break;
-                  default: %>
-                    <svg width="24" height="24" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="2" y="2" width="40" height="40" rx="20" fill="#B2898A"/>
-                      <path d="M21.375 6.75C13.2759 6.75 6.75 13.2759 6.75 21.375C6.75 29.4741 13.2759 36 21.375 36C29.4741 36 36 29.4741 36 21.375C36 19.8018 35.7891 18.2329 35.2266 16.7695L33.3984 18.5625C33.6226 19.4634 33.75 20.3643 33.75 21.375C33.75 28.2393 28.2393 33.75 21.375 33.75C14.5107 33.75 9 28.2393 9 21.375C9 14.5107 14.5107 9 21.375 9C24.75 9 27.7822 10.3447 29.918 12.4805L31.5 10.8984C28.9116 8.31006 25.3125 6.75 21.375 6.75ZM34.0664 11.5664L21.375 24.2578L16.5586 19.4414L14.9414 21.0586L20.5664 26.6836L21.375 27.457L22.1836 26.6836L35.6836 13.1836L34.0664 11.5664Z" fill="#5F0002"/>
-                    </svg>
-                  <% } %>
+
               <div class="task-text">
                 <p><%= task.title %></p>
                 <small class="due-date" data-due="<%= task.dueDate && task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">
@@ -133,7 +128,7 @@
         <h2><a href="/learning" style="text-decoration: none; color: inherit;">Learn</a></h2>
         <% if (learningProgress && learningProgress.length > 0) { %>
           <% learningProgress.forEach(function(module) { %>
-            <div class="card learn">
+        <div class="card learn">
               <i class="fa-solid fa-book-open-reader learn-icon"></i>
               <div class="learn-content">
                 <p><%= module.title %></p>
@@ -145,11 +140,11 @@
                 <% } else { %>
                   <span class="status-badge in-progress"><%= module.percentComplete %>% Complete</span>
                 <% } %>
-              </div>
-            </div>
+          </div>
+        </div>
           <% }); %>
         <% } else { %>
-          <div class="card learn">
+        <div class="card learn">
             <i class="fa-solid fa-book learn-icon"></i>
             <div class="learn-content">
               <p>No learning modules</p>
@@ -164,4 +159,4 @@
   </div>
   <script src="/dynamic/formatDueDates.js"></script>
 </body>
-</html>
+</html> 
