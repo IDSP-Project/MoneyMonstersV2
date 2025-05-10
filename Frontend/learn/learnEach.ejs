@@ -26,11 +26,11 @@
         <%- blog.content.split('\n\n').map(paragraph => `<p>${paragraph}</p>`).join('') %>
       </article>
 
-      <p>Status:
-  <span id="status-<%= blog._id %>" class="status-badge <%= hasSubmitted ? 'complete' : 'todo' %>">
-    <%= hasSubmitted ? 'Complete' : 'To Do' %>
-  </span>
-</p>
+      <!-- <p>Status:
+        <span id="status-<%= blog._id %>" class="status-badge <%= hasSubmitted ? 'complete' : 'todo' %>">
+          <%= hasSubmitted ? 'Complete' : 'To Do' %>
+        </span>
+      </p> -->
 
 <button onclick="completeAndRedirect('<%= blog._id %>')">Mark as Complete</button>
 
