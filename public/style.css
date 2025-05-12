@@ -96,22 +96,6 @@ h1, h2, h3 {
 .headerbar .hidden {
   display: none !important;
 }
-.headerbar .back-button {
-  font-size: 1.25rem;
-  color: #2F2F2F;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 0.25rem;
-  cursor: pointer;
-}
-.headerbar .back-button i {
-  font-size: 1.25rem;
-}
-.headerbar .back-button:hover {
-  opacity: 0.7;
-}
 
 .bottomNav {
   background-color: #2F2F2F;
@@ -555,26 +539,6 @@ html {
 }
 .homepage .table-header.tasks-header {
   grid-template-columns: auto 1fr auto;
-}
-.homepage .center-button {
-  display: flex;
-  justify-content: center;
-  margin: 1rem 0;
-}
-.homepage .primary-btn {
-  background-color: #2F2F2F;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  text-decoration: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-.homepage .primary-btn:hover {
-  background-color: #161616;
 }
 
 .card-section {

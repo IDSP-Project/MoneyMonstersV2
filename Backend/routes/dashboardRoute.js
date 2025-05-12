@@ -244,12 +244,7 @@ router.get('/dashboard/responses', ensureAuthenticated, async (req, res) => {
       childName: childMap[r.userId?.toString()] || "Unknown"
     }));
 
-    res.render('dashboard/parentResponses', {
-    responses: responseDetails,
-    user: req.session.user,
-    currentPage: 'dashboard' // or 'responses' if you want different highlighting
-  });
-
+    res.render('dashboard/parentResponses', { responses: responseDetails });
   } catch (error) {
     console.error('Error loading parent responses:', error);
     res.status(500).render('dashboard/parentResponses', { responses: [] });

@@ -93,22 +93,4 @@
     .hidden {
       display: none !important;
     }
-    .back-button {
-    font-size: 1.25rem;
-    color: $secondary;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 0.25rem;
-    cursor: pointer;
-
-    i {
-      font-size: 1.25rem;
-    }
-
-    &:hover {
-      opacity: 0.7;
-    }
-  }
 }
