@@ -261,6 +261,11 @@ if (confirmTaskTypeBtn && addTaskDetailsModal) {
 
   document.querySelectorAll('.task-card').forEach(card => {
     card.addEventListener('click', function() {
+      // Skip modal logic if in parent view
+      if (!document.querySelector('.child-task-modal')) {
+        return;
+      }
+
       const title = card.querySelector('.task-text h3').textContent;
       const desc = card.dataset.description || '';
       const reward = card.querySelector('.task-text small').textContent.split('|')[0].trim();

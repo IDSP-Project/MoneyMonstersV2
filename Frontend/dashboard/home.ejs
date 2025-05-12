@@ -151,7 +151,7 @@
         <h2><a href="/learning" style="text-decoration: none; color: inherit;">Learn</a></h2>
         <% if (learningProgress && learningProgress.length > 0) { %>
           <% learningProgress.forEach(function(module) { %>
-            <div class="card learn">
+        <div class="card learn">
               <i class="fa-solid fa-book-open-reader learn-icon"></i>
               <div class="learn-content">
                 <p><%= module.title %></p>
@@ -163,11 +163,11 @@
                 <% } else { %>
                   <span class="status-badge in-progress"><%= module.percentComplete %>% Complete</span>
                 <% } %>
-              </div>
-            </div>
+          </div>
+        </div>
           <% }); %>
         <% } else { %>
-          <div class="card learn">
+        <div class="card learn">
             <i class="fa-solid fa-book learn-icon"></i>
             <div class="learn-content">
               <p>No learning modules</p>
@@ -182,4 +182,4 @@
   </div>
   <script src="/dynamic/formatDueDates.js"></script>
 </body>
-</html>
+</html> 
