@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
   if (document.querySelector('.addTaskBtn')) {
     setupParentTaskManagement();
   }
+
+  setupLearningHandlers();
 });
 
 function initModals() {
@@ -42,11 +44,77 @@ function initModals() {
   
   setupGoalModalHandlers();
   setupTaskModalHandlers();
-  setupTaskAssignmentHandlers()
+  setupTaskAssignmentHandlers();
   setupAssignGoalHandlers();
-
+  setupLearningHandlers();
 }
 
+function setupLearningHandlers() {
+  const learnContainer = document.querySelector('.singleLearn .container');
+  if (learnContainer && !document.getElementById('learnSuccessOverlay')) {
+    const successOverlay = document.createElement('div');
+    successOverlay.id = 'learnSuccessOverlay';
+    successOverlay.className = 'successOverlay';
+    successOverlay.innerHTML = `
+      <div class="successIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <div class="successMessage">Learning Complete!</div>
+    `;
+    learnContainer.appendChild(successOverlay);
+  }
+
+  const submitLearningBtn = document.getElementById('submitLearningBtn');
+  if (submitLearningBtn) {
+    submitLearningBtn.addEventListener('click', function() {
+      const blogId = this.dataset.blogId;
+      const reflection = document.getElementById('learningReflection').value.trim();
+      
+      if (!reflection) {
+        alert('Please share something you learned before completing!');
+        return;
+      }
+      
+      completeAndRedirect(blogId, reflection);
+    });
+  }
+}
+
+
+async function completeAndRedirect(blogId, reflection = "") {
+  try {
+    const res = await fetch(`/progress/${blogId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        status: "Complete",
+        reflection: reflection 
+      })
+    });
+
+    if (res.ok) {
+      closeModal('whatLearnedModal');
+      
+      const successOverlay = document.getElementById('learnSuccessOverlay');
+      if (successOverlay) {
+        successOverlay.classList.add('show');
+        
+        setTimeout(() => {
+          successOverlay.classList.remove('show');
+          window.location.href = "/learn";
+        }, 1500);
+      } else {
+        window.location.href = "/learn";
+      }
+    } else {
+      alert("Something went wrong marking this complete.");
+    }
+  } catch (err) {
+    console.error("❌ Failed to complete article:", err);
+  }
+}
 function setupGoalModalHandlers() {
   const addGoalBtn = document.querySelector('.addGoalBtnContainer .btn');
   if (addGoalBtn) {
@@ -250,15 +318,6 @@ function setupTaskCompletionHandlers() {
     });
   }
 }
-  
-  const completeTaskBtn = document.getElementById('modalCompleteBtn');
-  if (completeTaskBtn) {
-    completeTaskBtn.addEventListener('click', function() {
-      const taskId = this.dataset.taskId;
-      const goalId = this.dataset.goalId;
-      completeTask(taskId, goalId);
-    });
-  }
 
 
 function setupParentTaskManagement() {
@@ -918,3 +977,4 @@ window.openModal = openModal;
 window.closeModal = closeModal;
 window.openAssignTaskModal = function() { openModal('assignTaskModal'); };
 window.closeAssignTaskModal = function() { closeModal('assignTaskModal'); };
+window.completeAndRedirect = completeAndRedirect; 

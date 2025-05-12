@@ -17,9 +17,7 @@ const {
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../db/connection');
 
-// IMPORTANT: Routes are ordered from most specific to most general patterns
 
-// View a specific goal by ID
 router.get('/goals/view/:goalId', ensureAuthenticated, async (req, res) => {
   try {
     const goalId = req.params.goalId;
@@ -62,7 +60,6 @@ router.get('/goals/view/:goalId', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Get JSON data for a specific goal
 router.get('/goals/:goalId/data', ensureAuthenticated, async (req, res) => {
   try {
     const goalId = req.params.goalId;

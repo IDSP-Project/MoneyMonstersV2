@@ -1,18 +1,26 @@
-.tasksContainer {
-  margin: 0 auto;
-  margin-bottom: 4rem;
+.tasks {
+    h2 {
+    font-size: $font-size-sm;
+    color: lighten($secondary, 20%);
+    background-color: $primary;
+    padding: 0.5rem 1.5rem;
+    border-top: $secondary-light 1px solid;
+    border-bottom: $secondary-light 1px solid;
+    margin: 1rem 0 0 0;
+    }
 
   .sectionTabs {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1rem 0.5rem 1rem;
+    padding: 1rem 0 0 0;
     font-weight: $font-regular;
     font-family: $primary-font;
     color: $secondary;
+    width: 18.9rem;
     font-size: $font-size-xs;
     border-bottom: 1px solid rgb(236, 236, 236);
-    margin-bottom: 0.5rem;
+    margin: 0 0.2rem 0 0.1rem;
 
     .tasksTab {
       flex: 2;
@@ -136,7 +144,6 @@
   }
 }
 
-// Shared styles for dashboard and tasks page
 .card.earn {
   display: flex;
   justify-content: space-between;

@@ -16,7 +16,8 @@
         <%- include('../partials/viewingAsChild') %>
       <% } %>
     </header>
-        <main><h3>Learn how to manage your money</h3>
+    <main>
+          <h3><%= viewingAsChild ? viewingChildName : user.firstName %>'s Reading List</h3>
           <% if (user.accountType === 'parent') { %>
             <div class="learn-admin-actions">
               <a href="/learn/new" class="btn">Add New Learn Article</a>
@@ -37,19 +38,10 @@
             <span id="status-<%= blogIdStr %>" class="status-badge <%= status === 'Complete' ? 'complete' : 'todo' %>">
               <%= status === 'Complete' ? 'Complete' : 'To Do' %>
             </span>
-
-            <!-- <button class="mark-complete-btn" onclick="markLearningComplete('<%= blogIdStr %>')">
-              <%= status === 'Complete' ? 'Undo' : 'Mark as Complete' %>
-            </button> -->
-
-
             </div>
             <div class="blog-summary">
               <p><%= blog.summary %></p>
             </div>
-            <!-- <% if (blog.image) { %>
-              <img src="<%= blog.image %>" alt="<%= blog.title %>">
-            <% } %> -->
           </div>
         </div>
 

@@ -1,0 +1,19 @@
+<div id="whatLearnedModal" class="modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>What did you learn?</h2>
+    </div>
+    
+    <div class="modalBody">
+      <p>Please share something you learned from this article:</p>
+      <textarea id="learningReflection" placeholder="Type something you learned from this article..."></textarea>
+    </div>
+    
+    <div class="modalFooter">
+      <button class="cancelBtn">Cancel</button>
+      <button id="submitLearningBtn" data-blog-id="<%= blog._id %>" class="confirmBtn">
+        <i class="fas fa-check-circle"></i> Mark as Complete
+      </button>
+    </div>
+  </div>
+</div>

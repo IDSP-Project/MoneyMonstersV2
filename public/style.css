@@ -445,36 +445,49 @@ html {
 
 .homepage {
   background-color: #F1F1F1;
+  font-family: "Inter", sans-serif;
 }
-.homepage .card-section, .homepage .card-section-goals, .homepage .card-section-tasks {
-  margin-bottom: 1rem;
+.homepage h1 {
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 2rem;
+  color: #714AA8;
 }
-.homepage .card-section h2, .homepage .card-section-goals h2, .homepage .card-section-tasks h2 {
+.homepage h2 {
   font-size: 14px;
   color: #626262;
-  background-color: #F1F1F1;
-  padding: 0.5rem;
-  border: #BDBDBD 1px solid;
-  margin-bottom: 0;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  background: #F1F1F1;
+  border-bottom: 1px solid #BDBDBD;
 }
-.homepage .card-section-goals .card {
+.homepage .sectionTabs {
   display: grid;
   grid-template-columns: 1fr auto;
-  background-color: #FFFFFF;
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #F1F1F1;
+  border-top: 1px solid #BDBDBD;
+  border-bottom: 1px solid #BDBDBD;
+  margin: 1rem 0 0.5rem 0;
 }
-.homepage .card-section-goals .card .card-left {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 1rem;
-  align-items: center;
+.homepage .sectionTabs h2:first-child {
+  text-align: left;
+  border-bottom: none;
 }
-.homepage .card-section-goals .card .goal-status {
-  justify-self: end;
+.homepage .sectionTabs h2:last-child {
+  text-align: right;
+  border-bottom: none;
 }
-.homepage .card-section-tasks .task-icon-home {
+.homepage .card-section, .homepage .card-section-goals {
+  margin-bottom: 1rem;
+}
+.homepage .card-section-goals .goalList {
+  margin-bottom: 1rem;
+}
+.homepage .card-section-goals .goalList .goalCardLink {
+  text-decoration: none;
+  color: inherit;
+}
+.homepage .card-section-goals .goalList .goalCardLink .goalCard {
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: 1rem;
@@ -485,76 +498,245 @@ html {
   padding: 1rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-.homepage .card-section-tasks .task-icon-home .task-text p {
-  margin: 0 0 0.25rem 0;
-  font-weight: 500;
-}
-.homepage .card-section-tasks .task-icon-home .task-text small {
-  color: #2F2F2F;
-  font-size: 0.75rem;
-}
-.homepage .card-section-tasks .task-icon-home .task-status {
-  justify-self: end;
-}
-.homepage .card-section-tasks .card.earn {
+.homepage .card-section-goals .goalList .goalCardLink .goalCard .goalInfo {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 1rem;
   align-items: center;
 }
-.homepage .card-section .card.learn {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 1rem;
+.homepage .card-section-goals .goalList .goalCardLink .goalCard .goalInfo .goalImage, .homepage .card-section-goals .goalList .goalCardLink .goalCard .goalInfo .initialsAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
   align-items: center;
-  background-color: #FFFFFF;
-  border-radius: 8px;
-  margin-bottom: 4rem;
-  padding: 1rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-.homepage .card-section .card.learn .learn-content p {
-  margin: 0 0 0.25rem 0;
-  font-weight: 500;
-}
-.homepage .card-section .card.learn .learn-content small {
-  color: #2F2F2F;
-  font-size: 0.75rem;
-}
-.homepage .card-section .card.learn .learn-status {
-  justify-self: end;
-}
-.homepage .status-badge {
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  display: inline-block;
-}
-.homepage .status-badge.in_progress, .homepage .status-badge.in-progress {
+  justify-content: center;
   background-color: #714AA8;
   color: #2F2F2F;
-}
-.homepage .status-badge.completed {
-  background-color: #31D22B;
-  color: #2F2F2F;
-}
-.homepage .status-badge.overdue {
-  background-color: #FF585B;
-  color: #2F2F2F;
-}
-.homepage .table-header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  padding: 0.75rem 1rem;
-  background-color: #2F2F2F;
-  color: #FFFFFF;
   font-weight: 600;
-  border-radius: 8px 8px 0 0;
-  margin-bottom: 0.5rem;
 }
-.homepage .table-header.tasks-header {
-  grid-template-columns: auto 1fr auto;
+.homepage .card-section-goals .goalList .goalCardLink .goalCard .goalInfo .goalText h3 {
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+  font-size: 1rem;
+}
+.homepage .card-section-goals .goalList .goalCardLink .goalCard .goalInfo .goalText p {
+  color: #2F2F2F;
+  font-size: 0.75rem;
+  margin: 0;
+}
+.homepage .card-section-goals .goalList .goalCardLink .goalCard .goalProgress {
+  justify-self: end;
+}
+.homepage .card-section-goals .goalList .goalCardLink .goalCard .goalProgress .progressBar {
+  width: 100px;
+  height: 8px;
+  background-color: #BDBDBD;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+.homepage .card-section-goals .goalList .goalCardLink .goalCard .goalProgress .progressBar .progressFill {
+  height: 100%;
+  width: var(--progress-width, 0%);
+  background-color: #31D22B;
+  border-radius: 4px;
+}
+.homepage .card-section-goals .goalList .goalCardLink .goalCard .goalProgress span {
+  font-size: 0.75rem;
+  color: #2F2F2F;
+  text-align: right;
+  display: block;
+}
+.homepage .card-section-goals .noGoalsMessage {
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  padding: 2rem 1rem;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+.homepage .card-section-goals .noGoalsMessage h2 {
+  color: #2F2F2F;
+  font-size: 1.25rem;
+  margin: 0.5rem 0;
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: bold;
+}
+.homepage .card-section-goals .noGoalsMessage p {
+  color: #2F2F2F;
+  margin: 0;
+  font-size: 0.9rem;
+}
+.homepage .tasksContainer {
+  margin-bottom: 2rem;
+}
+.homepage .tasksContainer .taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.homepage .tasksContainer .taskCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.homepage .tasksContainer .taskInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 1;
+}
+.homepage .tasksContainer .taskInfo .taskIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.homepage .tasksContainer .taskInfo .taskText {
+  flex: 1;
+}
+.homepage .tasksContainer .taskInfo .taskText h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+.homepage .tasksContainer .taskInfo .taskText small {
+  color: #2F2F2F;
+  font-size: 0.75rem;
+}
+.homepage .tasksContainer .taskStatus {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 90px;
+}
+.homepage .tasksContainer .noTasksMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  margin: 2rem 0;
+  text-align: center;
+}
+.homepage .tasksContainer .noTasksMessage p {
+  color: #2F2F2F;
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+.homepage .learningContainer {
+  margin-bottom: 3rem;
+}
+.homepage .learningContainer .learningList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.homepage .learningContainer .learningCardLink {
+  text-decoration: none;
+  color: inherit;
+}
+.homepage .learningContainer .learningCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.homepage .learningContainer .learningInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 1;
+}
+.homepage .learningContainer .learningInfo .learningIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: #714AA8;
+  color: #2F2F2F;
+  border-radius: 50%;
+  font-weight: 600;
+}
+.homepage .learningContainer .learningInfo .learningText {
+  flex: 1;
+}
+.homepage .learningContainer .learningInfo .learningText h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+.homepage .learningContainer .learningInfo .learningText p {
+  color: #2F2F2F;
+  margin: 0.2rem 0 0.3rem 0;
+}
+.homepage .learningContainer .learningInfo .learningText small {
+  color: #2F2F2F;
+  font-size: 0.75rem;
+}
+.homepage .learningContainer .noLearningMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  margin: 2rem 0;
+  text-align: center;
+}
+.homepage .learningContainer .noLearningMessage h2, .homepage .learningContainer .noLearningMessage h3 {
+  background: none;
+  border: none;
+  padding: 0;
+}
+.homepage .learningContainer .noLearningMessage h3 {
+  color: #2F2F2F;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+.homepage .learningContainer .noLearningMessage p {
+  color: #2F2F2F;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 0;
+}
+.homepage .statusBadge {
+  display: inline-block;
+  padding: 0.4em 1em;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+.homepage .statusBadge.in_progress, .homepage .statusBadge.in-progress, .homepage .statusBadge.todo {
+  background: #714AA8;
+  color: #F1F1F1;
+}
+.homepage .statusBadge.completed, .homepage .statusBadge.complete {
+  background: #BDBDBD;
+  color: #2F2F2F;
+}
+.homepage .statusBadge.new {
+  background: #DDFFD7;
+  color: #31D22B;
+}
+.homepage .statusBadge.overdue {
+  background: #FFEEEE;
+  color: #FF585B;
 }
 .homepage .center-button {
   display: flex;
@@ -563,7 +745,7 @@ html {
 }
 .homepage .primary-btn {
   background-color: #2F2F2F;
-  color: white;
+  color: #FFFFFF;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -574,11 +756,7 @@ html {
   transition: background-color 0.3s ease;
 }
 .homepage .primary-btn:hover {
-  background-color: #161616;
-}
-
-.card-section {
-  margin-bottom: 0.5rem;
+  background-color: rgb(21.5, 21.5, 21.5);
 }
 
 .profile {
@@ -1584,6 +1762,93 @@ button[type=submit] a:hover {
 .singleLearn .complete-button:hover {
   background-color: #388e3c;
 }
+.singleLearn .whatLearned {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: "Inter", sans-serif;
+}
+.singleLearn .whatLearned h2 {
+  color: #2F2F2F;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.singleLearn .whatLearned .learningPoints {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.singleLearn .whatLearned .learningPoint {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.singleLearn .whatLearned .learningPoint .pointIcon {
+  background-color: #714AA8;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.singleLearn .whatLearned .learningPoint .pointIcon i {
+  color: white;
+  font-size: 1.2rem;
+}
+.singleLearn .whatLearned .learningPoint .pointText h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #2F2F2F;
+  font-weight: 600;
+}
+.singleLearn .whatLearned .learningPoint .pointText p {
+  margin: 0;
+  color: #2F2F2F;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+.singleLearn .whatLearned .progressReminder {
+  margin-top: 1.875rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 8px;
+  border-left: 4px solid #714AA8;
+}
+.singleLearn .whatLearned .progressReminder .reminderIcon {
+  color: #714AA8;
+  font-size: 1.5rem;
+}
+.singleLearn .whatLearned .progressReminder p {
+  margin: 0;
+  font-weight: 500;
+  color: #2F2F2F;
+}
+.singleLearn button {
+  display: block;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #F1F1F1;
+  background-color: #714AA8;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.singleLearn button:hover {
+  background-color: rgb(101.0929752066, 66.2024793388, 150.2975206612);
+  text-decoration: underline;
+}
 
 .learn-admin-actions {
   text-align: right;
@@ -1612,42 +1877,48 @@ form button {
   font-weight: bold;
 }
 
-.tasksContainer {
-  margin: 0 auto;
-  margin-bottom: 4rem;
+.tasks h2 {
+  font-size: 14px;
+  color: #626262;
+  background-color: #F1F1F1;
+  padding: 0.5rem 1.5rem;
+  border-top: #BDBDBD 1px solid;
+  border-bottom: #BDBDBD 1px solid;
+  margin: 1rem 0 0 0;
 }
-.tasksContainer .sectionTabs {
+.tasks .sectionTabs {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1rem 0.5rem 1rem;
+  padding: 1rem 0 0 0;
   font-weight: 400;
   font-family: "Inter", sans-serif;
   color: #2F2F2F;
+  width: 18.9rem;
   font-size: 12px;
   border-bottom: 1px solid rgb(236, 236, 236);
-  margin-bottom: 0.5rem;
+  margin: 0 0.2rem 0 0.1rem;
 }
-.tasksContainer .sectionTabs .tasksTab {
+.tasks .sectionTabs .tasksTab {
   flex: 2;
   text-align: left;
   background: none;
   box-shadow: none;
   cursor: default;
 }
-.tasksContainer .sectionTabs .statusTab {
+.tasks .sectionTabs .statusTab {
   flex: 1;
   text-align: right;
   background: none;
   box-shadow: none;
   cursor: default;
 }
-.tasksContainer .taskList {
+.tasks .taskList {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
-.tasksContainer .taskCard {
+.tasks .taskCard {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1657,13 +1928,13 @@ form button {
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
-.tasksContainer .taskInfo {
+.tasks .taskInfo {
   display: flex;
   align-items: center;
   gap: 0.8rem;
   flex: 1;
 }
-.tasksContainer .taskInfo .taskIcon {
+.tasks .taskInfo .taskIcon {
   width: 40px;
   height: 40px;
   display: flex;
@@ -1672,33 +1943,33 @@ form button {
   flex-shrink: 0;
   font-size: 1.5rem;
 }
-.tasksContainer .taskInfo .taskIcon svg {
+.tasks .taskInfo .taskIcon svg {
   width: 50px;
   height: 50px;
 }
-.tasksContainer .taskInfo .taskText {
+.tasks .taskInfo .taskText {
   flex: 1;
 }
-.tasksContainer .taskInfo .taskText h3 {
+.tasks .taskInfo .taskText h3 {
   font-size: 1rem;
   margin: 0;
 }
-.tasksContainer .taskInfo .taskText p {
+.tasks .taskInfo .taskText p {
   color: #2F2F2F;
   margin: 0.2rem 0 0.3rem 0;
 }
-.tasksContainer .taskInfo .taskText small {
+.tasks .taskInfo .taskText small {
   color: #2F2F2F;
   font-size: 12px;
   font-family: "Inter", sans-serif;
 }
-.tasksContainer .taskStatus {
+.tasks .taskStatus {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   min-width: 90px;
 }
-.tasksContainer .taskStatus .statusBadge {
+.tasks .taskStatus .statusBadge {
   display: inline-block;
   padding: 0.4em 1em;
   border-radius: 12px;
@@ -1706,31 +1977,31 @@ form button {
   font-weight: 600;
   text-align: center;
 }
-.tasksContainer .taskStatus .statusBadge.new {
+.tasks .taskStatus .statusBadge.new {
   background: rgb(212, 237, 218);
   color: #31D22B;
   font-family: "Inter", sans-serif;
   font-size: 12px;
 }
-.tasksContainer .taskStatus .statusBadge.in_progress {
+.tasks .taskStatus .statusBadge.in_progress {
   background: rgb(227, 227, 250);
   color: #714AA8;
   font-family: "Inter", sans-serif;
   font-size: 12px;
 }
-.tasksContainer .taskStatus .statusBadge.completed {
+.tasks .taskStatus .statusBadge.completed {
   background: rgb(235, 231, 231);
   color: #2F2F2F;
   font-family: "Inter", sans-serif;
   font-size: 12px;
 }
-.tasksContainer .taskStatus .statusBadge.overdue {
+.tasks .taskStatus .statusBadge.overdue {
   background: rgb(248, 215, 218);
   color: #FF585B;
   font-family: "Inter", sans-serif;
   font-size: 12px;
 }
-.tasksContainer .noTasksMessage {
+.tasks .noTasksMessage {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1739,18 +2010,18 @@ form button {
   padding: 2.5rem 1.5rem;
   margin: 2rem 0;
 }
-.tasksContainer .noTasksMessage i {
+.tasks .noTasksMessage i {
   font-size: 3rem;
   color: #714AA8;
   margin-bottom: 1rem;
 }
-.tasksContainer .noTasksMessage h2 {
+.tasks .noTasksMessage h2 {
   font-size: 32px;
   font-weight: bold;
   color: #714AA8;
   margin-bottom: 0.5rem;
 }
-.tasksContainer .noTasksMessage p {
+.tasks .noTasksMessage p {
   color: #2F2F2F;
   font-size: 18px;
   text-align: center;

@@ -95,9 +95,11 @@
       font-family: $primary-font;
       padding: 1rem;
     }
-    .blog-summary{
-        font-size: $font-size-base;
+    
+    .blog-summary {
+      font-size: $font-size-base;
     }
+    
     .complete-button {
       display: block;
       margin: 2rem auto;
@@ -110,38 +112,139 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.3s;
+      
+      &:hover {
+        background-color: #388e3c;
+      }
     }
     
-    .complete-button:hover {
-      background-color: #388e3c;
+    .whatLearned {
+      margin-top: 3rem;
+      padding: 1.5rem;
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      font-family: $primary-font;
+      
+      h2 {
+        color: $secondary;
+        margin-bottom: 1.25rem;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      
+      .learningPoints {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      
+      .learningPoint {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        
+        .pointIcon {
+          background-color: $tertiary;
+          width: 2.5rem;
+          height: 2.5rem;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          
+          i {
+            color: white;
+            font-size: 1.2rem;
+          }
+        }
+        
+        .pointText {
+          h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            color: $secondary;
+            font-weight: 600;
+          }
+          
+          p {
+            margin: 0;
+            color: $secondary;
+            line-height: 1.5;
+            opacity: 0.8;
+          }
+        }
+      }
+      
+      .progressReminder {
+        margin-top: 1.875rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background-color: #fff;
+        border-radius: 8px;
+        border-left: 4px solid $tertiary;
+        
+        .reminderIcon {
+          color: $tertiary;
+          font-size: 1.5rem;
+        }
+        
+        p {
+          margin: 0;
+          font-weight: 500;
+          color: $secondary;
+        }
+      }
     }
     
+    button {
+      display: block;
+      margin: 2rem auto;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: $primary;
+      background-color: $tertiary;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+      
+      &:hover {
+        background-color: darken($tertiary, 5%);
+        text-decoration: underline;
+      }
+    }
+
   }
+
 .learn-admin-actions {
   text-align: right;
   margin-bottom: 1rem;
 }
+
 .learn-admin-actions .btn {
   padding: 0.5rem 1rem;
   font-weight: bold;
 }
+
 form label {
   display: block;
   margin-top: 1rem;
 }
+
 form input, form textarea {
   width: 100%;
   padding: 0.5rem;
   margin-top: 0.25rem;
 }
+
 form button {
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
   font-weight: bold;
 }
-
-
-
-  
-
-
