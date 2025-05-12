@@ -1,0 +1,84 @@
+<div id="addGoalModal" class="modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>Add a New Goal!</h2>
+      <span class="modalClose">&times;</span>
+    </div>
+    <div class="modalBody">
+      <p>Do you want to import something from Amazon.ca or would you like to set a custom goal?</p>
+      <form id="goalTypeForm">
+        <label class="goalRadio">
+          <input type="radio" name="goalType" value="amazon" checked>
+          <span>Amazon.ca</span>
+        </label>
+        <label class="goalRadio">
+          <input type="radio" name="goalType" value="custom">
+          <span>Custom Goal</span>
+        </label>
+        <div class="modalFooter">
+          <button type="submit" class="confirmBtn">Confirm</button>
+          <button type="button" class="cancelBtn" id="cancelGoalModal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="customGoalModal" class="modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>Custom Goal</h2>
+      <span class="modalClose">&times;</span>
+    </div>
+    <div class="modalBody">
+      <p>Enter the details of what you are saving for:</p>
+      <form id="customGoalForm">
+        <input type="text" name="goalName" placeholder="Name" class="goalInput" required />
+        <input type="number" name="goalAmount" placeholder="Amount • $" class="goalInput" min="0" step="1" required />
+        <input type="text" name="goalDescription" placeholder="Description (optional)" class="goalInput" />
+        <div class="modalFooter">
+          <button type="submit" class="confirmBtn">Create Goal</button>
+          <button type="button" class="cancelBtn" id="backToTypeModal">Back</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="amazonGoalModal" class="modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>Amazon Product</h2>
+      <span class="modalClose">&times;</span>
+    </div>
+    <div class="modalBody">
+      <p>Please copy the link of the product you wish to add to your goal from Amazon.ca and paste it below</p>
+      <form id="amazonGoalForm">
+        <div class="goalInput amazonLinkInput">
+          <input type="text" name="amazonLink" placeholder="amazn.ca/abcd" required />
+          <span class="copyIcon" title="Copy"><i class="fa fa-copy"></i></span>
+        </div>
+        <div class="modalFooter">
+          <button type="submit" class="confirmBtn">Create Goal</button>
+          <button type="button" class="cancelBtn" id="backToTypeModalAmazon">Back</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="successGoalModal" class="modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>Goal Added!</h2>
+      <span class="modalClose">&times;</span>
+    </div>
+    <div class="modalBody successModalBody">
+      <div class="successIcon"><i class="fas fa-check-circle"></i></div>
+      <p>Your new goal was added successfully.</p>
+      <div class="modalFooter">
+        <button class="confirmBtn" id="successGoalDoneBtn">Done</button>
+      </div>
+    </div>
+  </div>
+</div>

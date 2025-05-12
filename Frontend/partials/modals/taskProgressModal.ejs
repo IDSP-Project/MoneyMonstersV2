@@ -1,0 +1,30 @@
+<div id="taskModal" class="modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2 id="modalTaskTitle">Task Details</h2>
+      <span class="modalClose">&times;</span>
+    </div>
+    <div class="modalBody">
+      <div class="modalTaskIcon" id="modalTaskIcon"></div>
+      <p class="modalTaskDesc" id="modalTaskDesc"></p>
+      <div class="modalTaskMeta">
+        <span id="modalTaskReward"></span> |
+        <span id="modalTaskDue"></span>
+      </div>
+      <div class="modalGoalInfoRow">
+        <span id="modalConfirmedBy" class="modalTaskConfirmedBy"></span>
+        <span id="modalGoalInfo" class="modalTaskGoalInfo"></span>
+      </div>
+      <div class="modalTaskActions" id="modalTaskActions">
+        <button class="btn modalStartBtn" id="modalStartBtn">Start</button>
+        <button class="btn modalCompleteBtn" id="modalCompleteBtn" style="display:none;">Mark Completed</button>
+      </div>
+      <div class="modalAssignGoalRow">
+        <button class="btn modalAssignGoalBtn" id="modalAssignGoalBtn" style="display:none;">Assign to Goal</button>
+      </div>
+    </div>
+    <div class="modalFooter">
+      <button class="cancelBtn" id="modalCancelBtn">Cancel</button>
+    </div>
+  </div>
+</div>

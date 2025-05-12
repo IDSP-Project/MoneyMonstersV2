@@ -1,0 +1,29 @@
+<div class="progressContainer" id="progress-container-<%= goalId %>" data-progress="<%= progress %>">
+  <div class="progressBar">
+    <svg width="280" height="154" viewBox="0 0 280 154" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+        <path class="progress-track"
+            d="M266 139.091C266 122.675 262.741 106.421 256.409 91.2556C250.077 76.09 240.796 62.31 229.095 50.7028C217.395 39.0954 203.505 29.888 188.218 23.6061C172.931 17.3243 156.547 14.0911 140 14.0911C123.453 14.0911 107.069 17.3243 91.782 23.606C76.4949 29.8879 62.6048 39.0953 50.9046 50.7027C39.2044 62.31 29.9233 76.0899 23.5912 91.2555C17.2591 106.421 14 122.675 14 139.091" 
+            stroke="#E0E0E0" 
+            stroke-width="28" 
+            stroke-linecap="round" 
+            stroke-linejoin="round"/>
+      
+      <path class="progress-indicator"
+            id="progress-path-<%= goalId %>"
+            d="M14 139.091C14 122.675 17.2591 106.421 23.5912 91.2555C29.9233 76.0899 39.2044 62.31 50.9046 50.7027C62.6048 39.0953 76.4949 29.8879 91.782 23.606C107.069 17.3243 123.453 14.0911 140 14.0911C156.547 14.0911 172.931 17.3243 188.218 23.6061C203.505 29.888 217.395 39.0954 229.095 50.7028C240.796 62.31 250.077 76.09 256.409 91.2556C262.741 106.421 266 122.675 266 139.091"
+            stroke="#7F56D9" 
+            stroke-width="28" 
+            stroke-linecap="round" 
+            stroke-linejoin="round"
+            stroke-dasharray="502"
+            stroke-dashoffset="<%= 502 - (502 * progress / 100) %>"
+            />
+    </svg>
+  </div>
+  <div class="progress-text">
+    <div class="progressPercentage" id="progress-text-<%= goalId %>"><%= progress.toFixed(0) %>%</div>
+    <div class="progressLabel">Completed</div>
+    <div class="assignedToGoal">Earned so far $<%= amountAchieved.toFixed(2) %></div>
+  </div>
+</div>

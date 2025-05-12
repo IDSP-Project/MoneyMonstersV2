@@ -4,6 +4,7 @@ const { getDB } = require('../db/connection');
 const { ensureAuthenticated } = require('../helpers/authHelpers');
 const { fetchTasksForHome, formatTaskDueDate } = require('../helpers/taskHelpers');
 const { ObjectId } = require('mongodb');
+const TaskModel = require('../db/taskModel');
 
 router.get('/tasks', ensureAuthenticated, async (req, res) => {
     try {
@@ -42,7 +43,6 @@ router.get('/tasks', ensureAuthenticated, async (req, res) => {
           let parentTasks = [];
           
           if (req.viewingChild) {
-            // If parent is viewing as a specific child, only show that child's tasks
             parentTasks = await db.collection('tasks')
               .find({
                 $or: [
@@ -53,7 +53,6 @@ router.get('/tasks', ensureAuthenticated, async (req, res) => {
               .sort({ createdAt: -1 })
               .toArray();
           } else {
-            // If parent is not viewing as any child, show all children's tasks
             const children = await db.collection('users').find({ 
               familyId: new ObjectId(req.session.user.familyId),
               accountType: 'child'
@@ -99,7 +98,6 @@ router.get('/tasks', ensureAuthenticated, async (req, res) => {
         status: task.status || (task.completed ? 'completed' : 'new')
       }));
   
-      // Sort tasks by status: new, in_progress, overdue, completed
       const statusOrder = { new: 0, in_progress: 1, overdue: 2, completed: 3 };
       tasks.sort((a, b) => (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99));
   
@@ -121,7 +119,43 @@ router.get('/tasks', ensureAuthenticated, async (req, res) => {
     }
 });
 
-router.post('/tasks/update/:taskId', ensureAuthenticated, async (req, res) => {
+router.get('/tasks/:taskId/details', ensureAuthenticated, async (req, res) => {
+  try {
+    const db = getDB();
+    const taskId = new ObjectId(req.params.taskId);
+    const task = await db.collection('tasks').findOne({ _id: taskId });
+    
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+    
+    let childName = 'No child assigned';
+    if (task.assigneeId) {
+      const child = await db.collection('users').findOne({ 
+        _id: new ObjectId(task.assigneeId) 
+      });
+      if (child) {
+        childName = child.firstName && child.lastName 
+          ? `${child.firstName} ${child.lastName}` 
+          : child.username || child.name || 'Child';
+      }
+    }
+    
+    const formattedTask = {
+      ...task,
+      childName,
+      formattedDue: formatTaskDueDate(task.dueDate),
+      status: task.status || (task.completed ? 'completed' : 'new')
+    };
+    
+    res.json(formattedTask);
+  } catch (error) {
+    console.error('Error fetching task details:', error);
+    res.status(500).json({ error: 'Failed to fetch task details' });
+  }
+});
+
+router.post('/tasks/:taskId/status', ensureAuthenticated, async (req, res) => {
   try {
     const db = getDB();
     const taskId = new ObjectId(req.params.taskId);
@@ -180,10 +214,8 @@ router.get('/tasks/available', ensureAuthenticated, async (req, res) => {
     } 
     else if (req.session.user.accountType === 'parent') {
       if (req.viewingChild) {
-        // If parent is viewing as a specific child, only show that child's tasks
         query.assigneeId = new ObjectId(req.viewingChild._id);
       } else {
-        // If not viewing as any child, show tasks posted by the parent
         query.posterId = new ObjectId(req.session.user.id);
       }
     }
@@ -211,6 +243,8 @@ router.post('/tasks', ensureAuthenticated, async (req, res) => {
     const db = getDB();
     const { category, title, description, amount, dueDate } = req.body;
     
+    console.log("Request body:", req.body);
+    
     const allowedCategories = ['pet', 'cleaning', 'garage', 'garden', 'misc'];
     if (!allowedCategories.includes(category)) {
       return res.status(400).json({ success: false, error: 'Invalid category' });
@@ -218,20 +252,17 @@ router.post('/tasks', ensureAuthenticated, async (req, res) => {
     if (!title || typeof title !== 'string' || !title.trim()) {
       return res.status(400).json({ success: false, error: 'Title is required' });
     }
-    if (isNaN(amount) || amount < 0) {
+    if (isNaN(amount) || parseFloat(amount) < 0) {
       return res.status(400).json({ success: false, error: 'Amount must be a positive number' });
     }
     if (!dueDate) {
       return res.status(400).json({ success: false, error: 'Due date is required' });
     }
 
-    // Get the child to assign the task to
     let selectedChild;
     if (req.viewingChild) {
-      // If parent is viewing as a specific child, assign to that child
       selectedChild = req.viewingChild;
     } else {
-      // If not viewing as any child, find children in the family
       const children = await db.collection('users').find({
         familyId: new ObjectId(req.session.user.familyId),
         accountType: 'child'
@@ -243,33 +274,73 @@ router.post('/tasks', ensureAuthenticated, async (req, res) => {
       selectedChild = children[0];
     }
 
-    const newTask = {
+    const newTask = TaskModel.createTask(
       category,
-      title: title.trim(),
-      description: description ? description.trim() : 'NO DESCRIPTION',
-      reward: Number(amount),
-      dueDate: new Date(dueDate),
-      status: 'new',
-      completed: false,
-      completedAt: new Date(0),
-      weeklyRepeat: false,
-      goalId: null,
-      posterId: new ObjectId(req.session.user.id),
-      assigneeId: new ObjectId(selectedChild._id),
-      familyId: new ObjectId(req.session.user.familyId),
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+      title,
+      description,
+      amount,
+      dueDate,
+      req.session.user,
+      selectedChild
+    );
 
+    console.log("Task being inserted:", newTask);
+    
     const result = await db.collection('tasks').insertOne(newTask);
+    
     if (result.acknowledged) {
-      res.json({ success: true, task: newTask });
+      res.json({ success: true, task: { ...newTask, _id: result.insertedId } });
     } else {
       throw new Error('Failed to create task');
     }
   } catch (error) {
     console.error('Error creating task:', error);
     res.status(500).json({ success: false, error: error.message || 'Failed to create task' });
+  }
+});
+
+router.post('/tasks/:taskId/complete', ensureAuthenticated, async (req, res) => {
+  try {
+    const db = getDB();
+    const taskId = new ObjectId(req.params.taskId);
+    
+    const result = await db.collection('tasks').updateOne(
+      { _id: taskId },
+      { 
+        $set: { 
+          status: 'completed',
+          completed: true,
+          completedAt: new Date()
+        } 
+      }
+    );
+    
+    if (result.modifiedCount === 1) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: 'Task not found or not modified' });
+    }
+  } catch (error) {
+    console.error('Error completing task:', error);
+    res.status(500).json({ success: false, error: 'Failed to complete task' });
+  }
+});
+
+router.delete('/tasks/:taskId', ensureAuthenticated, async (req, res) => {
+  try {
+    const db = getDB();
+    const taskId = new ObjectId(req.params.taskId);
+    
+    const result = await db.collection('tasks').deleteOne({ _id: taskId });
+    
+    if (result.deletedCount === 1) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: 'Task not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting task:', error);
+    res.status(500).json({ success: false, error: 'Failed to delete task' });
   }
 });
 

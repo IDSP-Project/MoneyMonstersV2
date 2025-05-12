@@ -1,25 +1,21 @@
-// // currently Mongoose, but needs to be Mongo DB instead
+const { ObjectId } = require('mongodb');
 
-// const mongoose = require('mongoose');
+class Goal {
+  constructor(data = {}) {
+    this._id = data._id;
+    this.title = data.title || '';
+    this.description = data.description || '';
+    this.price = parseFloat(data.price || 0);
+    this.purchaseLink = data.purchaseLink || '';
+    this.parentId = data.parentId || [];
+    this.childId = data.childId || '';
+    this.status = data.status || 'active';
+    this.createdAt = data.createdAt || new Date();
+    this.updatedAt = data.updatedAt || new Date();
+    this.totalRequired = parseFloat(data.totalRequired || data.price || 0);
+    this.amountAchieved = parseFloat(data.amountAchieved || 0);
+    this.progress = parseFloat(data.progress || 0);
+  }
+}
 
-// const taskSchema = new mongoose.Schema({
-//   description: String,
-//   amount: Number,
-//   completed: Boolean,
-//   completedAt: Date
-// });
-
-// const goalSchema = new mongoose.Schema({
-//   name: String,
-//   source: String,
-//   image: String,
-//   price: Number,
-//   progress: Number,
-//   tasks: [taskSchema],
-//   childId: {
-//     type: String,
-//     ref: 'Child'
-//   }
-// });
-
-// module.exports = mongoose.model('Goal', goalSchema);
+module.exports = Goal;
