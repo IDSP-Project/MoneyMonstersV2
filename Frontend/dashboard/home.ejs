@@ -34,9 +34,11 @@
           <button type="submit">Remove $1</button>
         </form>
       </section>
-      <section class="response-section">
+     <section class="response-section">
         <% if (user.accountType === 'parent') { %>
-          <a href="/dashboard/responses" class="btn">View What Your Children Learned</a>
+          <div class="center-button">
+            <a href="/dashboard/responses" class="btn primary-btn">View What Your Children Learned</a>
+          </div>
         <% } %>
       </section>
       <section class="card-section-goals">
