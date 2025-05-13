@@ -23,6 +23,7 @@ const router = express.Router();
 const User = require("../db/userModel.js");
 const Family = require('../db/familyModel.js');
 const { Resend } = require('resend');
+const seedLearningModules = require('../db/seeds/learningSeed.js');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 resend.apiKeys.create({ name: 'Production' });
@@ -378,6 +379,10 @@ router.post("/register", forwardAuthenticated, async (req, res) => {
     
     if (result.success) {
       await authenticateUser(email, password, req);
+
+        if (accountType === 'child') {
+        await seedLearningModules(result.userId);
+      }
       
       if (isAjax) {
         return res.json({
@@ -385,6 +390,8 @@ router.post("/register", forwardAuthenticated, async (req, res) => {
           redirect: "/"
         });
       }
+
+
     }
 
     res.redirect("/dashboard");
@@ -527,10 +534,13 @@ router.post("/register/family", forwardAuthenticated, async (req, res) => {
   }
 });
 
-// Profile routes
+
 router.get("/profile/:id", ensureAuthenticated, async (req, res) => {
   try {
-    const result = await retrieveProfile(req.params.id, req.session.user.id);
+    const userIdToUse = req.session.user.id;
+    const idToRetrieve = req.params.id === 'me' ? userIdToUse : req.params.id;
+    
+    const result = await retrieveProfile(idToRetrieve, userIdToUse);
 
     if (!result.success) {
       throw new Error(result.error);
@@ -1167,6 +1177,10 @@ router.post("/register/family/:familyId", forwardAuthenticated, async (req, res)
     
     if (result.success) {
       await authenticateUser(email, password, req);
+
+       if (accountType === 'child') {
+        await seedLearningModules(result.userId);
+      }
       
       if (isAjax) {
         return res.json({

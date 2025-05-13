@@ -44,9 +44,16 @@ router.get('/learn', ensureAuthenticated, async (req, res) => {
         })
         .sort({ createdAt: -1 })
         .toArray();
+      
+      const uniqueIds = new Set();
+      modules = modules.filter(module => {
+        const id = module._id.toString();
+        if (uniqueIds.has(id)) return false;
+        uniqueIds.add(id);
+        return true;
+      });
     }
     
-    // Build progress map from embedded progress data
     const progressMap = {};
     const progressUserId = req.viewingChild ? req.viewingChild._id.toString() : userId.toString();
     
@@ -65,7 +72,7 @@ router.get('/learn', ensureAuthenticated, async (req, res) => {
     const modulesWithProgress = modules.map(module => ({
       ...module,
       stringId: module._id.toString(),
-      status: progressMap[module._id.toString()]?.status || 'new'
+      status: progressMap[module._id.toString()]?.status || 'new'  
     }));
     
     res.render("learn/learnHome", {
@@ -92,6 +99,7 @@ router.get('/learn', ensureAuthenticated, async (req, res) => {
   }
 });
 
+
 router.get('/learn/view/:id', ensureAuthenticated, async (req, res) => {
   const id = req.params.id;
   if (!ObjectId.isValid(id)) {
@@ -106,12 +114,18 @@ router.get('/learn/view/:id', ensureAuthenticated, async (req, res) => {
       return res.status(404).send('Learning module not found');
     }
     
-    // Fixed code to handle potentially undefined userId
-    const rawUserId = req.session.user._id || req.session.user.id;
-    if (!rawUserId) {
+     let userId;
+    if (req.viewingChild) {
+      userId = req.viewingChild._id;
+    } else {
+      userId = req.session.user._id || req.session.user.id;
+    }
+    
+    if (!userId) {
       return res.status(403).send('User not authenticated properly');
     }
-    const userObjectId = typeof rawUserId === 'string' ? new ObjectId(rawUserId) : rawUserId;
+    
+    const userObjectId = typeof rawUserId === 'string' ? new ObjectId(userId) : userId;
     const userIdStr = userObjectId.toString();
     
     let userProgress = null;
@@ -130,7 +144,6 @@ router.get('/learn/view/:id', ensureAuthenticated, async (req, res) => {
     });
     const hasSubmitted = !!existingResponse;
     
-    // Update to 'to do' status when viewing if it's currently 'new'
     if (!userProgress && req.session.user.accountType === 'child') {
       const newProgress = {
         userId: userObjectId,
@@ -192,8 +205,7 @@ router.post('/progress/:blogId', ensureAuthenticated, async (req, res) => {
     
     const userId = typeof rawUserId === "string" ? new ObjectId(rawUserId) : rawUserId;
     
-    // Use the updated Learning.updateStatus method which handles rewards automatically
-    const result = await Learning.updateStatus(userId, blogId, status, reflection);
+      const result = await Learning.updateStatus(userId, blogId.toString(), 'completed', reflection);
     
     res.json(result);
   } catch (err) {
@@ -248,8 +260,17 @@ router.get('/learn/new', ensureAuthenticated, (req, res) => {
   if (req.session.user.accountType !== 'parent') {
     return res.redirect('/learn');
   }
-  res.render('learn/learnNew'); 
+    const child = req.viewingChild || null;
+  
+  res.render('learn/learnNew', { 
+    user: req.session.user,
+    child: child,  
+    viewingAsChild: req.viewingChild ? true : false,
+    viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+    currentPage: 'learn'
+  }); 
 });
+
 
 router.post('/learn/new', ensureAuthenticated, async (req, res) => {
   if (req.session.user.accountType !== 'parent') {

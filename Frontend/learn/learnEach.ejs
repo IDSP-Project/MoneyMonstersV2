@@ -12,7 +12,9 @@
   <div class="container">
     <header class="learn-each-header">
       <%- include('../partials/header') %>
-    </header>
+      <% if (locals.viewingAsChild && locals.viewingChildName) { %>
+        <%- include('../partials/viewingAsChild') %>
+      <% } %>    </header>
 
     <main>
         <article>
@@ -21,30 +23,25 @@
           <%- blog.content.split(/\n+/).filter(p => p.trim()).map(paragraph => 
             `<p>${paragraph.trim()}</p>`).join('') %>
         </article>
-
-        <% if (progress.status === 'completed') { %>
-          <div class="completed-message">
-            <div class="alert alert-success">
-              <i class="fas fa-check-circle"></i> Completed!
-              <% if(blog.reward > 0) { %>
-                <p>Reward of $<%= blog.reward.toFixed(2) %> has been added to your balance.</p>
+        
+          <% if (progress.status === 'completed') { %>
+            <div class="reflectionContainer">
+              <div class="completedMessage">
+                <h3>Completed! </h3>
+                <% if(blog.reward > 0) { %>
+                  <p>Reward of $<%= blog.reward.toFixed(2) %> has been added to your balance.</p>
+                <% } %>
+              </div>
+              
+              <% if (progress.reflection && progress.reflection.trim() !== '') { %>
+                <div class="reflectionContent">  
+                  <p>What I Learned: "<%= progress.reflection %>"</p>
+                </div>
               <% } %>
             </div>
-            
-            <% if (progress.reflection && progress.reflection.trim() !== '') { %>
-              <div class="reflection-container">
-                <h3>Reflection</h3>
-                <div class="reflection-content">
-                  <p><%= progress.reflection %></p>
-                </div>
-              </div>
-            <% } %>
-          </div>
-        <% } else if (user.accountType === 'child' && !viewingAsChild) { %>
-          <button data-modal-target="whatLearnedModal" class="completeBtn">
-            <i class="fas fa-check-circle"></i> Mark as Complete
-          </button>
-        <% } %>
+          <% } else if (user.accountType === 'child' && !viewingAsChild) { %>
+            <button data-modal-target="whatLearnedModal" class="completeBtn"> Mark as Complete </button>
+          <% } %>
 
         <%- include('../partials/modals/whatLearned') %>
     </main>

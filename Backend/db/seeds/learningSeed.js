@@ -133,49 +133,117 @@ So whether you use a piggy bank, a savings account, or both, remember: it’s no
   },
 ];
 
-async function seedLearningModules() {
+async function seedLearningModules(specificUserId = null) {
+  let isConnectedInternally = false;
+
   try {
-    await connectDB();
-    const db = getDB();
-    console.log('Connected to database successfully');
-
-    const children = await db.collection('users').find({
-      accountType: 'child'
-    }).toArray();
-
-    if (children.length === 0) {
-      console.log('No child users found. Please create child accounts first.');
-      process.exit(0);
+    let db;
+    try {
+      db = getDB();
+    } catch (error) {
+      console.log('Database connection not initialized. Connecting now...');
+      await connectDB();
+      db = getDB();
+      isConnectedInternally = true;
+      console.log('Connected to database successfully');
     }
 
-    console.log(`Found ${children.length} child users`);
+    let children = [];
+    
+    if (specificUserId) {      
+      const userObjectId = typeof specificUserId === 'string' 
+        ? new ObjectId(specificUserId) 
+        : specificUserId;
+      
+      const user = await db.collection('users').findOne({ 
+        _id: userObjectId,
+        accountType: 'child'
+      });
+      
+      if (!user) {
+        return;
+      }
+      
+
+      const existingCount = await db.collection('learnings').countDocuments({ 
+        assigneeId: user._id 
+      });
+      
+      
+      if (existingCount > 0) {
+        return;
+      }
+      
+      children = [user];
+    } else {
+      
+      const allChildren = await db.collection('users').find({
+        accountType: 'child'
+      }).toArray();
+      
+      
+      if (allChildren.length === 0) {
+        console.log('No child users found. Please create child accounts first.');
+        return;
+      }
+      
+      children = [];
+      for (const child of allChildren) {
+        const modulesCount = await db.collection('learnings').countDocuments({ 
+          assigneeId: child._id 
+        });
+        
+        if (modulesCount === 0) {
+          children.push(child);
+        }
+      } 
+
+      
+      if (children.length === 0) {
+        return;
+      }
+    }
 
     const parents = await db.collection('users').find({
       accountType: 'parent'
     }).toArray();
 
-    if (parents.length === 0) {
-      console.log('No parent users found. Using system as poster.');
+    let defaultPosterId;
+    let familyId = null;
+    
+    if (children.length > 0 && children[0].familyId) {
+      familyId = children[0].familyId;
+      
+      const familyParent = await db.collection('users').findOne({
+        familyId: familyId,
+        accountType: 'parent'
+      });
+      
+      if (familyParent) {
+        defaultPosterId = familyParent._id;
+      } else if (parents.length > 0) {
+        defaultPosterId = parents[0]._id;
+      } else {
+        defaultPosterId = new ObjectId();
+      }
+    } else {
+      defaultPosterId = parents.length > 0 ? parents[0]._id : new ObjectId();
+      familyId = null;
     }
-
-    const defaultPosterId = parents.length > 0 ? parents[0]._id : new ObjectId();
-    const familyId = children[0].familyId;
 
     let articlesCreated = 0;
 
-    for (const article of defaultArticles) {
-      const baseArticle = {
-        ...article,
-        posterId: defaultPosterId,
-        familyId: familyId,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-
-      for (const child of children) {
+    for (const child of children) {
+      
+      for (const article of defaultArticles) {
+        
         const childArticle = {
-          ...baseArticle,
+          ...article,
+          posterId: defaultPosterId,
+          familyId: child.familyId || familyId,
           assigneeId: child._id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
           userProgress: [{
             userId: child._id,
             status: 'new',
@@ -185,22 +253,51 @@ async function seedLearningModules() {
           }]
         };
 
-        const result = await db.collection('learnings').insertOne(childArticle);
-        articlesCreated++;
+        try {
+          const result = await db.collection('learnings').insertOne(childArticle);
+          articlesCreated++;
+        } catch (error) {
+          console.error(`Error creating article "${article.title}" for child ${child._id}:`, error);
+        }
       }
     }
-
-    console.log(`Created ${articlesCreated} learning modules with embedded progress`);
-    console.log('Seed completed successfully');
-
   } catch (error) {
     console.error('Error seeding database:', error);
   } finally {
-    await closeDB();
-    process.exit(0);
+    if (isConnectedInternally) {
+      await closeDB();
+      
+      if (require.main === module) {
+        console.log('Exiting process...');
+        process.exit(0);
+      }
+    }
   }
 }
 
-seedLearningModules();
+if (require.main === module) {
+  process.on('unhandledRejection', (error) => {
+    console.error('Unhandled Promise Rejection:', error);
+    process.exit(1);
+  });
 
-seedLearningModules();
+  const args = process.argv.slice(2);
+  const specificUserId = args[0]; 
+  
+  connectDB()
+    .then(() => {
+      if (specificUserId) {
+        console.log(`Running seed for specific user ID: ${specificUserId}`);
+        return seedLearningModules(specificUserId);
+      } else {
+        console.log('Running seed for all users without learning modules');
+        return seedLearningModules();
+      }
+    })
+    .catch(error => {
+      console.error('Fatal error during seeding:', error);
+      process.exit(1);
+    });
+} else {
+  module.exports = seedLearningModules;
+}

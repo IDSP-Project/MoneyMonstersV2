@@ -252,6 +252,12 @@
   display: block;
   flex-direction: column;
   align-items: center;
+
+  h2 {
+    background-color: $white;
+    border: none;
+    padding-left: 0.5rem;
+  }
 }
 
 .taskTypeIconsRow {
@@ -278,28 +284,37 @@
 }
 
 .confirmBtn {
-  background: #714AA8;
-  color: #fff;
+  background: $tertiary;
+  color: $white;
   width: 100%;
   border-radius: 10px;
   margin-bottom: 0.7rem;
-  font-size: 1.1rem;
+  font-size: $font-size-base;
   font-weight: 600;
   padding: 0.7rem 0;
   border: none;
   cursor: pointer;
   transition: background 0.2s;
+
+  &:hover {
+  text-decoration: underline;
+  }
 }
 .cancelBtn {
-  background: #fff;
-  color: #000;
+  background: $primary;
+  color: $secondary;
   width: 100%;
   border-radius: 10px;
-  font-size: 1.1rem;
+  font-size: $font-size-base;
   font-weight: 600;
   padding: 0.7rem 0;
-  border: 1px solid #ececec;
+  margin: 1rem auto;
+  border: 1px solid $primary;
   cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .assignGoalRow {

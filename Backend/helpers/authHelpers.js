@@ -97,7 +97,7 @@ async function registerUser(firstName, lastName, email, password, accountType, f
       email,
       password,
       accountType || "parent",
-      null, //profilephoto not set at registration
+      null,
       familyObjectId || null,
     );
     

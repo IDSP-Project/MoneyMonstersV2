@@ -128,122 +128,123 @@ class Learning {
     }
   }
 
-  static async updateStatus(userId, learningId, status, reflection = '') {
-    try {
-      const db = getDB();
-      const session = db.client.startSession();
-      let result = { success: false, message: 'Operation failed' };
+static async updateStatus(userId, learningId, status, reflection = '') {
+  try {
+    const db = getDB();
+    const session = db.client.startSession();
+    let result = { success: false, message: 'Operation failed' };
+    
+    await session.withTransaction(async () => {
+      status = status.toLowerCase();
+      const userIdObj = typeof userId === 'string' ? new ObjectId(userId) : userId;
+      const learningObj = new ObjectId(learningId);
       
-      await session.withTransaction(async () => {
-        const userIdObj = typeof userId === 'string' ? new ObjectId(userId) : userId;
-        const learningObj = new ObjectId(learningId);
+      const learning = await db.collection('learnings').findOne(
+        { _id: learningObj }
+      );
+      
+      if (!learning) {
+        result = { success: false, message: 'Learning module not found' };
+        return;
+      }
+      
+      const userIdStr = userIdObj.toString();
+      const existingProgress = learning.userProgress?.find(p => p.userId.toString() === userIdStr);
+      
+      let rewardApplied = false;
+      let rewardAmount = 0;
+      let userBalance = 0;
+      
+      if (status === 'completed' && learning.reward > 0 && 
+          (!existingProgress || existingProgress.status !== 'completed')) {
         
-        const learning = await db.collection('learnings').findOne(
-          { _id: learningObj }
+        rewardAmount = learning.reward;
+        
+        const userUpdateResult = await db.collection('users').updateOne(
+          { _id: userIdObj },
+          { 
+            $inc: { balance: rewardAmount },
+            $push: { 
+              transactions: {
+                type: 'reward',
+                amount: rewardAmount,
+                description: `Learning completed: ${learning.title}`,
+                date: new Date(),
+                learningId: learning._id
+              } 
+            }
+          },
+          { session }
         );
         
-        if (!learning) {
-          result = { success: false, message: 'Learning module not found' };
-          return;
-        }
+        rewardApplied = userUpdateResult.modifiedCount === 1;
         
-        const userIdStr = userIdObj.toString();
-        const existingProgress = learning.userProgress?.find(p => p.userId.toString() === userIdStr);
-        
-        let rewardApplied = false;
-        let rewardAmount = 0;
-        let userBalance = 0;
-        
-        if (status === 'completed' && learning.reward > 0 && 
-            (!existingProgress || existingProgress.status !== 'completed')) {
-          
-          rewardAmount = learning.reward;
-          
-          const userUpdateResult = await db.collection('users').updateOne(
+        if (rewardApplied) {
+          const updatedUser = await db.collection('users').findOne(
             { _id: userIdObj },
-            { 
-              $inc: { balance: rewardAmount },
-              $push: { 
-                transactions: {
-                  type: 'reward',
-                  amount: rewardAmount,
-                  description: `Learning completed: ${learning.title}`,
-                  date: new Date(),
-                  learningId: learning._id
-                } 
+            { session, projection: { balance: 1 } }
+          );
+          userBalance = updatedUser.balance;
+        }
+      }
+      
+      const progressUpdate = {
+        status: status,
+        reflection: reflection || (existingProgress?.reflection || ''),
+        lastAccessedAt: new Date()
+      };
+      
+      if (status === 'completed') {
+        progressUpdate.completedAt = new Date();
+      }
+      
+      let updateResult;
+      
+      if (existingProgress) {
+        updateResult = await db.collection('learnings').updateOne(
+          { 
+            _id: learningObj,
+            "userProgress.userId": userIdObj
+          },
+          { $set: { "userProgress.$": { ...existingProgress, ...progressUpdate } } },
+          { session }
+        );
+      } else {
+        updateResult = await db.collection('learnings').updateOne(
+          { _id: learningObj },
+          { 
+            $push: { 
+              userProgress: {
+                userId: userIdObj,
+                ...progressUpdate
               }
-            },
-            { session }
-          );
-          
-          rewardApplied = userUpdateResult.modifiedCount === 1;
-          
-          if (rewardApplied) {
-            const updatedUser = await db.collection('users').findOne(
-              { _id: userIdObj },
-              { session, projection: { balance: 1 } }
-            );
-            userBalance = updatedUser.balance;
-          }
-        }
-        
-        const progressUpdate = {
-          status: status,
-          reflection: reflection || (existingProgress?.reflection || ''),
-          lastAccessedAt: new Date()
+            } 
+          },
+          { session }
+        );
+      }
+      
+      if (updateResult.modifiedCount === 1) {
+        result = { 
+          success: true, 
+          message: `Progress updated to ${status}`,
+          rewardApplied,
+          rewardAmount,
+          userBalance
         };
-        
-        if (status === 'completed') {
-          progressUpdate.completedAt = new Date();
-        }
-        
-        let updateResult;
-        
-        if (existingProgress) {
-          updateResult = await db.collection('learnings').updateOne(
-            { 
-              _id: learningObj,
-              "userProgress.userId": userIdObj
-            },
-            { $set: { "userProgress.$": { ...existingProgress, ...progressUpdate } } },
-            { session }
-          );
-        } else {
-          updateResult = await db.collection('learnings').updateOne(
-            { _id: learningObj },
-            { 
-              $push: { 
-                userProgress: {
-                  userId: userIdObj,
-                  ...progressUpdate
-                }
-              } 
-            },
-            { session }
-          );
-        }
-        
-        if (updateResult.modifiedCount === 1) {
-          result = { 
-            success: true, 
-            message: `Progress updated to ${status}`,
-            rewardApplied,
-            rewardAmount,
-            userBalance
-          };
-        } else {
-          result = { success: false, message: 'No changes made to progress' };
-        }
-      });
-      
-      await session.endSession();
-      return result;
-      
-    } catch (err) {
-      console.error("Error updating status:", err);
-      throw err;
-    }
+      } else {
+        result = { success: false, message: 'No changes made to progress' };
+      }
+    });
+    
+    await session.endSession();
+    return result;
+    
+  } catch (err) {
+    console.error("Error updating status:", err);
+    throw err;
   }
+}
 
   static async markInProgress(userId, learningId) {
     return await this.updateStatus(userId, learningId, 'to do');

@@ -12,8 +12,27 @@
     <div class="modalFooter">
       <button class="cancelBtn">Cancel</button>
       <button id="submitLearningBtn" data-blog-id="<%= blog._id %>" class="confirmBtn">
-        <i class="fas fa-check-circle"></i> Mark as Complete
+      Mark as Complete
       </button>
+    </div>
+  </div>
+</div>
+
+<div id="learnSuccessModal" class="modal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <h2>Success!</h2>
+    </div>
+    
+    <div class="modalBody">
+      <div class="successIconContainer">
+        <div class="successIcon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      </div>
+      <p class="successText">Learning Complete!</p>
     </div>
   </div>
 </div>

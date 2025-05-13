@@ -17,39 +17,75 @@ h1, h2, h3 {
 .headerbar {
   position: relative;
   font-family: "Inter", sans-serif;
+  margin: 0.8rem auto;
 }
 .headerbar * {
   box-sizing: border-box;
 }
-.headerbar .main-header {
-  display: flex;
-  justify-content: space-between;
+.headerbar .mainHeader {
+  display: grid;
+  grid-template-columns: 80% 10%;
   align-items: center;
+  gap: 0.75rem;
   background-color: #ffffff;
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 100;
   position: relative;
-}
-.headerbar .header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.headerbar .logo-wrapper {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-}
-.headerbar .logo-wrapper svg {
   width: 100%;
-  height: auto;
 }
-.headerbar .brand-name {
+.headerbar .headerLeft {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.headerbar .back-button {
+  display: flex;
   font-size: 1.25rem;
+  color: #2F2F2F;
+  text-decoration: none;
+  align-items: center;
+  justify-content: flex-start;
+  width: 40px;
+  height: 32px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+.headerbar .back-button i {
+  font-size: 1.25rem;
+}
+.headerbar .back-button:hover {
+  opacity: 0.7;
+}
+.headerbar .logoWrapper {
+  display: flex;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  margin-right: 1rem;
+}
+.headerbar .logoWrapper svg {
+  width: 32px;
+  height: auto;
+  max-width: 100%;
+}
+.headerbar .brandName {
+  display: inline-block;
+  font-size: 16px;
   font-weight: bold;
   color: #2F2F2F;
+  margin: 0;
+  flex-grow: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+.headerbar .hamburger-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 32px;
 }
 .headerbar .icon-button {
   background: none;
@@ -57,10 +93,7 @@ h1, h2, h3 {
   font-size: 1.5rem;
   cursor: pointer;
   color: #2F2F2F;
-}
-.headerbar .hamburger-toggle {
-  display: flex;
-  align-items: center;
+  padding: 0;
 }
 .headerbar .dropdown-menu {
   background: #FFFFFF;
@@ -83,7 +116,7 @@ h1, h2, h3 {
 .headerbar .menu-items li {
   margin: 2rem 0;
 }
-.headerbar .menu-items li :hover {
+.headerbar .menu-items li:hover {
   text-decoration: underline;
 }
 .headerbar .menu-items a {
@@ -94,23 +127,7 @@ h1, h2, h3 {
   padding: 1rem 0;
 }
 .headerbar .hidden {
-  display: none !important;
-}
-.headerbar .back-button {
-  font-size: 1.25rem;
-  color: #2F2F2F;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 0.25rem;
-  cursor: pointer;
-}
-.headerbar .back-button i {
-  font-size: 1.25rem;
-}
-.headerbar .back-button:hover {
-  opacity: 0.7;
+  display: none;
 }
 
 .bottomNav {
@@ -1147,7 +1164,7 @@ button[type=submit] a:hover {
   width: 100%;
   border-radius: 10px;
   margin-bottom: 0.7rem;
-  font-size: 1.1rem;
+  font-size: 14px;
   font-weight: 600;
   padding: 0.7rem 0;
   border: none;
@@ -1427,7 +1444,7 @@ button[type=submit] a:hover {
   margin-bottom: 1.5rem;
 }
 .modal .modalContent .modalHeader h2 {
-  margin: 0;
+  margin: auto;
   font-size: 1.3rem;
   font-weight: bold;
   font-family: "Inter", sans-serif;
@@ -1661,12 +1678,37 @@ button[type=submit] a:hover {
 .learn {
   font-family: "Inter", sans-serif;
 }
+.learn .statusBadge {
+  display: inline-block;
+  padding: 0.4em 1em;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+}
+.learn .statusBadge.in_progress, .learn .statusBadge.in-progress, .learn .statusBadge.todo {
+  background: #714AA8;
+  color: #F1F1F1;
+}
+.learn .statusBadge.completed, .learn .statusBadge.complete {
+  background: #BDBDBD;
+  color: #2F2F2F;
+}
+.learn .statusBadge.new {
+  background: #DDFFD7;
+  color: #31D22B;
+}
+.learn .statusBadge.overdue {
+  background: #FFEEEE;
+  color: #FF585B;
+}
 .learn main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem;
-  margin-top: 1rem;
+  padding: 0 1rem;
 }
 .learn .blog-card {
   display: flex;
@@ -1685,10 +1727,9 @@ button[type=submit] a:hover {
   color: var(--Barney, #7F56D9);
   text-align: justify;
   font-family: "Inter", sans-serif;
-  font-size: 0.875rem;
+  font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 1.25rem;
 }
 .learn .blog-title a {
   color: var(--Gray-900, #181D27);
@@ -1733,48 +1774,40 @@ button[type=submit] a:hover {
   overflow-wrap: break-word;
 }
 
-.singleLearn h5 {
-  color: #714AA8;
-}
-.singleLearn h1, .singleLearn p {
-  color: #2F2F2F;
-}
 .singleLearn article {
   font-family: "Inter", sans-serif;
-  padding: 1rem;
+  padding: 1rem 1rem 0 1rem;
+}
+.singleLearn article h5 {
+  margin: 0;
+  color: #714AA8;
+}
+.singleLearn article h1 {
+  color: #2F2F2F;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.singleLearn article p {
+  color: #2F2F2F;
+  line-height: 1.6;
+  margin-bottom: 1rem;
 }
 .singleLearn .blog-summary {
   font-size: 16px;
 }
-.singleLearn .complete-button {
-  display: block;
-  margin: 2rem auto;
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: white;
-  background-color: #43a047;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.singleLearn .complete-button:hover {
-  background-color: #388e3c;
-}
 .singleLearn .whatLearned {
   margin-top: 3rem;
   padding: 1.5rem;
-  background-color: #f8f9fa;
+  background-color: #F1F1F1;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   font-family: "Inter", sans-serif;
 }
 .singleLearn .whatLearned h2 {
   color: #2F2F2F;
-  margin-bottom: 1.25rem;
+  margin: 1rem;
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 24px;
   font-weight: 600;
 }
 .singleLearn .whatLearned .learningPoints {
@@ -1832,11 +1865,11 @@ button[type=submit] a:hover {
   font-weight: 500;
   color: #2F2F2F;
 }
-.singleLearn button {
+.singleLearn .completeBtn {
   display: block;
-  margin: 2rem auto;
+  margin: 0 auto 1rem auto;
   padding: 1rem 2rem;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: bold;
   color: #F1F1F1;
   background-color: #714AA8;
@@ -1845,16 +1878,82 @@ button[type=submit] a:hover {
   cursor: pointer;
   transition: background 0.3s;
 }
-.singleLearn button:hover {
+.singleLearn .completeBtn:hover {
   background-color: rgb(101.0929752066, 66.2024793388, 150.2975206612);
   text-decoration: underline;
+}
+.singleLearn .completedMessage {
+  margin: 0.5rem 0;
+}
+.singleLearn .completedMessage i {
+  margin-right: 0.5rem;
+  color: #31D22B;
+}
+.singleLearn .completedMessage p {
+  margin: 0.5rem 0 0 0;
+}
+.singleLearn .reflectionContainer {
+  margin: 0.5rem;
+  padding: 0.5rem;
+  text-align: center;
+  justify-content: center;
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  max-width: 80%;
+  border: #31D22B 4px solid;
+}
+.singleLearn .reflectionContainer h3 {
+  color: #2F2F2F;
+  margin: 0 auto;
+  font-size: 1.2rem;
+}
+.singleLearn .reflectionContainer .reflectionContent {
+  padding: 0.5rem;
+}
+.singleLearn .reflectionContainer .reflectionContent p {
+  margin: 0;
+  color: #2F2F2F;
+}
+.singleLearn textarea {
+  width: 90%;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  height: 7rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+#learnSuccessModal .successIconContainer {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+#learnSuccessModal .successIconContainer .successIcon {
+  width: 60px;
+  height: 60px;
+  background-color: #31D22B;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#learnSuccessModal .successIconContainer .successIcon svg {
+  width: 36px;
+  height: 36px;
+  color: white;
+}
+#learnSuccessModal .successText {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 1rem 0;
 }
 
 .learn-admin-actions {
   text-align: right;
   margin-bottom: 1rem;
 }
-
 .learn-admin-actions .btn {
   padding: 0.5rem 1rem;
   font-weight: bold;
@@ -1864,17 +1963,32 @@ form label {
   display: block;
   margin-top: 1rem;
 }
-
 form input, form textarea {
   width: 100%;
   padding: 0.5rem;
   margin-top: 0.25rem;
 }
-
 form button {
   margin-top: 1rem;
   padding: 0.75rem 1.5rem;
   font-weight: bold;
+}
+
+.addArticle main {
+  font-family: "Inter", sans-serif;
+  margin: 1rem;
+  max-width: 80%;
+  margin-bottom: 5rem;
+}
+.addArticle main h1 {
+  font-size: 24px;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+}
+.addArticle main p {
+  text-align: center;
+  font-size: 12px;
 }
 
 .tasks h2 {
@@ -2152,6 +2266,11 @@ form button {
   flex-direction: column;
   align-items: center;
 }
+.taskModalContent h2 {
+  background-color: #FFFFFF;
+  border: none;
+  padding-left: 0.5rem;
+}
 
 .taskTypeIconsRow {
   display: grid;
@@ -2176,28 +2295,35 @@ form button {
 
 .confirmBtn {
   background: #714AA8;
-  color: #fff;
+  color: #FFFFFF;
   width: 100%;
   border-radius: 10px;
   margin-bottom: 0.7rem;
-  font-size: 1.1rem;
+  font-size: 16px;
   font-weight: 600;
   padding: 0.7rem 0;
   border: none;
   cursor: pointer;
   transition: background 0.2s;
 }
+.confirmBtn:hover {
+  text-decoration: underline;
+}
 
 .cancelBtn {
-  background: #fff;
-  color: #000;
+  background: #F1F1F1;
+  color: #2F2F2F;
   width: 100%;
   border-radius: 10px;
-  font-size: 1.1rem;
+  font-size: 16px;
   font-weight: 600;
   padding: 0.7rem 0;
-  border: 1px solid #ececec;
+  margin: 1rem auto;
+  border: 1px solid #F1F1F1;
   cursor: pointer;
+}
+.cancelBtn:hover {
+  text-decoration: underline;
 }
 
 .assignGoalRow {

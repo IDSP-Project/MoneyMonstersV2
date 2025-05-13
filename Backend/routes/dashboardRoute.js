@@ -170,18 +170,29 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
       learningProgress = [];
     }
     
-    if (req.viewingChild && req.viewingChild._id) {
-      try {
+    try {
+      const userIdObj = typeof userId === 'string' ? new ObjectId(userId) : userId;
+      
+      if (req.viewingChild && req.viewingChild._id) {
         const childUser = await db.collection('users').findOne({ 
-          _id: new ObjectId(req.viewingChild._id) 
+          _id: userIdObj
         });
         
         if (childUser) {
           req.viewingChild.balance = childUser.balance || 0;
         }
-      } catch (error) {
-        console.error('Error updating child balance:', error);
+      } 
+      else {
+        const currentUser = await db.collection('users').findOne({
+          _id: userIdObj
+        });
+        
+        if (currentUser) {
+          req.session.user.balance = currentUser.balance || 0;
+        }
       }
+    } catch (error) {
+      console.error('Error updating user balance:', error);
     }
     
     res.render('dashboard/home', {

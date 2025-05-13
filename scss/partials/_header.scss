@@ -1,107 +1,42 @@
-.headerbar{
+.headerbar {
   position: relative; 
   font-family: $primary-font;
-  ;
-    * {
-      box-sizing: border-box;
-    }
-    
-    .main-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #ffffff;
-      padding: 1rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      z-index: 100;
-      position: relative;
-    }
-    
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .logo-wrapper {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-    
-      svg {
-        width: 100%;
-        height: auto;
-      }
-    }
-    
-    .brand-name {
-      font-size: 1.25rem;
-      font-weight: bold;
-      color: $secondary;;
-    }
-    
-    .icon-button {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: $secondary;
-    }
-    
-    .hamburger-toggle {
-      display: flex;
-      align-items: center;
-    }
-    
-    .dropdown-menu {
-      background: $white;
-      width: 100%;
-      padding: 1rem 1.5rem 1.5rem 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 90;
-      border-radius: 0 0 8px 8px;
-      max-height: 100vh;
-      overflow-y: auto;
-      position: absolute; 
-      top: 100%; 
-      left: 0; 
-    }
-    
-    .menu-items {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    
-    .menu-items li {
-      margin: 2rem 0;
-      // border-bottom: 1px solid rgba($secondary-light, 0.3);
-      :hover {
-        text-decoration: underline;
-      }
-    }
-    
-    .menu-items a {
-      color: #181D27;
-      text-decoration: none;
-      font-size: 1rem;
-      font-weight: 500;
-      padding: 1rem 0;
-    }
-    
-    .hidden {
-      display: none !important;
-    }
-    .back-button {
+  margin: 0.8rem auto;
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  .mainHeader {
+    display: grid;
+    grid-template-columns: 80% 10%; 
+    align-items: center;
+    gap: 0.75rem;
+    background-color: #ffffff;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 100;
+    position: relative;
+    width: 100%;
+  }
+  
+  .headerLeft {
+    display: flex; 
+    align-items: center;
+    width: 100%;
+  }
+  
+  .back-button {
+    display: flex;
     font-size: 1.25rem;
     color: $secondary;
     text-decoration: none;
-    display: flex;
     align-items: center;
-    justify-content: center;
-    margin-right: 0.25rem;
+    justify-content: flex-start;
+    width: 40px; 
+    height: 32px;
     cursor: pointer;
+    margin-right: 0.5rem;
 
     i {
       font-size: 1.25rem;
@@ -110,5 +45,87 @@
     &:hover {
       opacity: 0.7;
     }
+  }
+  
+  .logoWrapper {
+    display: flex;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    width: 40px; 
+    margin-right: 1rem;
+  
+    svg {
+      width: 32px;
+      height: auto;
+      max-width: 100%;
+    }
+  }
+  
+  .brandName {
+    display: inline-block;
+    font-size: $font-size-base;
+    font-weight: bold;
+    color: $secondary;
+    margin: 0;
+    flex-grow: 1; 
+    text-align: center;
+    white-space: nowrap; 
+  }
+  
+  .hamburger-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    height: 32px;
+  }
+  
+  .icon-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: $secondary;
+    padding: 0;
+  }
+  
+  .dropdown-menu {
+    background: $white;
+    width: 100%;
+    padding: 1rem 1.5rem 1.5rem 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 90;
+    border-radius: 0 0 8px 8px;
+    max-height: 100vh;
+    overflow-y: auto;
+    position: absolute; 
+    top: 100%; 
+    left: 0; 
+  }
+  
+  .menu-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu-items li {
+    margin: 2rem 0;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  .menu-items a {
+    color: #181D27;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 1rem 0;
+  }
+  
+  .hidden {
+    display: none;
   }
 }

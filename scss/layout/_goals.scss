@@ -229,7 +229,7 @@
     width: 100%;
     border-radius: 10px;
     margin-bottom: 0.7rem;
-    font-size: 1.1rem;
+    font-size: $font-size-sm;
     font-weight: 600;
     padding: 0.7rem 0;
     border: none;
@@ -532,7 +532,6 @@
   }
 }
 
-// Modal styles
 .modal {
   display: none;
   position: fixed;
@@ -561,7 +560,7 @@
       margin-bottom: 1.5rem;
 
       h2 {
-        margin: 0;
+        margin: auto;
         font-size: 1.3rem;
         font-weight: bold;
         font-family: $primary-font;
