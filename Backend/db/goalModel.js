@@ -14,12 +14,12 @@ class Goal {
     this.createdAt = data.createdAt || new Date();
     this.updatedAt = data.updatedAt || new Date();
     this.totalRequired = parseFloat(data.totalRequired || data.price || 0);
-    this.amountAchieved = parseFloat(data.amountAchieved || 0);
+    this.amountAchieved = data.amountAchieved !== undefined ? parseFloat(data.amountAchieved) : 0;
     
     if (this.totalRequired > 0) {
       this.progress = Math.min(100, Math.round((this.amountAchieved / this.totalRequired) * 100));
     } else {
-      this.progress = 0;
+      this.progress = data.progress !== undefined ? parseFloat(data.progress) : 0;
     }
     
     this.completed = this.progress >= 100;
@@ -33,6 +33,12 @@ class Goal {
   isCompleted() {
     return this.completed === true || this.progress >= 100 || this.amountAchieved >= this.totalRequired;
   }
+
+  addReward(amount) {
+  this.amountAchieved += parseFloat(amount);
+  this.updateProgress();
+  return this;
+}
   
   updateProgress() {
     if (this.totalRequired > 0) {
@@ -60,50 +66,28 @@ class Goal {
     return newGoal;
   }
   
-  async save() {
-      const db = getDB();
+async save() {
+  const db = getDB();
   if (this._id) {
-    // Create a plain object from this Goal instance
-    const plainObject = {
-      _id: this._id,
-      title: this.title,
-      description: this.description,
-      price: this.price,
-      purchaseLink: this.purchaseLink,
-      parentId: this.parentId,
-      childId: this.childId,
-      status: this.status,
-      createdAt: this.createdAt,
-      updatedAt: new Date(),
-      totalRequired: this.totalRequired,
+    const updateData = {
       amountAchieved: this.amountAchieved,
       progress: this.progress,
       completed: this.completed,
-      completedAt: this.completedAt
+      updatedAt: new Date()
     };
     
-    console.log('Saving goal with explicit fields:', plainObject);
-    
-    const result = await db.collection('goals').replaceOne(
+    const result = await db.collection('goals').updateOne(
       { _id: this._id },
-      plainObject,
-      { writeConcern: { w: 'majority' } }
+      { $set: updateData }
     );
     
-    console.log('Save result details:', result);
     return result;
-    } else {
-      const result = await db.collection('goals').insertOne(this);
-      this._id = result.insertedId;
-      return result;
-    }
+  } else {
+    const result = await db.collection('goals').insertOne(this);
+    this._id = result.insertedId;
+    return result;
   }
-  
-  addReward(amount) {
-    this.amountAchieved += parseFloat(amount);
-    this.updateProgress();
-    return this;
-  }
+}
 }
 
 module.exports = Goal;

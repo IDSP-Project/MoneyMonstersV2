@@ -245,7 +245,6 @@ router.post('/learn/response/:articleId', ensureAuthenticated, async (req, res) 
       createdAt: new Date()
     });
     
-    // Mark as completed and automatically apply reward
     const result = await Learning.updateStatus(userId, blogId.toString(), 'completed', responseText);
     
     console.log("Response saved and status updated for user:", userId.toString());
@@ -305,7 +304,6 @@ router.post('/learn/new', ensureAuthenticated, async (req, res) => {
       selectedChild = children[0];
     }
     
-    // Create learning with embedded progress - simplified with just status
     const newLearning = {
       category: category,
       title: title.trim(),

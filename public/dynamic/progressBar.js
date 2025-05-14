@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   initProgressBars();
   setupTaskCardListeners();
+  
 });
 
 function initProgressBars() {
@@ -27,7 +28,6 @@ async function completeTaskWGoal(taskId, goalId) {
       completeBtn.textContent = 'Completing...';
     }
     
-    // Capture initial goal state for comparison
     let initialGoalData = null;
     if (goalId) {
       try {
@@ -41,7 +41,6 @@ async function completeTaskWGoal(taskId, goalId) {
       }
     }
     
-    // Complete the task
     const response = await fetch(`/tasks/${taskId}/complete`, {
       method: 'POST'
     });
@@ -54,7 +53,6 @@ async function completeTaskWGoal(taskId, goalId) {
     console.log('Task completion result:', result);
     
     if (result.success) {
-      // Update task card UI
       const taskCard = document.querySelector(`.taskCard[data-task-id="${taskId}"]`);
       if (taskCard) {
         const statusBadge = taskCard.querySelector('.statusBadge');
@@ -65,29 +63,19 @@ async function completeTaskWGoal(taskId, goalId) {
         }
       }
       
-      // Apply the goal updates if we have a goalId
       if (goalId) {
         console.log(`Explicitly refreshing goal ${goalId} data after task completion`);
         
-        // First, force an update-progress call to ensure DB is updated
-        await fetch(`/goals/${goalId}/update-progress`, {
+        const updateResponse = await fetch(`/goals/${goalId}/update-progress`, {
           method: 'POST'
         });
         
-        // Then get the fresh data
-        const goalResponse = await fetch(`/goals/${goalId}/data`);
-        if (goalResponse.ok) {
-          const goalData = await goalResponse.json();
-          console.log('Updated goal data:', goalData);
-          
-          // If we've verified the goal data has changed, update the UI
-          if (goalData && (!initialGoalData || 
-              initialGoalData.amountAchieved !== goalData.amountAchieved ||
-              initialGoalData.progress !== goalData.progress)) {
+        if (updateResponse.ok) {
+          const updateResult = await updateResponse.json();
+          if (updateResult.success && updateResult.goal) {
+            const goalData = updateResult.goal;
+            console.log('Updated goal data from update endpoint:', goalData);
             
-            console.log('Goal data changed, updating UI with:', goalData);
-            
-            // Update the progress bar
             if (typeof updateProgressBar === 'function') {
               updateProgressBar(
                 goalId, 
@@ -97,21 +85,51 @@ async function completeTaskWGoal(taskId, goalId) {
               );
             }
             
-            // Update other goal UI elements
             if (typeof updateGoalUI === 'function') {
               updateGoalUI(goalData);
             }
           } else {
-            console.log('Goal data unchanged or invalid, forcing page reload');
-            setTimeout(() => window.location.reload(), 1000);
+            console.log('No goal data in update response, fetching separately');
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            const goalResponse = await fetch(`/goals/${goalId}/data`);
+            if (goalResponse.ok) {
+              const goalData = await goalResponse.json();
+              
+              if (goalData && (!initialGoalData || 
+                  initialGoalData.amountAchieved !== goalData.amountAchieved ||
+                  initialGoalData.progress !== goalData.progress)) {
+                
+                console.log('Goal data changed, updating UI with:', goalData);
+                
+                if (typeof updateProgressBar === 'function') {
+                  updateProgressBar(
+                    goalId, 
+                    goalData.progress,
+                    goalData.amountAchieved,
+                    goalData.totalRequired
+                  );
+                }
+                
+                if (typeof updateGoalUI === 'function') {
+                  updateGoalUI(goalData);
+                }
+              } else {
+                console.log('Goal data unchanged or invalid, forcing page reload');
+                setTimeout(() => window.location.reload(), 3000);
+              }
+            } else {
+              console.error(`Failed to fetch goal data: ${goalResponse.status}`);
+              setTimeout(() => window.location.reload(), 3000);
+            }
           }
         } else {
-          console.error(`Failed to fetch goal data: ${goalResponse.status}`);
-          setTimeout(() => window.location.reload(), 1000);
+          console.error(`Failed to update goal progress: ${updateResponse.status}`);
+          setTimeout(() => window.location.reload(), 3000);
         }
       }
       
-      // Update user balance if provided
       if (result.userBalance !== undefined) {
         const balanceElements = document.querySelectorAll('.userBalance');
         balanceElements.forEach(element => {
@@ -119,7 +137,6 @@ async function completeTaskWGoal(taskId, goalId) {
         });
       }
       
-      // Show success overlay
       const modalContent = document.querySelector('#taskModal .modalContent');
       let successOverlay = document.getElementById('completeTaskSuccessOverlay');
       
@@ -140,7 +157,6 @@ async function completeTaskWGoal(taskId, goalId) {
       
       successOverlay.classList.add('show');
       
-      // Hide buttons
       const startBtn = document.getElementById('modalStartBtn');
       const assignGoalBtn = document.getElementById('modalAssignGoalBtn');
       
@@ -148,39 +164,39 @@ async function completeTaskWGoal(taskId, goalId) {
       if (completeBtn) completeBtn.style.display = 'none';
       if (assignGoalBtn) assignGoalBtn.style.display = 'none';
       
-      // Update modal status
       const modalStatusEl = document.getElementById('modalTaskStatus');
       if (modalStatusEl) {
         modalStatusEl.innerHTML = `<span class="statusBadge completed">Completed</span>`;
       }
       
-      // Close modal and reload after delay
       setTimeout(() => {
         closeModal('taskModal');
-        
-        // If we didn't see a goal update, force a reload to ensure
-        // everything is in sync
+
         if (result.goalUpdated && goalId && result.goal) {
           console.log("Server indicated goal was updated, verifying UI update...");
           
-          // One final check - if the goal was updated according to the backend 
-          // but we don't see the UI change, force reload
           const goalElement = document.querySelector(`.goal-${goalId} .goalAmountText`);
           if (goalElement) {
             const displayedAmount = goalElement.textContent.replace('$', '').trim();
             const expectedAmount = parseFloat(result.goal.amountAchieved).toFixed(2);
             
+            console.log("UI verification:", {
+              displayedInUI: displayedAmount,
+              expectedFromServer: expectedAmount,
+              goalElement: goalElement.outerHTML
+            });
+            
             if (displayedAmount !== expectedAmount) {
               console.log(`UI not updated correctly: displayed=${displayedAmount}, expected=${expectedAmount}`);
-              window.location.reload();
+              setTimeout(() => window.location.reload(), 3000);
             }
           } else {
-            // If we can't find the element, reload anyway
-            window.location.reload();
+            console.log(`Goal element .goal-${goalId} .goalAmountText not found, reloading page`);
+            setTimeout(() => window.location.reload(), 3000);
           }
         } else {
-          // Goal wasn't updated or we don't have info to verify, reload to be safe
-          window.location.reload();
+          console.log("No goal update indicated or missing data, reloading page");
+          setTimeout(() => window.location.reload(), 3000);
         }
       }, 1500);
     } else {
@@ -203,7 +219,6 @@ function updateGoalUI(goalData) {
   
   const goalId = goalData._id.toString();
   
-  // Update remaining amount display
   const remainingElement = document.querySelector(`.goal-${goalId} .remaining-amount`);
   if (remainingElement) {
     const remaining = Math.max(0, goalData.totalRequired - goalData.amountAchieved);
@@ -211,7 +226,6 @@ function updateGoalUI(goalData) {
     console.log(`Updated remaining amount to $${parseFloat(remaining).toFixed(2)}`);
   }
   
-  // Update modal amount if it exists
   const remainingModalElement = document.getElementById('remainingGoalAmount');
   if (remainingModalElement) {
     const remaining = Math.max(0, goalData.totalRequired - goalData.amountAchieved);
@@ -219,14 +233,12 @@ function updateGoalUI(goalData) {
     console.log(`Updated modal remaining amount to ${parseFloat(remaining).toFixed(2)}`);
   }
   
-  // Update amount texts
   const amountText = document.querySelector(`.goal-${goalId} .goalAmountText`);
   if (amountText) {
     amountText.textContent = `$${parseFloat(goalData.amountAchieved).toFixed(2)}`;
     console.log(`Updated amount text to $${parseFloat(goalData.amountAchieved).toFixed(2)}`);
   }
   
-  // Handle completion state
   if (goalData.completed) {
     console.log(`Goal ${goalId} is completed, updating UI to show completion`);
     
@@ -245,7 +257,6 @@ function updateGoalUI(goalData) {
   }
 }
 
-
 function refreshAllGoalProgress() {
   console.log('Refreshing all goal progress data');
   
@@ -260,7 +271,6 @@ function refreshAllGoalProgress() {
     }
   });
 }
-
 
 function updateProgressBar(goalId, percentage, amountAchieved, totalRequired) {
   console.log(`Updating progress bar for goal ${goalId} to ${percentage}%`);
@@ -342,21 +352,6 @@ function refreshGoalProgress(goalId) {
     })
     .catch(error => console.error(`Error refreshing goal ${goalId} data:`, error));
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('Page loaded, refreshing all goal data');
-  
-  setTimeout(function() {
-    const goalElements = document.querySelectorAll('[data-goal-id]');
-    
-    goalElements.forEach(function(element) {
-      const goalId = element.dataset.goalId;
-      if (goalId) {
-        refreshGoalData(goalId);
-      }
-    });
-  }, 500); 
-});
 
 async function refreshGoalData(goalId) {
   console.log(`Refreshing data for goal ${goalId}`);

@@ -1,4 +1,3 @@
-// routes/goalRoutes.js
 const express = require('express');
 const router = express.Router();
 const { ensureAuthenticated } = require('../helpers/authHelpers');
@@ -71,7 +70,9 @@ router.get('/goals/view/:goalId', ensureAuthenticated, async (req, res) => {
 router.get('/goals/:goalId/data', ensureAuthenticated, async (req, res) => {
   try {
     const goalId = req.params.goalId;
-    const goal = await findGoalById(goalId);
+    
+    const db = getDB();
+    const goal = await db.collection('goals').findOne({ _id: new ObjectId(goalId) });
     
     if (!goal) {
       return res.status(404).json({ success: false, error: 'Goal not found' });
@@ -90,14 +91,19 @@ router.get('/goals/:goalId/data', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Update progress for a specific goal
+
 router.post('/goals/:goalId/update-progress', ensureAuthenticated, async (req, res) => {
   try {
     const goalId = req.params.goalId;
     const result = await updateGoalProgress(goalId);
     
     if (result.success) {
-      res.json({ success: true });
+      const updatedGoal = await findGoalById(goalId);
+      
+      res.json({ 
+        success: true,
+        goal: updatedGoal
+      });
     } else {
       throw new Error('Failed to update goal progress');
     }
@@ -110,7 +116,6 @@ router.post('/goals/:goalId/update-progress', ensureAuthenticated, async (req, r
   }
 });
 
-// Get all goals for a specific child
 router.get('/goals/:childId', ensureAuthenticated, async (req, res) => {
   try {
     const goals = await findGoalsByChildId(req.params.childId);
@@ -133,7 +138,6 @@ router.get('/goals/:childId', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Get all goals (for current user)
 router.get('/goals', ensureAuthenticated, async (req, res) => {
   try {
     let goals = [];
@@ -177,7 +181,6 @@ router.get('/goals', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Add a new goal
 router.post('/add', ensureAuthenticated, async (req, res) => {
   try {
     const db = getDB();
@@ -225,7 +228,6 @@ router.post('/add', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Update an existing goal
 router.post('/update/:goalId', ensureAuthenticated, async (req, res) => {
   try {
     const { status, amountAchieved, totalRequired } = req.body;
@@ -252,7 +254,6 @@ router.post('/update/:goalId', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Delete a goal
 router.delete('/:goalId', async (req, res) => {
   try {
     const result = await deleteGoal(req.params.goalId);

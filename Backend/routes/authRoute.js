@@ -123,7 +123,7 @@ router.post('/password-reset', async (req, res) => {
       });
     }    
     const token = crypto.randomBytes(32).toString('hex');
-    const expiryTime = new Date(Date.now() + 3600000); // 1 hour from now
+    const expiryTime = new Date(Date.now() + 3600000);
     await User.setPasswordResetToken(user._id, token, expiryTime);
     
     const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${token}`;
@@ -216,7 +216,6 @@ router.post('/reset-password/:token', async (req, res) => {
       });
     }
     
-    // Check password validity
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.valid) {
       return res.render('users/resetPassword', {
@@ -229,7 +228,6 @@ router.post('/reset-password/:token', async (req, res) => {
     
     await User.resetPassword(user._id, password);
     
-    // Redirect to login with success message
     req.session.flash = {
       message: 'Your password has been reset successfully. Please log in.',
       type: 'success'
