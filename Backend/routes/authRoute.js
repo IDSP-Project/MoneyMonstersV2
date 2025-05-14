@@ -537,10 +537,19 @@ router.post("/register/family", forwardAuthenticated, async (req, res) => {
 
 router.get("/profile/:id", ensureAuthenticated, async (req, res) => {
   try {
-    const userIdToUse = req.session.user.id;
-    const idToRetrieve = req.params.id === 'me' ? userIdToUse : req.params.id;
+let idToRetrieve;
     
-    const result = await retrieveProfile(idToRetrieve, userIdToUse);
+    if (req.params.id === 'me') {
+      if (req.viewingChild) {
+        idToRetrieve = req.viewingChild._id || req.viewingChild.id;
+      } else {
+        idToRetrieve = req.session.user.id;
+      }
+    } else {
+      idToRetrieve = req.params.id;
+    }
+    
+    const result = await retrieveProfile(idToRetrieve, req.session.user.id);
 
     if (!result.success) {
       throw new Error(result.error);
@@ -549,7 +558,10 @@ router.get("/profile/:id", ensureAuthenticated, async (req, res) => {
     res.render("users/userProfile", {
       user: req.session.user,
       profileUser: result.profileUser,
-      currentPage: 'profile'
+      currentPage: 'profile',
+       viewingAsChild: req.viewingChild ? true : false,
+      viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+      child: req.viewingChild
     });
   } catch (error) {
     res.status(404).send(error.message);

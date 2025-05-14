@@ -133,7 +133,9 @@ const createGoal = async (goalData) => {
       updatedAt: new Date(),
       totalRequired: parseFloat(goalData.totalRequired || goalData.price),
       amountAchieved: parseFloat(goalData.amountAchieved || 0),
-      progress: parseFloat(goalData.progress || 0)
+      progress: parseFloat(goalData.progress || 0),
+      completed: false,              
+      completedAt: null                
     };
     
     const result = await db.collection('goals').insertOne(newGoal);
@@ -167,7 +169,19 @@ const updateGoal = async (goalId, updateData) => {
         ? parseFloat(updateData.amountAchieved) 
         : currentGoal.amountAchieved;
       
-      updateData.progress = Math.min(100, (amountAchieved / totalRequired) * 100);
+      const newProgress = Math.min(100, (amountAchieved / totalRequired) * 100);
+      updateData.progress = newProgress;
+      
+      const isCompleted = newProgress >= 100;
+      updateData.completed = isCompleted;
+      
+      if (isCompleted && !currentGoal.completed) {
+        updateData.completedAt = new Date();
+        
+        if (currentGoal.status !== 'ready') {
+          updateData.status = 'ready';
+        }
+      }
     }
     
     const result = await db.collection('goals').updateOne(
@@ -230,13 +244,37 @@ const updateGoalProgress = async (goalId) => {
     const assignedAmount = await getAssignedFundsForGoal(goalId);
     const progress = Math.min(100, (assignedAmount / goal.totalRequired) * 100);
     
-    return await updateGoal(goalId, {
+    const isCompleted = progress >= 100;
+    const updateObj = {
       amountAchieved: assignedAmount,
-      progress: progress
-    });
+      progress: progress,
+      completed: isCompleted
+    };
+    
+    if (isCompleted && !goal.completed) {
+      updateObj.completedAt = new Date();
+      
+      if (goal.status !== 'ready') {
+        updateObj.status = 'ready';
+      }
+    }
+    
+    return await updateGoal(goalId, updateObj);
   } catch (error) {
     console.error('Error updating goal progress:', error);
     return { success: false, error: error.message };
+  }
+};
+
+const isGoalCompleted = async (goalId) => {
+  try {
+    const goal = await findGoalById(goalId);
+    if (!goal) return false;
+    
+    return goal.completed === true;
+  } catch (error) {
+    console.error('Error checking if goal is completed:', error);
+    return false;
   }
 };
 
@@ -250,5 +288,6 @@ module.exports = {
   updateGoal,
   deleteGoal,
   getAssignedFundsForGoal,
-  updateGoalProgress
+  updateGoalProgress,
+  isGoalCompleted
 };

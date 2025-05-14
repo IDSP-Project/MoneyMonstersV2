@@ -17,6 +17,9 @@
     </header>
     <div class="goalPage">
       <div class="goalsContainer">
+        <% if (user.accountType === 'parent' && !locals.viewingAsChild) { %>
+            <h1>Family's goal progress %></h1>
+            <% } %>
         <% if (goals && goals.length > 0) { %>
           <div class="sectionTabs">
             <h2>Goals</h2>
@@ -50,7 +53,7 @@
         <% } else { %>
           <div class="noGoalsMessage">
             <i class="fas fa-bullseye"></i>
-            <h2>No Goals Yet</h2>
+            <h1>No Goals Yet</h1>
             <p>You haven't set any goals yet. Start by adding your first goal!</p>
           </div>
         <% } %>

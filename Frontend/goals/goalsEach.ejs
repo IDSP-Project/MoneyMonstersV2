@@ -11,6 +11,9 @@
   <div class="container">
     <header>
       <%- include('../partials/header') %>
+      <% if (locals.viewingAsChild && locals.viewingChildName) { %>
+        <%- include('../partials/viewingAsChild') %>
+      <% } %> 
     </header>
     <main>
       <div class="goalDetailsPage">
@@ -45,16 +48,17 @@
           </div>
           
           <div class="tasksContainer">
-            <div class="assignTaskContainer">
-              <button class="assignTaskBtn" data-modal-target="assignTaskModal">
-                <i class="fas fa-plus"></i> Assign Task
-              </button>
-            </div>
-            <div class="assignBalanceContainer">
-              <button class="assignTaskBtn" data-modal-target="assignTaskModal">
-                <i class="fas fa-plus"></i> Assign Balance
-              </button>
-            </div>
+            <% if (user.accountType === 'child' && !viewingAsChild) { %>
+              <div class="goalActionsContainer">
+                <button class="assignTaskBtn" data-modal-target="assignTaskModal">
+                  Assign Task
+                </button>
+                
+                <button class="assignBalanceBtn" data-modal-target="assignBalanceModal">
+                  Assign Balance
+                </button>
+              </div>
+            <% } %>
 
             <div class="sectionTabs">
               <h2>Tasks</h2>
@@ -81,7 +85,7 @@
                       </div>
                       <div class="taskText">
                         <h3><%= task.title %></h3>
-                        <small class="dueDate" data-due="<%= task.dueDate && task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> | <%= task.formattedDue ? task.formattedDue : '' %></small>
+                        <small class="dueDate" data-due="<%= task.dueDate && task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> <%= task.formattedDue ? task.formattedDue : '' %></small>
                       </div>
                     </div>
                     <div class="taskStatus">
@@ -111,7 +115,7 @@
     <%- include('../partials/modals/assignGoalModal') %>
     <%- include('../partials/modals/assignTaskModal') %>
     <%- include('../partials/modals/confirmReassignModal') %>
-    </div>
+    <%- include('../partials/modals/assignBalanceModal') %>
   </div>
 
   <script src="/dynamic/formatDueDates.js"></script>

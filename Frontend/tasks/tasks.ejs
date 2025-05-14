@@ -42,7 +42,7 @@
                     </div>
                     <div class="taskText">
                       <h3><%= task.title %></h3>
-                      <small class="dueDate" data-due="<%= task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> | <%= task.formattedDue %></small>
+                      <small class="dueDate" data-due="<%= task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> <%= task.formattedDue %></small>
                     </div>
                   </div>
                   <div class="taskStatus">
@@ -56,7 +56,7 @@
           <% } else { %>
             <div class="noTasksMessage">
               <i class="fas fa-tasks"></i>
-              <h2>No Tasks Yet</h2>
+              <h1>No Tasks Yet</h1>
               <p>Ask your parent to assign a task.</p>
             </div>
           <% } %>

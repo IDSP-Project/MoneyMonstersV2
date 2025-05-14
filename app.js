@@ -42,13 +42,14 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'Frontend'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(checkViewingAsChild);
+
+
 const authRoute = require('./Backend/routes/authRoute');
 const { router: goalsRoute, fetchGoalsForHome } = require('./Backend/routes/goalsRoute');
 const { router: taskRoute, fetchTasksForHome } = require('./Backend/routes/taskRoute');
 const learnRoute = require('./Backend/routes/learnRoute.js');
 const dashboardRoute = require('./Backend/routes/dashboardRoute');
-
-app.use(checkViewingAsChild);
 
 app.use(express.json());
 app.use('/', authRoute);         

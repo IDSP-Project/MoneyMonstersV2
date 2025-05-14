@@ -20,15 +20,15 @@
       <section class="balance-section">
         <% if (user && user.balance != null) { %>
           <% if (user.accountType === 'parent' && !locals.viewingAsChild) { %>
-            <h1>Family's progress: $<%= user.balance.toFixed(2) %></h1>
+            <h1>Family's savings: $<%= user.balance.toFixed(2) %></h1>
           <% } else { %>
-            <h1>Your savings so far: $<%= user.balance.toFixed(2) %></h1>
+            <h1>You have saved: $<%= user.balance.toFixed(2) %></h1>
           <% } %>
         <% } else { %>
           <h2>Balance not available</h2>
         <% } %>
 
-        <form action="/balance/add" method="POST" style="display: inline;">
+        <!-- <form action="/balance/add" method="POST" style="display: inline;">
           <input type="hidden" name="amount" value="1" />
           <button type="submit" class="btn">Add $1</button>
         </form>
@@ -36,7 +36,7 @@
         <form action="/balance/remove" method="POST" style="display: inline;">
           <input type="hidden" name="amount" value="1" />
           <button type="submit" class="btn">Remove $1</button>
-        </form>
+        </form> -->
       </section>
      <section class="response-section">
       </section>
@@ -74,7 +74,7 @@
           </div>
         <% } else { %>
           <div class="noGoalsMessage">
-            <h2>No Goals Yet</h2>
+            <h1>No Goals Yet</h1>
             <p>You haven't set any goals yet. Start by adding your first goal!</p>
           </div>
         <% } %>
@@ -120,8 +120,7 @@
             </div>
           <% } else { %>
             <div class="noTasksMessage">
-              <i class="fas fa-tasks"></i>
-              <h2>No Tasks Yet</h2>
+              <h1>No Tasks Yet</h1>
               <p>Ask your parent to assign a task.</p>
             </div>
           <% } %>
