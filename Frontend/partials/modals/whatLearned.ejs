@@ -1,38 +1,34 @@
-<div id="whatLearnedModal" class="modal">
+
+<div id="whatLearnedModal" class="baseModal">
   <div class="modalContent">
-    <div class="modalHeader">
-      <h2>What did you learn?</h2>
-    </div>
+    <h2>What did you learn?</h2>
     
     <div class="modalBody">
       <p>Please share something you learned from this article:</p>
-      <textarea id="learningReflection" placeholder="Type something you learned from this article..."></textarea>
-    </div>
-    
-    <div class="modalFooter">
-      <button class="cancelBtn">Cancel</button>
-      <button id="submitLearningBtn" data-blog-id="<%= blog._id %>" class="confirmBtn">
-      Mark as Complete
-      </button>
+      <textarea id="learningReflection" class="modalInput textarea" 
+                placeholder="Type something you learned from this article..."></textarea>
+      
+      <div class="modalFooter">
+        <button id="submitLearningBtn" data-blog-id="<%= blog._id %>" class="modalBtn primary">
+          Mark as Complete
+        </button>
+        <button id="cancelLearningBtn" class="modalBtn secondary">Cancel</button>
+      </div>
     </div>
   </div>
 </div>
 
-<div id="learnSuccessModal" class="modal">
+<div id="learnSuccessModal" class="baseModal">
   <div class="modalContent">
-    <div class="modalHeader">
-      <h2>Success!</h2>
-    </div>
+    <h2>Success!</h2>
     
     <div class="modalBody">
-      <div class="successIconContainer">
-        <div class="successIcon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
+      <div class="successIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+        </svg>
       </div>
-      <p class="successText">Learning Complete!</p>
+      <p class="successMessage">Learning Complete!</p>
     </div>
   </div>
 </div>

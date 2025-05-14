@@ -1,7 +1,7 @@
 .learn {
   font-family: $primary-font;
 
-   .statusBadge {
+  .statusBadge {
     display: inline-block;
     padding: 0.4em 1em;
     border-radius: 12px;
@@ -31,7 +31,6 @@
       color: $error;
     }
   }
-  
   
   main {
     display: flex;
@@ -263,6 +262,7 @@
     grid-template-rows: repeat(2, auto);
     max-width: 80%;
     border: $success 4px solid;
+    
     h3 {
       color: $secondary;
       margin: 0 auto;
@@ -289,37 +289,6 @@
   }
 }
 
-#learnSuccessModal {
-  .successIconContainer {
-    display: flex;
-    justify-content: center;
-    margin: 1rem 0;
-    
-    .successIcon {
-      width: 60px;
-      height: 60px;
-      background-color: $success;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      svg {
-        width: 36px;
-        height: 36px;
-        color: white;
-      }
-    }
-  }
-  
-  .successText {
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #333;
-    margin: 1rem 0;
-  }
-}
 
 .learn-admin-actions {
   text-align: right;
@@ -356,15 +325,17 @@ form {
     margin: 1rem;
     max-width: 80%;
     margin-bottom: 5rem;
+    
     h1 {
       font-size: $font-size-lg;
       width: 100%;
       text-align: center;
       white-space: nowrap;
     }
+    
     p {
       text-align: center;
       font-size: $font-size-xs;
-    };
+    }
   }
 }

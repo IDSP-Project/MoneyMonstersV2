@@ -1,16 +1,32 @@
-<div class="modal" id="assignTaskModal">
+<div id="assignTaskModal" class="baseModal">
   <div class="modalContent">
-    <span class="closeModal">&times;</span>
     <h2>Assign Task to Goal</h2>
     
-    <div class="taskList">
-      <div class="loadingMessage">
-        <p>Loading available tasks...</p>
+    <div class="modalBody">
+      <div class="taskList">
+        <div class="loadingMessage">
+          <p>Loading available tasks...</p>
+        </div>
+      </div>
+      
+      <div class="modalFooter">
+        <button type="button" class="modalBtn secondary">Cancel</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="successGoalModal" class="baseModal">
+  <div class="modalContent">
+    <h2>Task Complete!</h2>
     
-    <div class="modalActions">
-      <button type="button" class="cancelBtn">Cancel</button>
+    <div class="modalBody">
+      <div class="successIcon"><i class="fas fa-check-circle"></i></div>
+      <p class="successMessage">Your task is now marked complete.</p>
+      
+      <div class="modalFooter">
+        <button class="modalBtn primary" id="successGoalDoneBtn">Done</button>
+      </div>
     </div>
   </div>
 </div>

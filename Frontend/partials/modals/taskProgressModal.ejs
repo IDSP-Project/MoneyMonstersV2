@@ -1,30 +1,70 @@
-<div id="taskModal" class="modal">
+<div id="taskProgressModal" class="baseModal">
   <div class="modalContent">
-    <div class="modalHeader">
-      <h2 id="modalTaskTitle">Task Details</h2>
-      <span class="modalClose">&times;</span>
-    </div>
+    <h2>Task Progress</h2>
+    
     <div class="modalBody">
-      <div class="modalTaskIcon" id="modalTaskIcon"></div>
-      <p class="modalTaskDesc" id="modalTaskDesc"></p>
-      <div class="modalTaskMeta">
-        <span id="modalTaskReward"></span> |
-        <span id="modalTaskDue"></span>
+      <div class="taskDetails">
+        <h3 id="taskProgressTitle"></h3>
+        <p id="taskProgressDescription"></p>
+        <div class="taskMetaInfo">
+          <span id="taskProgressReward"></span>
+          <span id="taskProgressDueDate"></span>
+          <span id="taskProgressStatus" class="statusBadge"></span>
+        </div>
+        <div class="taskChild">
+          <p>Assigned to: <span id="taskProgressChild"></span></p>
+        </div>
       </div>
-      <div class="modalGoalInfoRow">
-        <span id="modalConfirmedBy" class="modalTaskConfirmedBy"></span>
-        <span id="modalGoalInfo" class="modalTaskGoalInfo"></span>
+      
+      <div class="taskActions">
+        <button class="modalBtn primary" id="approveTaskBtn">Approve Completion</button>
+        <button class="modalBtn primary" id="rejectTaskBtn">Reject Completion</button>
+        <button class="modalBtn tertiary" id="deleteTaskBtn">Delete Task</button>
       </div>
-      <div class="modalTaskActions" id="modalTaskActions">
-        <button class="btn modalStartBtn" id="modalStartBtn">Start</button>
-        <button class="btn modalCompleteBtn" id="modalCompleteBtn" style="display:none;">Mark Completed</button>
-      </div>
-      <div class="modalAssignGoalRow">
-        <button class="btn modalAssignGoalBtn" id="modalAssignGoalBtn" style="display:none;">Assign to Goal</button>
+      
+      <div id="taskProgressError" class="modalError"></div>
+      
+      <div class="modalFooter">
+        <button class="modalBtn secondary" id="closeTaskProgressModal">Close</button>
       </div>
     </div>
-    <div class="modalFooter">
-      <button class="cancelBtn" id="modalCancelBtn">Cancel</button>
+  </div>
+</div>
+
+<div id="taskModal" class="baseModal">
+  <div class="modalContent">
+    <div class="taskDetailsRow">
+      <div class="iconCircle" id="modalTaskIcon"></div>
+      <h2 class="detailsTitle" id="modalTaskTitle">Task Details</h2>
+      <div class="statusBadge" id="modalTaskStatus"></div>
+    </div>
+    
+    <div class="modalBody">
+      <h5>Description:</h5>
+      <p id="modalTaskDesc" class="taskDescription"></p>
+      
+        <div class="taskMeta">
+          <div class="metaRow">
+            <h5>Reward:</h5>
+            <span id="modalTaskReward"></span>
+          </div>
+          <div class="metaRow">
+            <h5>Due By:</h5> 
+            <span id="modalTaskDue"></span>
+          </div>
+        </div>
+      
+      <div class="taskGoalInfo">
+        <p id="modalConfirmedBy"></p>
+        <p id="modalGoalInfo"></p>
+      </div>
+      
+      <div class="modalFooter">
+        <button class="modalBtn primary action" id="modalStartBtn">Start</button>
+        <button class="modalBtn primary action" id="modalCompleteBtn" style="display:none;">Mark Completed</button>
+        <button class="modalBtn tertiary action" id="modalAssignGoalBtn" style="display:none;">Assign to Goal</button>
+        <button class="modalBtn secondary" id="modalCancelBtn">Cancel</button>
+      </div>
     </div>
   </div>
 </div>

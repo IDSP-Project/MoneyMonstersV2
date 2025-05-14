@@ -1,21 +1,20 @@
-<div id="assignGoalModal" class="modal">
+<div id="assignGoalModal" class="baseModal">
   <div class="modalContent">
-    <div class="modalHeader">
-      <h2>Assign to a Goal</h2>
-      <span class="modalClose">&times;</span>
-    </div>
+    <h2>Assign to a Goal</h2>
+    
     <div class="modalBody">
       <% if (activeGoals && activeGoals.length > 0) { %>
         <form id="assignGoalForm">
           <% activeGoals.forEach(function(goal) { %>
-            <label class="goalRadio">
+            <label class="radioOption">
               <input type="radio" name="goalId" value="<%= goal._id %>" />
               <span><%= goal.title %></span>
             </label>
           <% }); %>
+          
           <div class="modalFooter">
-            <button type="submit" class="confirmBtn">Assign</button>
-            <button type="button" class="cancelBtn" id="cancelAssignGoalModal">Cancel</button>
+            <button type="submit" class="modalBtn primary">Assign</button>
+            <button type="button" class="modalBtn secondary" id="cancelAssignGoalModal">Cancel</button>
           </div>
         </form>
       <% } else { %>
@@ -23,8 +22,9 @@
           <i class="fas fa-bullseye"></i>
           <p>No active goals to assign.</p>
         </div>
+        
         <div class="modalFooter">
-          <button type="button" class="cancelBtn" id="cancelAssignGoalModal">Close</button>
+          <button type="button" class="modalBtn secondary" id="cancelAssignGoalModal">Close</button>
         </div>
       <% } %>
     </div>

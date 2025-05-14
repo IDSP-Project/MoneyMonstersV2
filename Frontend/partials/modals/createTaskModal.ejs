@@ -1,7 +1,8 @@
-<div id="selectTaskTypeModal" class="taskModal" style="display: none;">
-  <div class="taskModalContent">
+<div id="selectTaskTypeModal" class="baseModal" style="display: none;">
+  <div class="modalContent">
     <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1.2rem;">Select Task Type</h2>
     <div class="taskTypeIconsRow">
+
       <div class="taskType">
         <div class="taskTypeIcon" data-category="pet">
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -52,15 +53,14 @@
         <div class="taskTypeLabel">Misc.</div>
       </div>
     </div>
-
-    <div id="taskTypeError" class="modalError"></div>
-    <button class="confirmBtn" id="confirmTaskTypeBtn">Confirm</button>
-    <button class="cancelBtn" id="cancelTaskTypeBtn">Cancel</button>
+   <div id="taskTypeError" class="modalError"></div>
+    <button class="modalBtn primary" id="confirmTaskTypeBtn">Confirm</button>
+    <button class="modalBtn secondary" id="cancelTaskTypeBtn">Cancel</button>
   </div>
 </div>
 
-<div id="addTaskDetailsModal" class="taskModal" style="display: none;">
-  <div class="taskModalContent addTaskDetailsModalContent">
+<div id="addTaskDetailsModal" class="baseModal" style="display: none;">
+  <div class="modalContent">
     <div class="taskDetailsIconRow">
       <span id="taskDetailsIconCircle" class="taskDetailsIconCircle">
       </span>
@@ -72,17 +72,15 @@
     <input type="date" id="taskDetailsDate" class="taskDetailsInput" placeholder="By • Date" required/>
     <input type="time" id="taskDetailsTime" class="taskDetailsInput" placeholder="By • Time" required/>
     <div id="taskDetailsError" class="modalError"></div>
-    <button class="confirmBtn" id="confirmAddTaskBtn">Create Task</button>
-    <button class="cancelBtn" id="cancelAddTaskBtn">Cancel</button>
+    <button class="modalBtn primary" id="confirmAddTaskBtn">Create Task</button>
+    <button class="modalBtn secondary" id="cancelAddTaskBtn">Cancel</button>
   </div>
 </div>
 
-<div id="taskProgressModal" class="modal">
+<div id="taskProgressModal" class="baseModal">
   <div class="modalContent">
-    <div class="modalHeader">
-      <h2>Task Progress</h2>
-      <span class="modalClose">&times;</span>
-    </div>
+    <h2>Task Progress</h2>
+    
     <div class="modalBody">
       <div class="taskDetails">
         <h3 id="taskProgressTitle"></h3>
@@ -96,15 +94,16 @@
           <p>Assigned to: <span id="taskProgressChild"></span></p>
         </div>
       </div>
+      
       <div class="taskActions">
-        <button class="btn approveTaskBtn" id="approveTaskBtn">Approve Completion</button>
-        <button class="btn rejectTaskBtn" id="rejectTaskBtn">Reject Completion</button>
-        <button class="btn deleteTaskBtn" id="deleteTaskBtn">Delete Task</button>
+        <button class="modalBtn primary" id="approveTaskBtn">Approve Completion</button>
+        <button class="modalBtn primary" id="rejectTaskBtn">Reject Completion</button>
+        <button class="modalBtn tertiary" id="deleteTaskBtn">Delete Task</button>
       </div>
+      
       <div class="modalError" id="taskProgressError"></div>
-      <div class="modalFooter">
-        <button class="cancelBtn" id="closeTaskProgressModal">Close</button>
-      </div>
     </div>
+    
+    <button class="modalBtn secondary" id="closeTaskProgressModal">Close</button>
   </div>
 </div>
