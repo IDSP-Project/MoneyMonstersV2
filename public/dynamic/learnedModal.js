@@ -248,13 +248,10 @@ document.addEventListener('DOMContentLoaded', function() {
             modalConfirmedBy.textContent = '';
           }
         }
-        // Set goal info for completed status
         if (modalGoalInfo) {
           let goalTitle = '';
           let rewardAmount = reward.replace('$', '').trim();
-          // Try to get goal title from the card if available
           if (card.dataset.goalId && card.dataset.goalId !== '') {
-            // Try to find the goal title from the assignGoalForm
             let foundTitle = '';
             if (assignGoalForm) {
               const goalRadio = assignGoalForm.querySelector(`input[value='${card.dataset.goalId}']`);

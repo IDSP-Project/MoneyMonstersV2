@@ -301,22 +301,12 @@ router.post('/tasks', ensureAuthenticated, async (req, res) => {
 
 router.post('/tasks/:taskId/complete', ensureAuthenticated, async (req, res) => {
   try {
-    const db = getDB();
-    const taskId = new ObjectId(req.params.taskId);
+    const taskId = req.params.taskId;
     
-    const result = await db.collection('tasks').updateOne(
-      { _id: taskId },
-      { 
-        $set: { 
-          status: 'completed',
-          completed: true,
-          completedAt: new Date()
-        } 
-      }
-    );
+    const result = await TaskModel.completeTask(taskId);
     
-    if (result.modifiedCount === 1) {
-      res.json({ success: true });
+    if (result.success) {
+      res.json(result);
     } else {
       res.status(404).json({ success: false, error: 'Task not found or not modified' });
     }

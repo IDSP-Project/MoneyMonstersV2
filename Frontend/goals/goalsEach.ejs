@@ -45,10 +45,6 @@
           </div>
           
           <div class="tasksContainer">
-            <div class="sectionTabs">
-              <span class="tab tasksTab">Tasks</span>
-              <span class="tab statusTab">Status</span>
-            </div>
             <div class="assignTaskContainer">
               <button class="assignTaskBtn" data-modal-target="assignTaskModal">
                 <i class="fas fa-plus"></i> Assign Task
@@ -58,6 +54,11 @@
               <button class="assignTaskBtn" data-modal-target="assignTaskModal">
                 <i class="fas fa-plus"></i> Assign Balance
               </button>
+            </div>
+
+            <div class="sectionTabs">
+              <h2>Tasks</h2>
+              <h2>Status</h2>
             </div>
 
             <% if (assignedTasks && assignedTasks.length > 0) { %>

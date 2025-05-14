@@ -6,19 +6,43 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   setupLearningHandlers();
+  
+  document.addEventListener('mousedown', function(e) {
+    const openModals = document.querySelectorAll('.baseModal[style*="display: flex"]');
+    if (openModals.length === 0) return;
+    
+    if (e.target.hasAttribute('data-modal-target') || 
+        e.target.closest('[data-modal-target]')) {
+      return;
+    }
+    
+    const container = document.querySelector('.container');
+    if (!container) return;
+    
+    let clickedInsideModal = false;
+    openModals.forEach(modal => {
+      if (modal.contains(e.target)) {
+        clickedInsideModal = true;
+      }
+    });
+    
+    if (!container.contains(e.target) && !clickedInsideModal) {
+      openModals.forEach(modal => closeModal(modal.id));
+    }
+  });
 });
 
 function initModals() {
   document.querySelectorAll('.modalClose').forEach(button => {
     button.addEventListener('click', function() {
-      const modal = this.closest('.modal') || this.closest('.taskModal');
+      const modal = this.closest('.baseModal');
       if (modal) {
         closeModal(modal.id);
       }
     });
   });
   
-  document.querySelectorAll('.modal, .taskModal').forEach(modal => {
+  document.querySelectorAll('.baseModal').forEach(modal => {
     modal.addEventListener('click', function(e) {
       if (e.target === this) {
         closeModal(this.id);
@@ -26,9 +50,9 @@ function initModals() {
     });
   });
   
-  document.querySelectorAll('.cancelBtn').forEach(button => {
+  document.querySelectorAll('.modalBtn.secondary').forEach(button => {
     button.addEventListener('click', function() {
-      const modal = this.closest('.modal') || this.closest('.taskModal');
+      const modal = this.closest('.baseModal');
       if (modal) {
         closeModal(modal.id);
       }
@@ -185,6 +209,7 @@ function setupTaskCardListeners() {
       const taskTitle = this.querySelector('h3').textContent;
       const taskDesc = this.dataset.description || 'No description available';
       const goalId = this.dataset.goalId || '';
+      const category = this.dataset.category || 'misc';
       
       if (document.body.classList.contains('parentView')) {
         loadAndShowTaskDetails(taskId);
@@ -193,9 +218,8 @@ function setupTaskCardListeners() {
         if (dueElement) {
           const taskReward = dueElement.textContent.split('|')[0].trim();
           const taskDue = dueElement.textContent.split('|')[1].trim();
-          const taskCategory = this.dataset.category || 'misc';
           
-          populateTaskModal(taskId, taskTitle, taskDesc, taskReward, taskDue, taskCategory, goalId);
+          populateTaskModal(taskId, taskTitle, taskDesc, taskReward, taskDue, category, goalId);
           openModal('taskModal');
         }
       }
@@ -370,7 +394,7 @@ function setupTaskTypeSelection() {
 }
 
 function setupAddTaskFlow() {
-  const modalContent = document.querySelector('.addTaskDetailsModalContent');
+  const modalContent = document.querySelector('#addTaskDetailsModal .modalContent');
   if (modalContent && !document.getElementById('successOverlay')) {
     const successOverlay = document.createElement('div');
     successOverlay.id = 'successOverlay';
@@ -641,6 +665,7 @@ function populateTaskModal(taskId, title, desc, reward, due, category, goalId) {
   const rewardEl = document.getElementById('modalTaskReward');
   const dueEl = document.getElementById('modalTaskDue');
   const iconEl = document.getElementById('modalTaskIcon');
+  const statusEl = document.getElementById('modalTaskStatus')
   const startBtn = document.getElementById('modalStartBtn');
   const completeBtn = document.getElementById('modalCompleteBtn');
   const assignGoalBtn = document.getElementById('modalAssignGoalBtn');
@@ -650,23 +675,40 @@ function populateTaskModal(taskId, title, desc, reward, due, category, goalId) {
   if (rewardEl) rewardEl.textContent = reward;
   if (dueEl) dueEl.textContent = due;
   
+  if (iconEl) {
+    const taskCard = document.querySelector(`.taskCard[data-task-id="${taskId}"]`);
+    if (taskCard) {
+      const cardIcon = taskCard.querySelector('.taskIcon svg');
+      if (cardIcon) {
+        iconEl.innerHTML = cardIcon.outerHTML;
+      }
+      if (statusEl) {
+        const cardStatus = taskCard.querySelector('.statusBadge');
+        if (cardStatus) {
+          statusEl.innerHTML = `<span class="statusBadge ${cardStatus.classList[1]}">${cardStatus.textContent}</span>`;
+        }
+      }
+    }
+  }
+  
+  const taskStatus = document.querySelector(`.taskCard[data-task-id="${taskId}"] .statusBadge`).classList[1];
+  
   if (startBtn) {
     startBtn.dataset.taskId = taskId;
-    startBtn.style.display = 'block';
+    startBtn.style.display = taskStatus === 'new' ? 'block' : 'none';
   }
   
   if (completeBtn) {
     completeBtn.dataset.taskId = taskId;
     completeBtn.dataset.goalId = goalId || '';
-    completeBtn.style.display = 'none';
+    completeBtn.style.display = taskStatus === 'in_progress' ? 'block' : 'none';
   }
   
   if (assignGoalBtn) {
     assignGoalBtn.dataset.taskId = taskId;
-    assignGoalBtn.style.display = goalId ? 'none' : 'block';
+    assignGoalBtn.style.display = (taskStatus === 'completed') ? 'none' : 'block';
   }
 }
-
 
 async function loadAndShowTaskDetails(taskId) {
   try {
@@ -768,6 +810,29 @@ async function updateTaskStatus(taskId, status) {
       if (status === 'in_progress') {
         document.getElementById('modalStartBtn').style.display = 'none';
         document.getElementById('modalCompleteBtn').style.display = 'block';
+        
+        const modalStatusEl = document.getElementById('modalTaskStatus');
+        if (modalStatusEl) {
+          modalStatusEl.innerHTML = `<span class="statusBadge in_progress">In Progress</span>`;
+        }
+      }
+      
+      const taskCard = document.querySelector(`.taskCard[data-task-id="${taskId}"]`);
+      if (taskCard) {
+        const statusBadge = taskCard.querySelector('.statusBadge');
+        if (statusBadge) {
+          statusBadge.classList.remove('new', 'in_progress', 'completed');
+          
+          statusBadge.classList.add(status);
+          
+          if (status === 'new') {
+            statusBadge.textContent = 'New';
+          } else if (status === 'in_progress') {
+            statusBadge.textContent = 'In Progress';
+          } else if (status === 'completed') {
+            statusBadge.textContent = 'Completed';
+          }
+        }
       }
     } else {
       throw new Error(result.error || 'Failed to update task status');
@@ -786,17 +851,67 @@ async function completeTask(taskId, goalId) {
     
     const result = await response.json();
     if (result.success) {
+      // First update the UI to show the task as completed
+      const taskCard = document.querySelector(`.taskCard[data-task-id="${taskId}"]`);
+      if (taskCard) {
+        const statusBadge = taskCard.querySelector('.statusBadge');
+        if (statusBadge) {
+          statusBadge.classList.remove('new', 'in_progress');
+          statusBadge.classList.add('completed');
+          statusBadge.textContent = 'Completed';
+        }
+      }
+
+      // Update goal progress if goal is assigned
       if (goalId) {
         await fetch(`/goals/${goalId}/update-progress`, {
           method: 'POST'
         });
       }
       
-      closeModal('taskModal');
-      window.location.reload();
+      const modalContent = document.querySelector('#taskModal .modalContent');
+      let successOverlay = document.getElementById('completeTaskSuccessOverlay');
+      
+      if (!successOverlay) {
+        successOverlay = document.createElement('div');
+        successOverlay.id = 'completeTaskSuccessOverlay';
+        successOverlay.className = 'successOverlay';
+        successOverlay.innerHTML = `
+          <div class="successIcon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div class="successMessage">Task Marked Complete</div>
+        `;
+        modalContent.appendChild(successOverlay);
+      }
+      
+      successOverlay.classList.add('show');
+      
+      const startBtn = document.getElementById('modalStartBtn');
+      const completeBtn = document.getElementById('modalCompleteBtn');
+      const assignGoalBtn = document.getElementById('modalAssignGoalBtn');
+      const cancelBtn = document.getElementById('modalCancelBtn');
+      
+      if (startBtn) startBtn.style.display = 'none';
+      if (completeBtn) completeBtn.style.display = 'none';
+      if (assignGoalBtn) assignGoalBtn.style.display = 'none';
+      if (cancelBtn) cancelBtn.style.display = 'none';
+      
+      const modalStatusEl = document.getElementById('modalTaskStatus');
+      if (modalStatusEl) {
+        modalStatusEl.innerHTML = `<span class="statusBadge completed">Completed</span>`;
+      }
+      
+      setTimeout(() => {
+        closeModal('taskModal');
+        window.location.reload();
+      }, 1500);
     }
   } catch (error) {
     console.error('Error completing task:', error);
+    alert('Error completing task: ' + error.message);
   }
 }
 
@@ -889,7 +1004,6 @@ function closeModal(modalId) {
   }
 }
 
-
 function setupAssignGoalHandlers() {
   const assignGoalModalContent = document.querySelector('#assignGoalModal .modalContent');
   if (assignGoalModalContent && !document.getElementById('assignGoalSuccessOverlay')) {
@@ -956,4 +1070,4 @@ window.openModal = openModal;
 window.closeModal = closeModal;
 window.openAssignTaskModal = function() { openModal('assignTaskModal'); };
 window.closeAssignTaskModal = function() { closeModal('assignTaskModal'); };
-window.completeAndRedirect = completeAndRedirect; 
+window.completeAndRedirect = completeAndRedirect;
