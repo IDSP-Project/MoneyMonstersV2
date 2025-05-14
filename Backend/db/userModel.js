@@ -1,5 +1,3 @@
-// Class for users in the database
-
 const { getDB } = require("./connection.js");
 const { ObjectId } = require('mongodb');
 const bcrypt = require('bcrypt');

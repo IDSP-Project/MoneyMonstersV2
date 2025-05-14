@@ -18,16 +18,16 @@
     </header>
     <main>
          <h3>
-          <% if (viewingAsChild) { %>
-            <%= viewingChildName %>'s Reading List
-          <% } else if (user.accountType === 'parent') { %>
+            <% if (user.accountType !== 'child') { %>
+             <% if (!locals.viewingAsChild) { %>
             Family's Reading List
+            <% } %>
           <% } else { %>
             <%= user.firstName %>'s Reading List
           <% } %>
         </h3>
         
-          <% if (user.accountType === 'parent') { %>
+           <% if (user.accountType === 'parent' && locals.viewingAsChild) { %>
             <div class="learn-admin-actions">
               <a href="/learn/new" class="btn">Add New Learn Article</a>
             </div>

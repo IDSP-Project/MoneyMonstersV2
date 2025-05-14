@@ -1,4 +1,3 @@
-// routes/goalRoutes.js
 const express = require('express');
 const router = express.Router();
 const { ensureAuthenticated } = require('../helpers/authHelpers');
@@ -16,6 +15,8 @@ const {
 } = require('../helpers/goalsHelpers');
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../db/connection');
+const User = require('../db/userModel');
+
 
 
 router.get('/goals/view/:goalId', ensureAuthenticated, async (req, res) => {
@@ -46,7 +47,10 @@ router.get('/goals/view/:goalId', ensureAuthenticated, async (req, res) => {
       user: req.session.user, 
       error: null, 
       assignedTasks,
-      assignedAmount
+      assignedAmount,
+      viewingAsChild: req.viewingChild ? true : false,
+      viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+      child: req.viewingChild
     });
   } catch (error) {
     console.error('Error fetching goal:', error);
@@ -55,7 +59,10 @@ router.get('/goals/view/:goalId', ensureAuthenticated, async (req, res) => {
       user: req.session.user, 
       error: 'Failed to fetch goal', 
       assignedTasks: [],
-      assignedAmount: 0
+      assignedAmount: 0,
+      viewingAsChild: req.viewingChild ? true : false,
+      viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+      child: req.viewingChild
     });
   }
 });
@@ -63,7 +70,9 @@ router.get('/goals/view/:goalId', ensureAuthenticated, async (req, res) => {
 router.get('/goals/:goalId/data', ensureAuthenticated, async (req, res) => {
   try {
     const goalId = req.params.goalId;
-    const goal = await findGoalById(goalId);
+    
+    const db = getDB();
+    const goal = await db.collection('goals').findOne({ _id: new ObjectId(goalId) });
     
     if (!goal) {
       return res.status(404).json({ success: false, error: 'Goal not found' });
@@ -82,14 +91,19 @@ router.get('/goals/:goalId/data', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Update progress for a specific goal
+
 router.post('/goals/:goalId/update-progress', ensureAuthenticated, async (req, res) => {
   try {
     const goalId = req.params.goalId;
     const result = await updateGoalProgress(goalId);
     
     if (result.success) {
-      res.json({ success: true });
+      const updatedGoal = await findGoalById(goalId);
+      
+      res.json({ 
+        success: true,
+        goal: updatedGoal
+      });
     } else {
       throw new Error('Failed to update goal progress');
     }
@@ -102,7 +116,6 @@ router.post('/goals/:goalId/update-progress', ensureAuthenticated, async (req, r
   }
 });
 
-// Get all goals for a specific child
 router.get('/goals/:childId', ensureAuthenticated, async (req, res) => {
   try {
     const goals = await findGoalsByChildId(req.params.childId);
@@ -125,7 +138,6 @@ router.get('/goals/:childId', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Get all goals (for current user)
 router.get('/goals', ensureAuthenticated, async (req, res) => {
   try {
     let goals = [];
@@ -169,7 +181,6 @@ router.get('/goals', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Add a new goal
 router.post('/add', ensureAuthenticated, async (req, res) => {
   try {
     const db = getDB();
@@ -217,7 +228,6 @@ router.post('/add', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Update an existing goal
 router.post('/update/:goalId', ensureAuthenticated, async (req, res) => {
   try {
     const { status, amountAchieved, totalRequired } = req.body;
@@ -244,7 +254,6 @@ router.post('/update/:goalId', ensureAuthenticated, async (req, res) => {
   }
 });
 
-// Delete a goal
 router.delete('/:goalId', async (req, res) => {
   try {
     const result = await deleteGoal(req.params.goalId);
@@ -260,6 +269,76 @@ router.delete('/:goalId', async (req, res) => {
       success: false, 
       error: 'Failed to delete goal',
       currentPage: 'goals',
+    });
+  }
+});
+
+
+router.post('/goals/:goalId/assign-balance', ensureAuthenticated, async (req, res) => {
+  try {
+    const goalId = req.params.goalId;
+    const { amount } = req.body;
+    
+    if (!amount || isNaN(amount) || amount <= 0) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Please enter a valid amount greater than 0'
+      });
+    }
+    
+    const goal = await findGoalById(goalId);
+    if (!goal) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Goal not found'
+      });
+    }
+    
+    const userId = req.viewingChild || req.session.user.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'User not found'
+      });
+    }
+    
+    if (user.balance < amount) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'You do not have enough balance'
+      });
+    }
+    
+    const remainingAmount = goal.totalRequired - goal.amountAchieved;
+    if (amount > remainingAmount) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'The amount exceeds what is needed for this goal'
+      });
+    }
+    
+    const newAmountAchieved = goal.amountAchieved + parseFloat(amount);
+    
+    await updateGoal(goalId, {
+      amountAchieved: newAmountAchieved,
+      progress: (newAmountAchieved / goal.totalRequired) * 100
+    });
+    
+    await User.updateUser(userId, {
+      balance: user.balance - parseFloat(amount)
+    });
+    
+    if (req.session.user.id === userId) {
+      req.session.user.balance = user.balance - parseFloat(amount);
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error assigning balance to goal:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to assign balance to goal'
     });
   }
 });

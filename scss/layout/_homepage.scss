@@ -3,10 +3,10 @@
   font-family: $primary-font;
   
   h1 {
-    font-size: 1rem;
-    text-align: center;
-    margin-top: 2rem;
-    color: $tertiary;
+      margin: 1rem 2.5rem;
+      font-size: 1.1rem;
+      color: $secondary;
+      font-weight: 600;
   }
 
   h2 {
@@ -67,15 +67,15 @@
             align-items: center;
             
             .goalImage, .initialsAvatar {
-              width: 40px;
-              height: 40px;
+              width: 32px;
+              height: 32px;
+              font-size: 1rem;
+              background-color: $primary;
               border-radius: 50%;
-              display: flex;
-              align-items: center;
+              text-align: center;
               justify-content: center;
-              background-color: $tertiary;
-              color: $secondary;
-              font-weight: 600;
+              line-height: 32px;
+              border: $tertiary 1px solid;
             }
             
             .goalText {
@@ -103,12 +103,20 @@
               border-radius: 4px;
               overflow: hidden;
               margin-bottom: 0.25rem;
+              position: relative; 
+              box-sizing: border-box;
+              padding: 0;
               
               .progressFill {
                 height: 100%;
                 width: var(--progress-width, 0%);
-                background-color: $success;
+                background-color: $tertiary;
                 border-radius: 4px;
+                padding: 0;
+                margin: 0;
+                position: absolute;
+                left: 0;
+                box-sizing: border-box;
               }
             }
             

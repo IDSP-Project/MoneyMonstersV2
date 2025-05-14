@@ -2,7 +2,14 @@
   margin-bottom: 5rem;
   
   .goalsContainer {
-    margin: 0 auto;
+    margin: 0 auto 1rem auto;
+
+    h1 {
+          margin: 1rem 3.2rem;
+          font-size: 1.1rem;
+          color: $secondary;
+          font-weight: 600;
+    }
 
     h2 {
       font-size: 1.5rem;
@@ -22,7 +29,8 @@
     align-items: center;
     font-family: $primary-font;
     background-color: $primary;
-    border-bottom: 1px solid rgb(236, 236, 236);
+    border-bottom: 1px solid $primary;
+    border-top: 1px solid $primary;
     padding: 0;
     margin-bottom: 0.7rem;
 
@@ -30,72 +38,91 @@
     font-size: $font-size-xs;
     padding: 0 0.5rem;
     color: $secondary;
+        font-size: 14px;
+    color: #626262;
+    padding: 0.5rem 1rem;
+    margin: 0;
+    background: #F1F1F1;
     }
     }
 
-    .goalCard {
-      display: flex;
-      justify-content: space-between;
+  .goalCard {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
       align-items: center;
-      padding-right: 1rem;
-      padding-left: 1rem;
-      border-radius: 10px;
       background-color: $white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
-
-    .goalInfo {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-
-      .goalImage {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        border-radius: 8px;
-      }
-
-      .goalText {
-        h3 {
-          font-size: $font-size-base;
-          margin: 0;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      padding: 1rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      
+      .goalInfo {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        align-items: center;
+        
+        .goalImage, .initialsAvatar {
+          width: 60px;
+          height: 60px;
+          font-size: 1.5rem;
+          background-color: $primary;
+          border-radius: 50%;
+          text-align: center;
+          justify-content: center;
+          line-height: 60px;
+          border: $secondary 1px solid;
         }
         
-        p {
-          font-size: $font-size-sm;
-          font-family: $primary-font;
-          color: $secondary;
-        }
-      }
-    }
-
-    .goalProgress {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      .progressBar {
-        width: 80px;
-        height: 8px;
-        background: $primary;
-        border-radius: 4px;
-        overflow: hidden;
-
-        .progressFill {
-          height: 100%;
-          background: $tertiary;
-          border-radius: 4px;
+        .goalText {
+          h3 {
+            margin: 0 0 0.25rem 0;
+            font-weight: 500;
+            font-size: 1rem;
+          }
           
-          &[data-progress] {
-            width: var(--progress-width);
+          p {
+            color: $secondary;
+            font-size: 0.75rem;
+            margin: 0;
           }
         }
       }
-
-      span {
-        font-size: 0.875rem;
-        color: $secondary;
+      
+      .goalProgress {
+        justify-self: end;
+        
+        .progressBar {
+          width: 100px;
+          height: 8px;
+          background-color: $secondary-light;
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 0.25rem;
+          position: relative; 
+          box-sizing: border-box;
+          padding: 0;
+          
+          .progressFill {
+            height: 100%;
+            width: var(--progress-width, 0%);
+            background-color: $tertiary;
+            border-radius: 4px;
+            padding: 0;
+            margin: 0;
+            position: absolute;
+            left: 0;
+            box-sizing: border-box;
+          }
+        }
+        
+        span {
+          font-size: 0.75rem;
+          color: $secondary;
+          text-align: right;
+          display: block;
+        }
       }
     }
 
@@ -252,6 +279,12 @@
       width: 60px;
       height: 60px;
       font-size: 1.5rem;
+      background-color: $primary;
+      border-radius: 50%;
+      text-align: center;
+      justify-content: center;
+      line-height: 60px;
+      border: $secondary 1px solid;
     }
 
     .goalTitle {
@@ -318,13 +351,16 @@
     }
     }
 
-    .assignTaskContainer, .assignBalanceContainer {
+  .goalActionsContainer {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 2rem 1rem 1rem 1rem;
+      width: 90%;
+      flex-direction: column; 
+      margin: 1rem auto;
+      gap: 1rem;
+      
+    }
 
-      .assignTaskBtn {
+      .assignTaskBtn, .assignBalanceBtn {
         width: 100%;
         color: $white;
         background-color: $tertiary;
@@ -344,6 +380,10 @@
           font-size: 0.9rem;
         }
       }
+    }
+
+    .redeemAmount {
+      width: 80%;
     }
 
     .taskList {
@@ -442,7 +482,6 @@
     }
   }
   
-}
 
 .goalList a {
   text-decoration: none;
@@ -466,15 +505,20 @@
   margin-top: 1rem;
   display: flex;
   justify-content: center;
+  position: relative;
 }
 
-.progressText {
-  position: absolute;
-  bottom: 0;
+.progress-text {
+position: absolute;
+  top: 75%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  z-index: 2;
 }
 
 .progressPercentage {
@@ -486,3 +530,4 @@
   font-size: 16px;
   color: #666;
 }
+

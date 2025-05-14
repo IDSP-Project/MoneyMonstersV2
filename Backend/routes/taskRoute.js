@@ -243,8 +243,6 @@ router.post('/tasks', ensureAuthenticated, async (req, res) => {
     const db = getDB();
     const { category, title, description, amount, dueDate } = req.body;
     
-    console.log("Request body:", req.body);
-    
     const allowedCategories = ['pet', 'cleaning', 'garage', 'garden', 'misc'];
     if (!allowedCategories.includes(category)) {
       return res.status(400).json({ success: false, error: 'Invalid category' });
@@ -283,8 +281,6 @@ router.post('/tasks', ensureAuthenticated, async (req, res) => {
       req.session.user,
       selectedChild
     );
-
-    console.log("Task being inserted:", newTask);
     
     const result = await db.collection('tasks').insertOne(newTask);
     

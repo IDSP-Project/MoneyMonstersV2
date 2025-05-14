@@ -197,6 +197,8 @@ html {
   align-items: center;
   text-align: center;
   max-height: 85vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .baseModal h2 {
   color: #2F2F2F;
@@ -230,6 +232,9 @@ html {
   width: 100%;
   margin-bottom: 1rem;
 }
+.baseModal .modalBody .errorMessage {
+  color: #FF585B;
+}
 .baseModal .modalBody p {
   color: #2F2F2F;
   margin-bottom: 0.8rem;
@@ -249,6 +254,7 @@ html {
   width: 60px;
   height: 60px;
   background-color: #31D22B;
+  color: #FFFFFF;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -258,7 +264,6 @@ html {
 .baseModal .successIcon svg, .baseModal .successIcon i {
   width: 36px;
   height: 36px;
-  color: white;
   font-size: 2rem;
 }
 .baseModal .successMessage {
@@ -396,18 +401,20 @@ html {
 }
 
 .successOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 18rem;
+  height: auto;
   background-color: rgba(255, 255, 255, 0.95);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border-radius: inherit;
-  z-index: 10;
+  z-index: 2100;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -715,10 +722,10 @@ html {
   font-family: "Inter", sans-serif;
 }
 .homepage h1 {
-  font-size: 1rem;
-  text-align: center;
-  margin-top: 2rem;
-  color: #714AA8;
+  margin: 1rem 2.5rem;
+  font-size: 1.1rem;
+  color: #2F2F2F;
+  font-weight: 600;
 }
 .homepage h2 {
   font-size: 14px;
@@ -772,15 +779,15 @@ html {
   align-items: center;
 }
 .homepage .card-section-goals .goalList .goalCardLink .goalCard .goalInfo .goalImage, .homepage .card-section-goals .goalList .goalCardLink .goalCard .goalInfo .initialsAvatar {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+  background-color: #F1F1F1;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
+  text-align: center;
   justify-content: center;
-  background-color: #714AA8;
-  color: #2F2F2F;
-  font-weight: 600;
+  line-height: 32px;
+  border: #714AA8 1px solid;
 }
 .homepage .card-section-goals .goalList .goalCardLink .goalCard .goalInfo .goalText h3 {
   margin: 0 0 0.25rem 0;
@@ -802,12 +809,20 @@ html {
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 0.25rem;
+  position: relative;
+  box-sizing: border-box;
+  padding: 0;
 }
 .homepage .card-section-goals .goalList .goalCardLink .goalCard .goalProgress .progressBar .progressFill {
   height: 100%;
   width: var(--progress-width, 0%);
-  background-color: #31D22B;
+  background-color: #714AA8;
   border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  left: 0;
+  box-sizing: border-box;
 }
 .homepage .card-section-goals .goalList .goalCardLink .goalCard .goalProgress span {
   font-size: 0.75rem;
@@ -1215,7 +1230,13 @@ html {
   margin-bottom: 5rem;
 }
 .goalPage .goalsContainer {
-  margin: 0 auto;
+  margin: 0 auto 1rem auto;
+}
+.goalPage .goalsContainer h1 {
+  margin: 1rem 3.2rem;
+  font-size: 1.1rem;
+  color: #2F2F2F;
+  font-weight: 600;
 }
 .goalPage .goalsContainer h2 {
   font-size: 1.5rem;
@@ -1233,7 +1254,8 @@ html {
   align-items: center;
   font-family: "Inter", sans-serif;
   background-color: #F1F1F1;
-  border-bottom: 1px solid rgb(236, 236, 236);
+  border-bottom: 1px solid #F1F1F1;
+  border-top: 1px solid #F1F1F1;
   padding: 0;
   margin-bottom: 0.7rem;
 }
@@ -1241,60 +1263,80 @@ html {
   font-size: 12px;
   padding: 0 0.5rem;
   color: #2F2F2F;
+  font-size: 14px;
+  color: #626262;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  background: #F1F1F1;
 }
 .goalPage .goalsContainer .goalCard {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
   align-items: center;
-  padding-right: 1rem;
-  padding-left: 1rem;
-  border-radius: 10px;
   background-color: #FFFFFF;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-.goalPage .goalsContainer .goalInfo {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-.goalPage .goalsContainer .goalInfo .goalImage {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
   border-radius: 8px;
+  margin-bottom: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-.goalPage .goalsContainer .goalInfo .goalText h3 {
-  font-size: 16px;
+.goalPage .goalsContainer .goalCard .goalInfo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+.goalPage .goalsContainer .goalCard .goalInfo .goalImage, .goalPage .goalsContainer .goalCard .goalInfo .initialsAvatar {
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
+  background-color: #F1F1F1;
+  border-radius: 50%;
+  text-align: center;
+  justify-content: center;
+  line-height: 60px;
+  border: #2F2F2F 1px solid;
+}
+.goalPage .goalsContainer .goalCard .goalInfo .goalText h3 {
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+  font-size: 1rem;
+}
+.goalPage .goalsContainer .goalCard .goalInfo .goalText p {
+  color: #2F2F2F;
+  font-size: 0.75rem;
   margin: 0;
 }
-.goalPage .goalsContainer .goalInfo .goalText p {
-  font-size: 14px;
-  font-family: "Inter", sans-serif;
-  color: #2F2F2F;
+.goalPage .goalsContainer .goalCard .goalProgress {
+  justify-self: end;
 }
-.goalPage .goalsContainer .goalProgress {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.goalPage .goalsContainer .goalProgress .progressBar {
-  width: 80px;
+.goalPage .goalsContainer .goalCard .goalProgress .progressBar {
+  width: 100px;
   height: 8px;
-  background: #F1F1F1;
+  background-color: #BDBDBD;
   border-radius: 4px;
   overflow: hidden;
+  margin-bottom: 0.25rem;
+  position: relative;
+  box-sizing: border-box;
+  padding: 0;
 }
-.goalPage .goalsContainer .goalProgress .progressBar .progressFill {
+.goalPage .goalsContainer .goalCard .goalProgress .progressBar .progressFill {
   height: 100%;
-  background: #714AA8;
+  width: var(--progress-width, 0%);
+  background-color: #714AA8;
   border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  left: 0;
+  box-sizing: border-box;
 }
-.goalPage .goalsContainer .goalProgress .progressBar .progressFill[data-progress] {
-  width: var(--progress-width);
-}
-.goalPage .goalsContainer .goalProgress span {
-  font-size: 0.875rem;
+.goalPage .goalsContainer .goalCard .goalProgress span {
+  font-size: 0.75rem;
   color: #2F2F2F;
+  text-align: right;
+  display: block;
 }
 .goalPage .goalsContainer .noGoalsMessage {
   display: flex;
@@ -1429,6 +1471,12 @@ html {
   width: 60px;
   height: 60px;
   font-size: 1.5rem;
+  background-color: #F1F1F1;
+  border-radius: 50%;
+  text-align: center;
+  justify-content: center;
+  line-height: 60px;
+  border: #2F2F2F 1px solid;
 }
 .goalDetailsPage .goalDetailsCard .goalTitle {
   margin: 0 0 0.2rem 0;
@@ -1482,13 +1530,14 @@ html {
   padding: 0 0.5rem;
   color: #2F2F2F;
 }
-.goalDetailsPage .tasksContainer .assignTaskContainer, .goalDetailsPage .tasksContainer .assignBalanceContainer {
+.goalDetailsPage .tasksContainer .goalActionsContainer {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 2rem 1rem 1rem 1rem;
+  width: 90%;
+  flex-direction: column;
+  margin: 1rem auto;
+  gap: 1rem;
 }
-.goalDetailsPage .tasksContainer .assignTaskContainer .assignTaskBtn, .goalDetailsPage .tasksContainer .assignBalanceContainer .assignTaskBtn {
+.goalDetailsPage .tasksContainer .assignTaskBtn, .goalDetailsPage .tasksContainer .assignBalanceBtn {
   width: 100%;
   color: #FFFFFF;
   background-color: #714AA8;
@@ -1504,10 +1553,13 @@ html {
   padding: 0.5rem;
   gap: 0.5rem;
 }
-.goalDetailsPage .tasksContainer .assignTaskContainer .assignTaskBtn i, .goalDetailsPage .tasksContainer .assignBalanceContainer .assignTaskBtn i {
+.goalDetailsPage .tasksContainer .assignTaskBtn i, .goalDetailsPage .tasksContainer .assignBalanceBtn i {
   font-size: 0.9rem;
 }
-.goalDetailsPage .tasksContainer .taskList .taskCard {
+.goalDetailsPage .redeemAmount {
+  width: 80%;
+}
+.goalDetailsPage .taskList .taskCard {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1516,49 +1568,50 @@ html {
   background-color: #FFFFFF;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
-.goalDetailsPage .tasksContainer .taskList .taskCard .taskInfo {
+.goalDetailsPage .taskList .taskCard .taskInfo {
   display: flex;
   align-items: center;
   gap: 0.8rem;
 }
-.goalDetailsPage .tasksContainer .taskList .taskCard .taskInfo .taskIcon {
+.goalDetailsPage .taskList .taskCard .taskInfo .taskIcon {
   font-size: 20px;
   color: #714AA8;
 }
-.goalDetailsPage .tasksContainer .taskList .taskCard .taskInfo .taskText h3 {
+.goalDetailsPage .taskList .taskCard .taskInfo .taskText h3 {
   font-size: 16px;
   margin: 0;
   font-family: "Inter", sans-serif;
 }
-.goalDetailsPage .tasksContainer .taskList .taskCard .taskInfo .taskText .dueDate {
+.goalDetailsPage .taskList .taskCard .taskInfo .taskText .dueDate {
   font-size: 14px;
   font-family: "Inter", sans-serif;
   color: #2F2F2F;
 }
-.goalDetailsPage .tasksContainer .taskList .taskCard .taskStatus .statusBadge {
+.goalDetailsPage .taskList .taskCard .taskStatus .statusBadge {
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 0.9rem;
 }
-.goalDetailsPage .tasksContainer .taskList .taskCard .taskStatus .statusBadge.new {
+.goalDetailsPage .taskList .taskCard .taskStatus .statusBadge.new {
   background: rgb(212, 237, 218);
   color: #31D22B;
   font-family: "Inter", sans-serif;
   font-size: 12px;
 }
-.goalDetailsPage .tasksContainer .taskList .taskCard .taskStatus .statusBadge.in_progress {
+.goalDetailsPage .taskList .taskCard .taskStatus .statusBadge.in_progress {
   background: rgb(227, 227, 250);
   color: #714AA8;
   font-family: "Inter", sans-serif;
   font-size: 12px;
 }
-.goalDetailsPage .tasksContainer .taskList .taskCard .taskStatus .statusBadge.completed {
+.goalDetailsPage .taskList .taskCard .taskStatus .statusBadge.completed {
   background: rgb(235, 231, 231);
   color: #2F2F2F;
   font-family: "Inter", sans-serif;
   font-size: 12px;
 }
-.goalDetailsPage .noTasksMessage {
+
+.noTasksMessage {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1567,18 +1620,18 @@ html {
   padding: 2.5rem 1.5rem;
   margin: 2rem 0;
 }
-.goalDetailsPage .noTasksMessage i {
+.noTasksMessage i {
   font-size: 3rem;
   color: #714AA8;
   margin-bottom: 1rem;
 }
-.goalDetailsPage .noTasksMessage h2 {
+.noTasksMessage h2 {
   font-size: 32px;
   font-weight: bold;
   color: #714AA8;
   margin-bottom: 0.5rem;
 }
-.goalDetailsPage .noTasksMessage p {
+.noTasksMessage p {
   color: #2F2F2F;
   font-size: 18px;
   text-align: center;
@@ -1607,15 +1660,20 @@ html {
   margin-top: 1rem;
   display: flex;
   justify-content: center;
+  position: relative;
 }
 
-.progressText {
+.progress-text {
   position: absolute;
-  bottom: 0;
+  top: 75%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  z-index: 2;
 }
 
 .progressPercentage {
@@ -2324,10 +2382,8 @@ form button {
 .taskSectionBox {
   background: #fff;
   border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(113, 74, 168, 0.07);
   padding: 1.2rem 1rem 0.5rem 1rem;
-  margin-bottom: 1.2rem;
-  border: 1px solid #ececec;
+  margin-bottom: 3rem;
 }
 .taskSectionBox .taskSectionTitle {
   font-size: 1.1rem;
@@ -2395,6 +2451,13 @@ form button {
 .modalContent h2 {
   background-color: #FFFFFF;
   border: none;
+}
+
+.tasksContainer h1 {
+  margin: 1rem 3.2rem;
+  font-size: 1.1rem;
+  color: #2F2F2F;
+  font-weight: 600;
 }
 
 .family .error-message, .family .profile .success-message, .profile .family .success-message {

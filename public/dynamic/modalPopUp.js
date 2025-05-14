@@ -70,7 +70,8 @@ function initModals() {
   setupTaskModalHandlers();
   setupTaskAssignmentHandlers();
   setupAssignGoalHandlers();
-  setupLearningHandlers();
+  setupLearningHandlers(); 
+  setupAssignBalanceHandlers();
 }
 
 function setupLearningHandlers() {
@@ -214,12 +215,12 @@ function setupTaskCardListeners() {
       if (document.body.classList.contains('parentView')) {
         loadAndShowTaskDetails(taskId);
       } else {
-        const dueElement = this.querySelector('.dueDate');
+      const dueElement = this.querySelector('.dueDate');
         if (dueElement) {
-          const taskReward = dueElement.textContent.split('|')[0].trim();
-          const taskDue = dueElement.textContent.split('|')[1].trim();
+          const taskRewardText = dueElement.textContent.split(' ')[0].trim(); 
+          const taskDueText = dueElement.textContent.substring(taskRewardText.length).trim();
           
-          populateTaskModal(taskId, taskTitle, taskDesc, taskReward, taskDue, category, goalId);
+          populateTaskModal(taskId, taskTitle, taskDesc, taskRewardText, taskDueText, category, goalId);
           openModal('taskModal');
         }
       }
@@ -228,6 +229,21 @@ function setupTaskCardListeners() {
 }
 
 function setupTaskAssignmentHandlers() {
+  const assignTaskModalContent = document.querySelector('#assignTaskModal .modalContent');
+  if (assignTaskModalContent && !document.getElementById('assignTaskSuccessOverlay')) {
+    const successOverlay = document.createElement('div');
+    successOverlay.id = 'assignTaskSuccessOverlay';
+    successOverlay.className = 'successOverlay';
+    successOverlay.innerHTML = `
+      <div class="successIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <div class="successMessage">Task Assigned Successfully</div>
+    `;
+    assignTaskModalContent.appendChild(successOverlay);
+  }
   const assignGoalBtn = document.getElementById('modalAssignGoalBtn');
   if (assignGoalBtn) {
     assignGoalBtn.addEventListener('click', function() {
@@ -393,6 +409,79 @@ function setupTaskTypeSelection() {
   }
 }
 
+function createTaskCard(task, formattedDue) {
+  console.log("Creating task card for:", task);
+  
+  let iconHTML = '';
+  try {
+    const existingIcon = document.querySelector(`.taskTypeIcon[data-category="${task.category}"] svg`);
+    if (existingIcon) {
+      iconHTML = existingIcon.outerHTML;
+    } else {
+      const similarTaskIcon = document.querySelector(`.taskCard[data-category="${task.category}"] .taskIcon svg`);
+      if (similarTaskIcon) {
+        iconHTML = similarTaskIcon.outerHTML;
+      } else {
+        iconHTML = '<i class="fas fa-check-circle"></i>';
+      }
+    }
+  } catch (e) {
+    console.error("Error getting icon:", e);
+    iconHTML = '<i class="fas fa-check-circle"></i>';
+  }
+  
+  const taskCard = document.createElement('div');
+  taskCard.className = 'taskCard';
+  taskCard.dataset.taskId = task._id;
+  taskCard.dataset.category = task.category;
+  taskCard.dataset.description = task.description || '';
+  if (task.goalId) {
+    taskCard.dataset.goalId = task.goalId;
+  }
+  
+  taskCard.innerHTML = `
+    <div class="taskInfo">
+      <div class="taskIcon">
+        ${iconHTML}
+      </div>
+      <div class="taskText">
+        <h3>${task.title}</h3>
+        <small class="dueDate" data-due="${new Date(task.dueDate).toISOString()}">$${task.reward ? parseFloat(task.reward).toFixed(2) : '0.00'} ${formattedDue}</small>
+      </div>
+    </div>
+    <div class="taskStatus">
+      <span class="statusBadge new">New</span>
+    </div>
+  `;
+  
+  taskCard.addEventListener('click', function(e) {
+    if (e.target.tagName === 'BUTTON') return;
+    
+    const taskId = this.dataset.taskId;
+    if (document.body.classList.contains('parentView')) {
+      loadAndShowTaskDetails(taskId);
+    } else {
+      const taskTitle = this.querySelector('h3').textContent;
+      const taskDesc = this.dataset.description || 'No description available';
+      const goalId = this.dataset.goalId || '';
+      const category = this.dataset.category || 'misc';
+      const dueElement = this.querySelector('.dueDate');
+      
+      if (dueElement) {
+        const taskRewardText = dueElement.textContent.split(' ')[0].trim(); 
+        const taskDueText = dueElement.textContent.substring(taskRewardText.length).trim();
+        
+        populateTaskModal(taskId, taskTitle, taskDesc, taskRewardText, taskDueText, category, goalId);
+        openModal('taskModal');
+      }
+    }
+  });
+  
+  return taskCard;
+}
+
+window.createTaskCard = createTaskCard;
+
 function setupAddTaskFlow() {
   const modalContent = document.querySelector('#addTaskDetailsModal .modalContent');
   if (modalContent && !document.getElementById('successOverlay')) {
@@ -412,15 +501,41 @@ function setupAddTaskFlow() {
 
   const confirmAddTaskBtn = document.getElementById('confirmAddTaskBtn');
   if (confirmAddTaskBtn) {
-    confirmAddTaskBtn.addEventListener('click', async function() {
+    confirmAddTaskBtn.onclick = null;
+    confirmAddTaskBtn.replaceWith(confirmAddTaskBtn.cloneNode(true));
+    
+    const newBtn = document.getElementById('confirmAddTaskBtn');
+    
+    newBtn.addEventListener('click', async function() {
+      console.log("Task creation button clicked");
+      
       const taskData = validateAndGetTaskData();
       if (!taskData) {
+        console.log("Task validation failed");
         return; 
       }
       
       try {
-        const response = await createTask(taskData);
-        if (response.success) {
+        console.log("Creating task with data:", taskData);
+        
+        const response = await fetch('/tasks', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(taskData)
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Server responded with:', errorText);
+          throw new Error(`Server error: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log("Task created successfully:", result);
+        
+        if (result.success) {
           const successOverlay = document.getElementById('successOverlay');
           if (successOverlay) {
             successOverlay.classList.add('show');
@@ -435,16 +550,57 @@ function setupAddTaskFlow() {
               setTimeout(() => {
                 closeModal('addTaskDetailsModal');
                 
-                if (response.task && document.querySelector('.taskSectionBox')) {
-                  appendNewTaskToUI(response.task);
+                if (result.task) {
+                  if (!result.task.reward && taskData.amount) {
+                    result.task.reward = taskData.amount;
+                  }
+                  
+                  if (!result.task.category && taskData.category) {
+                    result.task.category = taskData.category || 'misc';
+                  }
+                  
+                  console.log("Adding task to UI:", result.task);
+                  
+                  const taskList = document.querySelector('.tasksContainer .taskList');
+                  console.log("Found task list:", !!taskList);
+                  
+                  if (taskList) {
+                    const dueDate = new Date(result.task.dueDate);
+                    const formattedDue = dueDate.toLocaleDateString() + ' ' + 
+                      dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    const taskCard = createTaskCard(result.task, formattedDue);
+                    
+                    taskList.insertAdjacentElement('afterbegin', taskCard);
+                    
+                    const noTasksMessage = document.querySelector('.noTasksMessage');
+                    if (noTasksMessage) {
+                      noTasksMessage.remove();
+                      
+                      const tasksContainer = document.querySelector('.tasksContainer');
+                      if (tasksContainer && !document.querySelector('.sectionTabs')) {
+                        const sectionTabs = document.createElement('div');
+                        sectionTabs.className = 'sectionTabs';
+                        sectionTabs.innerHTML = `
+                          <span class="tab tasksTab"><h2>Tasks</h2></span>
+                          <span class="tab statusTab"><h2>Status</h2></span>
+                        `;
+                        tasksContainer.insertBefore(sectionTabs, taskList);
+                      }
+                    }
+                  } else {
+                    console.log("Task list not found, falling back to appendNewTaskToUI");
+                    appendNewTaskToUI(result.task);
+                  }
                 }
               }, 300);
             }, 1500);
           }
         } else {
-          throw new Error(response.error || 'Failed to create task');
+          throw new Error(result.error || 'Failed to create task');
         }
       } catch (error) {
+        console.error("Error creating task:", error);
         const errorEl = document.getElementById('taskDetailsError');
         if (errorEl) errorEl.textContent = error.message;
       }
@@ -452,7 +608,55 @@ function setupAddTaskFlow() {
   }
 }
 
+window.setupAddTaskFlow = setupAddTaskFlow;
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("Running updated setupAddTaskFlow");
+  setupAddTaskFlow();
+});
+
 function appendNewTaskToUI(task) {
+  const taskList = document.querySelector('.tasksContainer .taskList');
+  
+  if (taskList) {
+    const dueDate = new Date(task.dueDate);
+    const formattedDue = dueDate.toLocaleDateString() + ' ' + 
+      dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    const taskCard = createTaskCard(task, formattedDue);
+    
+    taskList.insertAdjacentElement('afterbegin', taskCard);
+    
+    const noTasksMessage = document.querySelector('.noTasksMessage');
+    if (noTasksMessage) {
+      noTasksMessage.remove();
+      
+      const tasksContainer = document.querySelector('.tasksContainer');
+      if (tasksContainer && !document.querySelector('.sectionTabs')) {
+        const sectionTabs = document.createElement('div');
+        sectionTabs.className = 'sectionTabs';
+        sectionTabs.innerHTML = `
+          <span class="tab tasksTab"><h2>Tasks</h2></span>
+          <span class="tab statusTab"><h2>Status</h2></span>
+        `;
+        
+        if (!taskList) {
+          const newTaskList = document.createElement('div');
+          newTaskList.className = 'taskList';
+          
+          tasksContainer.appendChild(sectionTabs);
+          tasksContainer.appendChild(newTaskList);
+          
+          newTaskList.appendChild(taskCard);
+        } else {
+          tasksContainer.insertBefore(sectionTabs, taskList);
+        }
+      }
+    }
+    
+    return;
+  }
+  
   const newTasksSection = document.querySelector('.taskSectionBox');
   if (!newTasksSection) return;
   
@@ -485,48 +689,7 @@ function appendNewTaskToUI(task) {
   const formattedDue = dueDate.toLocaleDateString() + ' ' + 
                       dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   
-  let iconHTML = '';
-  try {
-    const iconTemplate = document.createElement('template');
-    const existingIcon = document.querySelector(`.taskTypeIcon[data-category="${task.category}"] svg`);
-    if (existingIcon) {
-      iconHTML = existingIcon.outerHTML;
-    } else {
-      iconHTML = '<i class="fas fa-check-circle"></i>';
-    }
-  } catch (e) {
-    iconHTML = '<i class="fas fa-check-circle"></i>';
-  }
-  
-  const taskCard = document.createElement('div');
-  taskCard.className = 'taskCard';
-  taskCard.dataset.taskId = task._id;
-  taskCard.dataset.category = task.category;
-  taskCard.dataset.description = task.description || '';
-  
-  taskCard.innerHTML = `
-    <div class="taskInfo">
-      <div class="taskIcon">
-        ${iconHTML}
-      </div>
-      <div class="taskText">
-        <h3>${task.title}</h3>
-        <small class="dueDate" data-due="${dueDate.toISOString()}">$${task.reward ? parseFloat(task.reward).toFixed(2) : '0.00'} | ${formattedDue}</small>
-      </div>
-    </div>
-    <div class="taskStatus">
-      <span class="statusBadge new">New</span>
-    </div>
-  `;
-  
-  taskCard.addEventListener('click', function(e) {
-    if (e.target.tagName === 'BUTTON') return;
-    
-    const taskId = this.dataset.taskId;
-    if (document.body.classList.contains('parentView')) {
-      loadAndShowTaskDetails(taskId);
-    }
-  });
+  const taskCard = createTaskCard(task, formattedDue);
   
   newTasksList.prepend(taskCard);
   
@@ -535,7 +698,6 @@ function appendNewTaskToUI(task) {
     noTasksMessage.remove();
   }
 }
-
 
 function validateAndGetTaskData() {
   const titleEl = document.getElementById('taskDetailsTitle');
@@ -629,36 +791,91 @@ async function loadAvailableTasks() {
     const taskList = document.querySelector('#assignTaskModal .taskList');
     if (taskList) {
       if (tasks.length > 0) {
-        taskList.innerHTML = tasks.map(task => `
-          <div class="taskCard" data-task-id="${task._id}">
-            <div class="taskInfo">
-              <div class="taskText">
-                <h3>${task.title}</h3>
-                <small>$${task.reward ? parseFloat(task.reward).toFixed(2) : '0.00'}</small>
-              </div>
-            </div>
-            <button class="assignBtn" data-task-id="${task._id}">Assign</button>
-          </div>
-        `).join('');
+        let formHtml = `<form id="assignTaskForm">`;
         
-        document.querySelectorAll('.assignBtn').forEach(btn => {
-          btn.addEventListener('click', function() {
-            assignTaskToGoal(this.dataset.taskId, goalId);
-          });
+        tasks.forEach(task => {
+          formHtml += `
+            <label class="radioOption">
+              <input type="radio" name="taskId" value="${task._id}" />
+              <span>${task.title} ($${task.reward ? parseFloat(task.reward).toFixed(2) : '0.00'})</span>
+            </label>
+          `;
         });
+        
+        formHtml += `
+          <div class="modalFooter">
+            <button type="submit" class="modalBtn primary">Assign</button>
+            <button type="button" class="modalBtn secondary" id="cancelAssignTaskModal">Cancel</button>
+          </div>
+        </form>`;
+        
+        taskList.innerHTML = formHtml;
+        
+        const assignTaskForm = document.getElementById('assignTaskForm');
+        if (assignTaskForm) {
+          assignTaskForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const taskId = document.querySelector('input[name="taskId"]:checked')?.value;
+            if (!taskId) {
+              alert('Please select a task');
+              return;
+            }
+            
+            await assignTaskToGoal(taskId, goalId);
+          });
+        }
+        
+        const cancelBtn = document.getElementById('cancelAssignTaskModal');
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', function() {
+            closeModal('assignTaskModal');
+          });
+        }
       } else {
         taskList.innerHTML = `
           <div class="noTasksMessage">
-            <p>No tasks available to assign.</p>
+            <i class="fas fa-tasks"></i>
+            <p>No available tasks to assign.</p>
+          </div>
+          
+          <div class="modalFooter">
+            <button type="button" class="modalBtn secondary" id="cancelAssignTaskModal">Close</button>
           </div>
         `;
+        
+        const cancelBtn = document.getElementById('cancelAssignTaskModal');
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', function() {
+            closeModal('assignTaskModal');
+          });
+        }
       }
     }
   } catch (error) {
     console.error('Error loading available tasks:', error);
+    
+    if (taskList) {
+      taskList.innerHTML = `
+        <div class="errorMessage">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>Failed to load tasks. Please try again.</p>
+        </div>
+        
+        <div class="modalFooter">
+          <button type="button" class="modalBtn secondary" id="cancelAssignTaskModal">Close</button>
+        </div>
+      `;
+      
+      const cancelBtn = document.getElementById('cancelAssignTaskModal');
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+          closeModal('assignTaskModal');
+        });
+      }
+    }
   }
 }
-
 function populateTaskModal(taskId, title, desc, reward, due, category, goalId) {
   const titleEl = document.getElementById('modalTaskTitle');
   const descEl = document.getElementById('modalTaskDesc');
@@ -706,9 +923,60 @@ function populateTaskModal(taskId, title, desc, reward, due, category, goalId) {
   
   if (assignGoalBtn) {
     assignGoalBtn.dataset.taskId = taskId;
+    assignGoalBtn.dataset.goalId = goalId || ''; 
     assignGoalBtn.style.display = (taskStatus === 'completed') ? 'none' : 'block';
+    
+    if (goalId && goalId.trim() !== '') {
+      assignGoalBtn.textContent = "Reassign Goal";
+    } else {
+      assignGoalBtn.textContent = "Assign Goal";
+    }
   }
 }
+
+function initModals() {
+  document.querySelectorAll('.modalClose').forEach(button => {
+    button.addEventListener('click', function() {
+      const modal = this.closest('.baseModal');
+      if (modal) {
+        closeModal(modal.id);
+      }
+    });
+  });
+  
+  document.querySelectorAll('.baseModal').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal(this.id);
+      }
+    });
+  });
+  
+  document.querySelectorAll('.modalBtn.secondary').forEach(button => {
+    button.addEventListener('click', function() {
+      const modal = this.closest('.baseModal');
+      if (modal) {
+        closeModal(modal.id);
+      }
+    });
+  });
+  
+  document.querySelectorAll('[data-modal-target]').forEach(trigger => {
+    trigger.addEventListener('click', function() {
+      const modalId = this.dataset.modalTarget;
+      openModal(modalId);
+    });
+  });
+  
+  setupGoalModalHandlers();
+  setupTaskModalHandlers();
+  setupTaskAssignmentHandlers();
+  setupAssignGoalHandlers();
+  setupLearningHandlers();
+  setupReassignmentHandlers(); 
+  setupAssignBalanceHandlers();
+}
+
 
 async function loadAndShowTaskDetails(taskId) {
   try {
@@ -851,7 +1119,6 @@ async function completeTask(taskId, goalId) {
     
     const result = await response.json();
     if (result.success) {
-      // First update the UI to show the task as completed
       const taskCard = document.querySelector(`.taskCard[data-task-id="${taskId}"]`);
       if (taskCard) {
         const statusBadge = taskCard.querySelector('.statusBadge');
@@ -862,7 +1129,6 @@ async function completeTask(taskId, goalId) {
         }
       }
 
-      // Update goal progress if goal is assigned
       if (goalId) {
         await fetch(`/goals/${goalId}/update-progress`, {
           method: 'POST'
@@ -925,35 +1191,81 @@ async function assignTaskToGoal(taskId, goalId) {
       body: JSON.stringify({ goalId })
     });
     
-    const result = await response.json();
-    
-    if (result.success) {
-      const successOverlay = document.getElementById('assignGoalSuccessOverlay');
-      if (successOverlay) {
-        successOverlay.classList.add('show');
-        
-        setTimeout(() => {
-          successOverlay.classList.remove('show');
+    if (response.ok) {
+      let result;
+      try {
+        result = await response.json();
+      } catch (e) {
+        result = { success: true };
+      }
+      
+      const assignTaskModalVisible = document.getElementById('assignTaskModal')?.style.display === 'flex';
+      const assignGoalModalVisible = document.getElementById('assignGoalModal')?.style.display === 'flex';
+      
+      if (assignTaskModalVisible) {
+        const successOverlay = document.getElementById('assignTaskSuccessOverlay');
+        if (successOverlay) {
+          successOverlay.classList.add('show');
           
           setTimeout(() => {
-            closeModal('assignGoalModal');
-            window.location.reload();
-          }, 300);
-        }, 1500);
+            successOverlay.classList.remove('show');
+            
+            setTimeout(() => {
+              closeModal('assignTaskModal');
+              window.location.reload();
+            }, 300);
+          }, 1500);
+        } else {
+          closeModal('assignTaskModal');
+          window.location.reload();
+        }
+      } else if (assignGoalModalVisible) {
+        const successOverlay = document.getElementById('assignGoalSuccessOverlay');
+        if (successOverlay) {
+          successOverlay.classList.add('show');
+          
+          setTimeout(() => {
+            successOverlay.classList.remove('show');
+            
+            setTimeout(() => {
+              closeModal('assignGoalModal');
+              window.location.reload();
+            }, 300);
+          }, 1500);
+        } else {
+          closeModal('assignGoalModal');
+          window.location.reload();
+        }
       } else {
-        closeModal('assignGoalModal');
-        alert('Task assigned to goal successfully');
         window.location.reload();
       }
     } else {
-      throw new Error(result.error || 'Failed to assign task to goal');
+      const responseText = await response.text();
+      if (responseText.includes("Task not found") || responseText.includes("not modified")) {
+        if (document.getElementById('assignTaskModal')?.style.display === 'flex') {
+          closeModal('assignTaskModal');
+        } else {
+          closeModal('assignGoalModal');
+        }
+        window.location.reload();
+      } else {
+        throw new Error(responseText || 'Failed to assign task to goal');
+      }
     }
   } catch (error) {
     console.error('Error assigning task to goal:', error);
-    alert('Error assigning task to goal: ' + error.message);
+    if (error.message.includes("Task not found") || error.message.includes("not modified")) {
+      if (document.getElementById('assignTaskModal')?.style.display === 'flex') {
+        closeModal('assignTaskModal');
+      } else {
+        closeModal('assignGoalModal');
+      }
+      window.location.reload();
+    } else {
+      alert('Error assigning task to goal: ' + error.message);
+    }
   }
 }
-
 async function deleteTask(taskId) {
   try {
     const response = await fetch(`/tasks/${taskId}`, {
@@ -1025,11 +1337,15 @@ function setupAssignGoalHandlers() {
   if (assignGoalBtn) {
     assignGoalBtn.addEventListener('click', function() {
       const taskId = this.dataset.taskId;
+      const currentGoalId = this.dataset.goalId;
       
       sessionStorage.setItem('currentTaskId', taskId);
       
-      closeModal('taskModal');
+      if (currentGoalId && currentGoalId.trim() !== '') {
+        this.textContent = "Reassign Goal";
+      }
       
+      closeModal('taskModal');
       loadAvailableGoals();
       openModal('assignGoalModal');
     });
@@ -1062,6 +1378,137 @@ function setupAssignGoalHandlers() {
   if (cancelAssignGoalBtn) {
     cancelAssignGoalBtn.addEventListener('click', function() {
       closeModal('assignGoalModal');
+      sessionStorage.removeItem('currentTaskId');
+    });
+  }
+}
+
+function setupReassignmentHandlers() {
+  const confirmReassignYes = document.getElementById('confirmReassignYes');
+  if (confirmReassignYes) {
+    confirmReassignYes.addEventListener('click', function() {
+      closeModal('confirmReassignModal');
+      closeModal('taskModal');
+      loadAvailableGoals();
+      openModal('assignGoalModal');
+    });
+  }
+
+  const confirmReassignNo = document.getElementById('confirmReassignNo');
+if (confirmReassignNo) {
+    confirmReassignNo.addEventListener('click', function() {
+      closeModal('confirmReassignModal');
+      sessionStorage.removeItem('currentTaskId');
+    });
+  }
+}
+
+
+function setupAssignBalanceHandlers() {
+  const assignBalanceBtn = document.querySelector('.assignBalanceBtn');
+  if (assignBalanceBtn) {
+    assignBalanceBtn.addEventListener('click', function() {
+      openModal('assignBalanceModal');
+      
+      const errorElement = document.getElementById('assignBalanceError');
+      if (errorElement) {
+        errorElement.style.display = 'none';
+        errorElement.textContent = '';
+      }
+      
+      const form = document.getElementById('assignBalanceForm');
+      if (form) form.reset();
+    });
+  }
+  
+  const assignBalanceForm = document.getElementById('assignBalanceForm');
+  if (assignBalanceForm) {
+    assignBalanceForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const amount = parseFloat(document.getElementById('assignAmount').value);
+      const userBalance = parseFloat(document.getElementById('currentUserBalance').textContent);
+      const remainingGoalAmount = parseFloat(document.getElementById('remainingGoalAmount').textContent);
+      const goalId = document.body.dataset.goalId;
+      
+      const errorElement = document.getElementById('assignBalanceError');
+      
+      if (isNaN(amount) || amount <= 0) {
+        errorElement.textContent = 'Please enter a valid amount greater than 0.';
+        errorElement.style.display = 'block';
+        return;
+      }
+      
+      if (amount > userBalance) {
+        errorElement.textContent = 'You cannot assign more than your current balance.';
+        errorElement.style.display = 'block';
+        return;
+      }
+      
+      if (amount > remainingGoalAmount) {
+        errorElement.textContent = 'You cannot assign more than the remaining amount needed for this goal.';
+        errorElement.style.display = 'block';
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/goals/${goalId}/assign-balance`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ amount })
+        });
+        
+        if (!response.ok) {
+          const result = await response.json();
+          throw new Error(result.error || 'Failed to assign balance');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          const modalContent = document.querySelector('#assignBalanceModal .modalContent');
+          let successOverlay = document.getElementById('assignBalanceSuccessOverlay');
+          
+          if (!successOverlay) {
+            successOverlay = document.createElement('div');
+            successOverlay.id = 'assignBalanceSuccessOverlay';
+            successOverlay.className = 'successOverlay';
+            successOverlay.innerHTML = `
+              <div class="successIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div class="successMessage">Balance Assigned Successfully</div>
+            `;
+            modalContent.appendChild(successOverlay);
+          }
+          
+          successOverlay.classList.add('show');
+          
+          setTimeout(() => {
+            successOverlay.classList.remove('show');
+            closeModal('assignBalanceModal');
+            
+            window.location.reload();
+          }, 1500);
+        } else {
+          throw new Error(result.error || 'Failed to assign balance');
+        }
+      } catch (error) {
+        console.error('Error assigning balance:', error);
+        errorElement.textContent = error.message;
+        errorElement.style.display = 'block';
+      }
+    });
+  }
+  
+  const cancelAssignBalanceBtn = document.getElementById('cancelAssignBalance');
+  if (cancelAssignBalanceBtn) {
+    cancelAssignBalanceBtn.addEventListener('click', function() {
+      closeModal('assignBalanceModal');
     });
   }
 }

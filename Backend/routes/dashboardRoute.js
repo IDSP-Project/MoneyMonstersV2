@@ -196,13 +196,13 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
     }
     
     res.render('dashboard/home', {
-      user: req.viewingChild || req.session.user,
+      user: req.session.user, 
       tasks,
       goals,
       learningProgress,
       viewingAsChild: req.viewingChild ? true : false,
       viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
-      child: req.viewingChild, 
+      child: req.viewingChild,
       currentPage: 'dashboard',
       getInitials: getGoalInitials 
     });

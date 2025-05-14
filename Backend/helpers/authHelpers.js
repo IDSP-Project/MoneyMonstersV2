@@ -1,5 +1,3 @@
-// Helper functions for login, registration and user profile management
-
 const bcrypt = require("bcrypt");
 const User = require("../db/userModel.js");
 const { ObjectId } = require('mongodb'); 

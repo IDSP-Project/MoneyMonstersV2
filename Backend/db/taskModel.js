@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../db/connection');
+const Goal = require('../db/goalModel');
 
 class TaskModel {
   constructor(taskData = {}) {
@@ -46,148 +47,153 @@ class TaskModel {
     return result;
   }
   
-static async completeTask(taskId) {
-  const db = getDB();
-  const session = db.client.startSession();
+  static async completeTask(taskId) {
+    const db = getDB();
   
-  try {
-    let result = null;
-    
-    await session.withTransaction(async () => {
-      const task = await db.collection('tasks').findOne(
-        { _id: new ObjectId(taskId) },
-        { session }
-      );
-      
-      if (!task) {
-        throw new Error('Task not found');
-      }
-      
-      await db.collection('tasks').updateOne(
-        { _id: task._id },
-        { 
-          $set: { 
-            completed: true, 
-            completedAt: new Date(),
-            status: 'completed',
-            updatedAt: new Date()
-          } 
-        },
-        { session }
-      );
-      
-      let user = null;
-      let goalUpdated = false;
-      let updatedGoal = null;
-      
-      if (task.reward && task.assigneeId) {
-        const rewardAmount = parseFloat(task.reward);
-        const assigneeId = typeof task.assigneeId === 'string' ? new ObjectId(task.assigneeId) : task.assigneeId;
+    try {
+        const taskObjectId = typeof taskId === 'string' ? new ObjectId(taskId) : taskId;
+        const task = await db.collection('tasks').findOne({ _id: taskObjectId });
         
-        await db.collection('users').updateOne(
-          { _id: assigneeId },
-          { 
-            $inc: { balance: rewardAmount },
-            $push: { 
-              transactions: {
-                type: 'reward',
-                amount: rewardAmount,
-                description: `Task completed: ${task.title}`,
-                date: new Date(),
-                taskId: task._id
-              } 
-            }
-          },
-          { session }
-        );
-        
-        user = await db.collection('users').findOne({ _id: assigneeId }, { session });
-        
-        if (task.goalId) {
-          const goalId = typeof task.goalId === 'string' ? new ObjectId(task.goalId) : task.goalId;
-          const goal = await db.collection('goals').findOne({ _id: goalId }, { session });
-          
-          if (goal) {
-            const remainingNeeded = Math.max(0, goal.price - goal.allocatedAmount);
-            
-            if (remainingNeeded > 0) {
-              const amountToAllocate = Math.min(remainingNeeded, user.balance);
-              
-              if (amountToAllocate > 0) {
-                await db.collection('users').updateOne(
-                  { _id: assigneeId },
-                  { 
-                    $inc: { balance: -amountToAllocate },
-                    $push: { 
-                      transactions: {
-                        type: 'allocation',
-                        amount: -amountToAllocate,
-                        description: `Auto-allocated to goal: ${goal.title}`,
-                        date: new Date(),
-                        taskId: task._id,
-                        goalId: goalId
-                      } 
-                    }
-                  },
-                  { session }
-                );
-                
-                const newAllocated = goal.allocatedAmount + amountToAllocate;
-                const newProgress = Math.min(100, Math.round((newAllocated / goal.price) * 100));
-                
-                await db.collection('goals').updateOne(
-                  { _id: goalId },
-                  { 
-                    $set: { 
-                      allocatedAmount: newAllocated,
-                      progress: newProgress,
-                      updatedAt: new Date(),
-                      status: newProgress >= 100 ? 'ready' : goal.status
-                    } 
-                  },
-                  { session }
-                );
-                
-                goalUpdated = true;
-                updatedGoal = await db.collection('goals').findOne({ _id: goalId }, { session });
-              }
-            }
-          }
+        if (!task) {
+            throw new Error('Task not found');
         }
-      }
-      
-      const updatedTask = await db.collection('tasks').findOne(
-        { _id: task._id },
-        { session }
-      );
-      
-      let finalUserBalance = null;
-      if (user) {
-        const finalUser = await db.collection('users').findOne(
-          { _id: user._id },
-          { session }
+        
+        await db.collection('tasks').updateOne(
+            { _id: task._id },  
+            { 
+                $set: { 
+                    completed: true, 
+                    completedAt: new Date(),
+                    status: 'completed',
+                    updatedAt: new Date()
+                } 
+            }
         );
-        finalUserBalance = finalUser.balance;
-      }
-      
-      result = {
-        success: true,
-        message: 'Task completed successfully',
-        task: updatedTask,
-        goalUpdated,
-        goal: updatedGoal,
-        userBalance: finalUserBalance
-      };
-    });
-    
-    return result;
-  } catch (error) {
-    console.error('Error completing task:', error);
-    throw error;
-  } finally {
-    await session.endSession();
+        
+        let user = null;
+        let goalUpdated = false;
+        let updatedGoal = null;
+        
+        if (task.reward && task.assigneeId) {
+            const rewardAmount = parseFloat(task.reward);
+            const assigneeId = typeof task.assigneeId === 'string' ? 
+                new ObjectId(task.assigneeId) : task.assigneeId;
+            
+            await db.collection('users').updateOne(
+                { _id: assigneeId },
+                { 
+                    $inc: { balance: rewardAmount },
+                    $push: { 
+                        transactions: {
+                            type: 'reward',
+                            amount: rewardAmount,
+                            description: `Task completed: ${task.title}`,
+                            date: new Date(),
+                            taskId: task._id
+                        } 
+                    }
+                }
+            );
+            
+            user = await db.collection('users').findOne({ _id: assigneeId });
+            
+            if (task.goalId) {
+                const goalId = typeof task.goalId === 'string' ? 
+                    new ObjectId(task.goalId) : task.goalId;
+                
+                const goal = await db.collection('goals').findOne({ _id: goalId });
+                
+                if (goal) {
+                    const currentAmount = parseFloat(goal.amountAchieved || 0);
+                    const taskAmount = parseFloat(task.reward || 0);
+                    const targetAmount = parseFloat(goal.totalRequired || goal.price || 0);
+                    
+                    const amountToAllocate = Math.min(taskAmount, targetAmount - currentAmount);
+                    const remainingAmount = taskAmount - amountToAllocate;
+                    
+                    const newAmount = currentAmount + amountToAllocate;
+                    const newProgress = Math.min(100, Math.round((newAmount / targetAmount) * 100));
+                    const isCompleted = newAmount >= targetAmount;
+                    
+                    if (amountToAllocate > 0) {
+                        await db.collection('users').updateOne(
+                            { _id: assigneeId },
+                            { 
+                                $inc: { balance: -amountToAllocate },
+                                $push: { 
+                                    transactions: {
+                                        type: 'allocation',
+                                        amount: -amountToAllocate,
+                                        description: `Auto-allocated to goal: ${goal.title}`,
+                                        date: new Date(),
+                                        taskId: task._id,
+                                        goalId: goalId
+                                    } 
+                                }
+                            }
+                        );
+                        
+                        const uniqueMarker = `task-${taskId}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+                        const timestamp = new Date().toISOString();
+                        
+                        await db.collection('goals').updateOne(
+                            { _id: goalId },
+                            { 
+                                $set: { 
+                                    amountAchieved: newAmount,
+                                    progress: newProgress,
+                                    completed: isCompleted,
+                                    updatedAt: new Date(),
+                                    lastUpdateSource: "taskCompletion",
+                                    lastUpdateTimestamp: timestamp,
+                                    uniqueMarker: uniqueMarker
+                                }
+                            }
+                        );
+                        
+                        try {
+                            await db.collection('goalUpdates').insertOne({
+                                goalId: goalId,
+                                taskId: task._id,
+                                amount: amountToAllocate,
+                                timestamp: new Date(),
+                                oldAmount: currentAmount,
+                                newAmount: newAmount,
+                                updateSource: "taskCompletion",
+                                uniqueMarker: uniqueMarker
+                            });
+                        } catch (err) {
+                            console.warn("Could not save update metadata:", err.message);
+                        }
+                        
+                        const finalCheck = await db.collection('goals').findOne({ _id: goalId });
+                        updatedGoal = finalCheck;
+                        goalUpdated = true;
+                    }
+                }
+            }
+        }
+        
+        let finalUserBalance = null;
+        if (user) {
+            const finalUser = await db.collection('users').findOne({ _id: user._id });
+            finalUserBalance = finalUser.balance;
+        }
+        
+        return {
+            success: true,
+            message: 'Task completed successfully',
+            task: await db.collection('tasks').findOne({ _id: task._id }),  
+            goalUpdated,
+            goal: updatedGoal,
+            userBalance: finalUserBalance
+        };
+    } catch (error) {
+        console.error('Error in completeTask:', error);
+        throw error;
+    }
   }
-}
+
   static async updateStatus(taskId, newStatus) {
     if (newStatus === 'completed') {
       return this.completeTask(taskId);

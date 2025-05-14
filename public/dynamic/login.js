@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitButton = document.getElementById('submitButton');
     const forgotPasswordLink = document.querySelector('.forgot-password a');
     const showPasswordLink = document.querySelectorAll('.showPassword');
-  const formError = document.querySelector('.form-error'); // Add this
+  const formError = document.querySelector('.form-error'); 
     
     
     if (loginForm && loginForm.dataset.useAjax === 'true') {

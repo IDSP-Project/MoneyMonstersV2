@@ -133,7 +133,9 @@ const createGoal = async (goalData) => {
       updatedAt: new Date(),
       totalRequired: parseFloat(goalData.totalRequired || goalData.price),
       amountAchieved: parseFloat(goalData.amountAchieved || 0),
-      progress: parseFloat(goalData.progress || 0)
+      progress: parseFloat(goalData.progress || 0),
+      completed: false,              
+      completedAt: null                
     };
     
     const result = await db.collection('goals').insertOne(newGoal);
@@ -167,7 +169,19 @@ const updateGoal = async (goalId, updateData) => {
         ? parseFloat(updateData.amountAchieved) 
         : currentGoal.amountAchieved;
       
-      updateData.progress = Math.min(100, (amountAchieved / totalRequired) * 100);
+      const newProgress = Math.min(100, Math.round((amountAchieved / totalRequired) * 100));
+      updateData.progress = newProgress;
+      
+      const isCompleted = newProgress >= 100;
+      updateData.completed = isCompleted;
+      
+      if (isCompleted && !currentGoal.completed) {
+        updateData.completedAt = new Date();
+        
+        if (currentGoal.status !== 'ready') {
+          updateData.status = 'ready';
+        }
+      }
     }
     
     const result = await db.collection('goals').updateOne(
@@ -211,7 +225,8 @@ const getAssignedFundsForGoal = async (goalId) => {
       status: 'completed'
     }).toArray();
     
-    const assignedTotal = tasks.reduce((sum, task) => sum + (parseFloat(task.amount) || 0), 0);
+    const assignedTotal = tasks.reduce((sum, task) => sum + (parseFloat(task.reward) || 0), 0);
+    console.log(`Goal ${goalId}: Found ${tasks.length} completed tasks with total reward of ${assignedTotal}`);
     return assignedTotal;
   } catch (error) {
     console.error('Error getting assigned funds for goal:', error);
@@ -219,24 +234,99 @@ const getAssignedFundsForGoal = async (goalId) => {
   }
 };
 
-const updateGoalProgress = async (goalId) => {
+const updateGoalProgress = async (goalId, options = {}) => {
   try {
     const db = getDB();
     if (typeof goalId === 'string') goalId = new ObjectId(goalId);
     
+    if (options.existingGoal && options.skipCalculation) {
+      console.log(`Using provided goal data for ${goalId} to avoid race condition`);
+      return { success: true, goal: options.existingGoal };
+    }
+    
     const goal = await findGoalById(goalId);
     if (!goal) throw new Error('Goal not found');
     
-    const assignedAmount = await getAssignedFundsForGoal(goalId);
-    const progress = Math.min(100, (assignedAmount / goal.totalRequired) * 100);
+
+    if (goal.uniqueMarker && goal.uniqueMarker.includes('task-') &&
+        goal.lastUpdateSource === 'taskCompletion') {
+      const lastUpdateTime = new Date(goal.lastUpdateTimestamp || goal.updatedAt);
+      const now = new Date();
+      const secondsSinceUpdate = (now - lastUpdateTime) / 1000;
+      
+      if (secondsSinceUpdate < 5) {
+        console.log(`Skipping progress update for goal ${goalId} - recently updated by task completion`);
+        return { 
+          success: true, 
+          message: 'Skipped update to preserve task completion changes',
+          goal: goal
+        };
+      }
+    }
     
-    return await updateGoal(goalId, {
-      amountAchieved: assignedAmount,
-      progress: progress
+    const assignedAmount = await getAssignedFundsForGoal(goalId);
+    const progress = Math.min(100, Math.round((assignedAmount / goal.totalRequired) * 100));
+    
+    console.log(`Goal ${goalId} progress calculation:`, {
+      assignedAmount,
+      totalRequired: goal.totalRequired,
+      calculatedProgress: progress,
+      currentProgress: goal.progress
     });
+    
+    if (Math.abs(assignedAmount - goal.amountAchieved) < 0.01 && 
+        Math.abs(progress - goal.progress) < 1) {
+      console.log(`No significant change for goal ${goalId}, skipping update`);
+      return { 
+        success: true, 
+        message: 'No change needed',
+        goal: goal
+      };
+    }
+    
+    const isCompleted = progress >= 100;
+    const updateObj = {
+      amountAchieved: assignedAmount,
+      progress: progress,
+      completed: isCompleted,
+      lastUpdateSource: 'taskCalculation',
+      lastUpdateTimestamp: new Date().toISOString()
+    };
+    
+    if (isCompleted && !goal.completed) {
+      updateObj.completedAt = new Date();
+      
+      if (goal.status !== 'ready') {
+        updateObj.status = 'ready';
+      }
+    }
+    
+    updateObj.uniqueMarker = `calculation-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    
+    console.log(`Updating goal ${goalId} with:`, updateObj);
+    
+    const updateResult = await updateGoal(goalId, updateObj);
+    
+    const updatedGoal = await findGoalById(goalId);
+    return { 
+      ...updateResult,
+      goal: updatedGoal 
+    };
   } catch (error) {
     console.error('Error updating goal progress:', error);
     return { success: false, error: error.message };
+  }
+};
+
+const isGoalCompleted = async (goalId) => {
+  try {
+    const goal = await findGoalById(goalId);
+    if (!goal) return false;
+    
+    return goal.completed === true;
+  } catch (error) {
+    console.error('Error checking if goal is completed:', error);
+    return false;
   }
 };
 
@@ -250,5 +340,6 @@ module.exports = {
   updateGoal,
   deleteGoal,
   getAssignedFundsForGoal,
-  updateGoalProgress
+  updateGoalProgress,
+  isGoalCompleted
 };

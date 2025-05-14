@@ -404,10 +404,8 @@
 .taskSectionBox {
   background: #fff;
   border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(113, 74, 168, 0.07);
   padding: 1.2rem 1rem 0.5rem 1rem;
-  margin-bottom: 1.2rem;
-  border: 1px solid #ececec;
+  margin-bottom: 3rem;
   
   .taskSectionTitle {
     font-size: 1.1rem;
@@ -485,3 +483,12 @@
       border: none;    }
   }
   
+
+  .tasksContainer {
+     h1 {
+          margin: 1rem 3.2rem;
+          font-size: 1.1rem;
+          color: $secondary;
+          font-weight: 600;
+    }
+  }

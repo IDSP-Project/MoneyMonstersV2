@@ -1,7 +1,6 @@
 const { getDB } = require('../db/connection');
 const { ObjectId } = require('mongodb');
 
-// Middleware to fetch tasks for home page
 const fetchTasksForHome = async (req, res, next) => {
     if (req.session.user) {
       try {
@@ -21,7 +20,6 @@ const fetchTasksForHome = async (req, res, next) => {
             .toArray();
         }
   
-        // Format tasks for display
         res.locals.tasks = res.locals.tasks.map(task => {
           return {
             ...task,
@@ -43,7 +41,6 @@ const fetchTasksForHome = async (req, res, next) => {
 function formatTaskDueDate(dueDate) {
   const now = new Date();
   const due = new Date(dueDate);
-  // Remove time for day comparison
   const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate());
   const diffMs = dueDay - nowDay;

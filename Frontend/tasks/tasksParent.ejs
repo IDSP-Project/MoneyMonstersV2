@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Money Monsters - Tasks</title>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <div class="tasks">
-    <div class="container">
+     <div class="container">
       <header>
         <%- include('../partials/header') %>
         <% if (locals.viewingAsChild && locals.viewingChildName) { %>
@@ -18,15 +18,19 @@
       </header>
       <main>
         <div class="tasksContainer">
-          <div class="addTaskBtnContainer">
-            <button class="addTaskBtn">Add New Task</button>
-          </div>
-          <% const statusGroups = {
+          <% if (user.accountType !== 'child') { %>
+             <% if (!locals.viewingAsChild) { %>
+              <h1>Family's task progress</h1>
+            <% } %>
+
+          <% 
+          const statusGroups = {
             'in_progress': { title: 'In Progress', tasks: [] },
-            'new': { title: 'Assigned', tasks: [] },
+            'new': { title: 'New', tasks: [] },
             'overdue': { title: 'Overdue', tasks: [] },
             'completed': { title: 'Complete', tasks: [] }
           };
+          
           if (tasks && tasks.length > 0) {
             tasks.forEach(function(task) {
               if (statusGroups[task.status]) {
@@ -79,17 +83,22 @@
           <% } else { %>
             <div class="noTasksMessage">
               <i class="fas fa-tasks"></i>
-              <h2>No Tasks Yet</h2>
+              <h1>No Tasks Yet</h1>
               <p>Your children don't have any tasks assigned yet.</p>
             </div>
           <% } %>
         </div>
+        <% if (locals.viewingAsChild) { %>
+            <div class="addTaskBtnContainer">
+              <button class="addTaskBtn">Add New Task</button>
+            </div>
+            <% } %>
+          <% } %>
       </main>
       <footer>
         <%- include('../partials/bottomNav') %>
       </footer>
  
-      <%- include('../partials/modals/taskProgressModal') %>
       <%- include('../partials/modals/assignGoalModal') %>
       <%- include('../partials/modals/assignTaskModal') %>
       <%- include('../partials/modals/confirmReassignModal') %>
