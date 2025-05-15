@@ -17,16 +17,21 @@
         <% } %>
       </header>
 
-      <section class="balance-section">
-        <% if (user && user.balance != null) { %>
-          <% if (user.accountType === 'parent' && !locals.viewingAsChild) { %>
-            <h1>Family's savings: $<%= user.balance.toFixed(2) %></h1>
+    <section class="balance-section">
+      <% if (user && user.balance != null) { %>
+        <% if (user.accountType === 'parent' && locals.viewingAsChild) { %>
+          <% if (locals.viewingChildBalance != null) { %>
+            <h1><%= locals.viewingChildName %> has saved: $<%= locals.viewingChildBalance.toFixed(2) %></h1>
           <% } else { %>
-            <h1>You have saved: $<%= user.balance.toFixed(2) %></h1>
+            <h1>Your Family's Progress</h1>
           <% } %>
         <% } else { %>
-          <h2>Balance not available</h2>
+          <h1>You have saved: $<%= user.balance.toFixed(2) %></h1>
         <% } %>
+      <% } else { %>
+        <h2>Balance not available</h2>
+      <% } %>
+    </section>
 
         <!-- <form action="/balance/add" method="POST" style="display: inline;">
           <input type="hidden" name="amount" value="1" />
