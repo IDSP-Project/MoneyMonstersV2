@@ -1453,6 +1453,11 @@ html {
   min-width: unset;
 }
 
+.amazonLinkInput {
+  background-color: #FFFFFF;
+  border: none;
+}
+
 .goalDetailsPage {
   display: grid;
   grid-template-columns: 1fr;
