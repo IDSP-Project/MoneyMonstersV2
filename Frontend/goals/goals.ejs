@@ -30,15 +30,15 @@
               <a href="/goals/view/<%= goal._id %>" class="goalCardLink">
                 <div class="goalCard">
                   <div class="goalInfo">
-                    <% if (goal.purchaseLink) { %>
-                      <img src="/images/goal.png" alt="Goal Image" class="goalImage" />
+                    <% if (goal.image) { %>
+                        <div class="amazonImg"><img src="<%= goal.image %>" alt="Goal Image"></div>
                     <% } else { %>
-                      <div class="initialsAvatar"><%= getInitials(goal.title) %></div>
+                        <div class="initialsAvatar"><%= getInitials(goal.title) %></div>
                     <% } %>
-                    <div class="goalText">
-                      <h3><%= goal.title %></h3>
-                      <p><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
-                    </div>
+                  <div class="goalText">
+                    <h3><%= goal.title.length > 14 ? goal.title.substring(0, 15) + '...' : goal.title %></h3>
+                    <p><%= goal.purchaseLink ? 'Amazon Goal' : 'Custom Goal' %></p>
+                  </div>
                   </div>
                   <div class="goalProgress">
                     <div class="progressBar">

@@ -30,12 +30,12 @@
           </div>
 
           <div class="goalDetailsCard">
-            <% if (goal.purchaseLink) { %>
-              <img src="/images/goal.png" alt="Goal Image" class="goalImage">
+            <% if (goal.image) { %>
+              <div class="amazonImg"><img src="<%= goal.image %>" alt="Goal Image"></div>
             <% } else { %>
               <div class="initialsAvatar"><%= goal.title ? goal.title.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) : '' %></div>
             <% } %>
-            <div>
+            <div class="goalInfo">
               <h2 class="goalTitle"><%= goal.title %></h2>
               <p class="goalSource"><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
               <% if (goal.description && goal.description.trim() !== '' && goal.description !== 'Custom goal') { %>
@@ -59,7 +59,7 @@
             </div>
           </div>
           
-      <div class="tasksContainer">
+          <div class="tasksContainer">
             <% if (user.accountType === 'child' && !viewingAsChild) { %>
               <div class="goalActionsContainer">
                 <% if (!goal.completed) { %>
@@ -89,49 +89,51 @@
               </div>
             <% } %>
 
-            <div class="sectionTabs">
-              <h2>Tasks</h2>
-              <h2>Status</h2>
-            </div>
+            <div class="taskHistory">
+              <div class="sectionTabs">
+                <h2>Tasks</h2>
+                <h2>Status</h2>
+              </div>
 
-            <% if (assignedTasks && assignedTasks.length > 0) { %>
-              <div class="taskList">
-                <% assignedTasks.forEach(function(task) { %>
-                  <div class="taskCard" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>">
-                    <div class="taskInfo">
-                      <div class="taskIcon">
-                         <% if (task.category === 'pet') { %>
-                          <%- include('../tasks/icons/pet') %>
-                        <% } else if (task.category === 'cleaning') { %>
-                          <%- include('../tasks/icons/cleaning') %>
-                        <% } else if (task.category === 'garage') { %>
-                          <%- include('../tasks/icons/garage') %>
-                        <% } else if (task.category === 'garden') { %>
-                          <%- include('../tasks/icons/garden') %>
-                        <% } else if (task.category === 'misc') { %>
-                          <%- include('../tasks/icons/misc') %>
-                        <% } %>
+              <% if (assignedTasks && assignedTasks.length > 0) { %>
+                <div class="taskList">
+                  <% assignedTasks.forEach(function(task) { %>
+                    <div class="taskCard" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>">
+                      <div class="taskInfo">
+                        <div class="taskIcon">
+                          <% if (task.category === 'pet') { %>
+                            <%- include('../tasks/icons/pet') %>
+                          <% } else if (task.category === 'cleaning') { %>
+                            <%- include('../tasks/icons/cleaning') %>
+                          <% } else if (task.category === 'garage') { %>
+                            <%- include('../tasks/icons/garage') %>
+                          <% } else if (task.category === 'garden') { %>
+                            <%- include('../tasks/icons/garden') %>
+                          <% } else if (task.category === 'misc') { %>
+                            <%- include('../tasks/icons/misc') %>
+                          <% } %>
+                        </div>
+                        <div class="taskText">
+                          <h3><%= task.title %></h3>
+                          <small class="dueDate" data-due="<%= task.dueDate && task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> <%= task.formattedDue ? task.formattedDue : '' %></small>
+                        </div>
                       </div>
-                      <div class="taskText">
-                        <h3><%= task.title %></h3>
-                        <small class="dueDate" data-due="<%= task.dueDate && task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> <%= task.formattedDue ? task.formattedDue : '' %></small>
+                      <div class="taskStatus">
+                        <span class="statusBadge <%= task.status %>">
+                          <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>
+                        </span>
                       </div>
                     </div>
-                    <div class="taskStatus">
-                      <span class="statusBadge <%= task.status %>">
-                        <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>
-                      </span>
-                    </div>
-                  </div>
-                <% }); %>
-              </div>
-            <% } else { %>
-              <div class="noTasksMessage">
-                <i class="fas fa-tasks"></i>
-                <h2>No Tasks Yet</h2>
-                <p>There are no tasks assigned to this goal yet. You can assign tasks to your goal by clicking the "Assign Task" button.</p>
-              </div>
-            <% } %>
+                  <% }); %>
+                </div>
+              <% } else { %>
+                <div class="noTasksMessage">
+                  <i class="fas fa-tasks"></i>
+                  <h2>No Tasks Yet</h2>
+                  <p>There are no tasks assigned to this goal yet. You can assign tasks to your goal by clicking the "Assign Task" button.</p>
+                </div>
+              <% } %>
+            </div>
           </div>
         <% } %>
       </div>

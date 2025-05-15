@@ -60,10 +60,10 @@
       .goalInfo {
         display: grid;
         grid-template-columns: auto 1fr;
-        gap: 1rem;
+        margin: 0.5rem;        
         align-items: center;
         
-        .goalImage, .initialsAvatar {
+         .initialsAvatar {
           width: 60px;
           height: 60px;
           font-size: 1.5rem;
@@ -73,6 +73,7 @@
           justify-content: center;
           line-height: 60px;
           border: $secondary 1px solid;
+          margin-right: 0.5rem;
         }
         
         .goalText {
@@ -183,69 +184,75 @@
   }
 }
 
-.amazonLinkInput {
-  display: flex;
-  align-items: center;
-  background: $primary;
-  border-radius: 10px;
-  padding: 0.5rem 1rem;
-  margin-bottom: 1.2rem;
-  position: relative;
+// .amazonLinkInput {
+//   display: flex;
+//   align-items: center;
+//   background: $primary;
+//   border-radius: 10px;
+//   padding: 0.5rem 1rem;
+//   margin-bottom: 1.2rem;
+//   position: relative;
   
-  input {
-    border: none;
-    background: transparent;
-    font-size: 1rem;
-    flex: 1;
-    outline: none;
-    color: $black;
-  }
+//   input {
+//     border: none;
+//     background: transparent;
+//     font-size: 1rem;
+//     flex: 1;
+//     outline: none;
+//     color: $black;
+//   }
   
-  .copyIcon {
-    color: $secondary-light;
-    font-size: 1.2rem;
-    margin-left: 0.5rem;
-    cursor: pointer;
-    transition: color 0.2s;
+//   .copyIcon {
+//     color: $secondary-light;
+//     font-size: 1.2rem;
+//     margin-left: 0.5rem;
+//     cursor: pointer;
+//     transition: color 0.2s;
     
-    &:hover {
-      color: $tertiary;
-    }
+//     &:hover {
+//       color: $tertiary;
+//     }
     
-    &.copied {
-      color: $success;
-    }
-  }
-}
+//     &.copied {
+//       color: $success;
+//     }
+//   }
+// }
 
-.goalDetailsCard {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  margin-left: 1rem;
+// .goalDetailsCard {
+//   grid-area: details;
+//     margin-top: 4rem;
   
-  .goalSource {
-    font-family: $primary-font;
-  }
+//   .goalSource {
+//     font-family: $primary-font;
+//   }
   
-  .goalDescription {
-    font-family: $primary-font;
-  }
+//   .goalDescription {
+//     font-family: $primary-font;
+//   }
   
-  .goalPrice {
-    font-family: $primary-font;
-  }
+//   .goalPrice {
+//     font-family: $primary-font;
+//   }
   
-  .goalProgress {
-    font-family: $primary-font;
-  }
-}
+//   .goalProgress {
+//     font-family: $primary-font;
+//   }
+// }
 
 .goalDetailsPage {
-  .goalProgressGraphic {
-    text-align: center;
-    margin: 2rem 0 1rem 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "progress"
+    "details"
+    "tasks";
+
+  .progressContainer {
+    grid-area: progress;
+    margin-bottom: 0;
+  }
 
     .progressPercentage {
       font-size: 2.2rem;
@@ -259,14 +266,16 @@
       font-size: 1rem;
       font-family: $primary-font;
     }
-  }
+
+    .goalInfo {
+      margin: auto;
+    }
+  
 
   .goalDetailsCard {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    margin-left: 1rem;
+    margin: 2rem 1rem 1rem 1rem;
 
     .goalImage {
       width: 60px;
@@ -318,6 +327,27 @@
   }
 
   .tasksContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "actions"
+      "tasks";
+    
+    .goalActionsContainer, .requestActionsContainer {
+      grid-area: actions;
+      display: flex;
+      width: 90%;
+      flex-direction: column; 
+      margin: 1rem auto;
+      gap: 1rem;
+    }
+    
+    .taskHistory {
+      grid-area: tasks;
+      margin-top: 0.5rem;
+    }
+  
     .sectionTabs {
     display: flex;
     justify-content: space-between;
@@ -493,15 +523,11 @@
 }
 
 .progressContainer {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
+     grid-area: details;
 }
 
 .progressBar {
-  margin-bottom: 0;
+  margin-bottom: 4rem;
   margin-top: 1rem;
   display: flex;
   justify-content: center;
@@ -509,10 +535,8 @@
 }
 
 .progress-text {
-position: absolute;
-  top: 75%; 
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  margin-top: -8.5rem;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -597,3 +621,10 @@ position: absolute;
   font-weight: 500;
 }
 
+.amazonImg img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-right: 0.5rem;
+}
