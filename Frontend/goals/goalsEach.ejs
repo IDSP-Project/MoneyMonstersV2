@@ -62,7 +62,7 @@
           <div class="tasksContainer">
             <% if (user.accountType === 'child' && !viewingAsChild) { %>
               <div class="goalActionsContainer">
-                <% if (!goal.completed) { %>
+                <% if (!goal.completed && (!goal.requestStatus || goal.requestStatus === 'none' || goal.requestStatus === 'approved')) { %>
                   <button class="assignTaskBtn" data-modal-target="assignTaskModal">
                     Assign Task
                   </button>
