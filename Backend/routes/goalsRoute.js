@@ -345,7 +345,7 @@ router.post('/goals/:goalId/assign-balance', ensureAuthenticated, async (req, re
   }
 });
 
-<<<<<<< HEAD
+
 router.post('/goals/:goalId/request', ensureAuthenticated, async (req, res) => {
   try {
     const goalId = req.params.goalId;
