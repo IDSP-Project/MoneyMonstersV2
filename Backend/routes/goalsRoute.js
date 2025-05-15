@@ -382,6 +382,7 @@ router.post('/goals/create-amazon', ensureAuthenticated, async (req, res) => {
   await db.collection('goals').insertOne(newGoal);
 
   res.status(200).json({ success: true });
+  
 });
 
 
