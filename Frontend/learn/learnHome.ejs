@@ -16,68 +16,60 @@
         <%- include('../partials/viewingAsChild') %>
       <% } %>
     </header>
-        <main><h3>Learn how to manage your money</h3>
-          <% if (user.accountType === 'parent') { %>
+    <main>
+         <h3>
+            <% if (user.accountType !== 'child') { %>
+             <% if (!locals.viewingAsChild) { %>
+            Family's Reading List
+            <% } %>
+          <% } else { %>
+            <%= user.firstName %>'s Reading List
+          <% } %>
+        </h3>
+        
+           <% if (user.accountType === 'parent' && locals.viewingAsChild) { %>
             <div class="learn-admin-actions">
               <a href="/learn/new" class="btn">Add New Learn Article</a>
             </div>
           <% } %>
 
-          <% blogs.forEach(blog => { 
-            const progressStatus = blogProgressMap[blog._id.toString()] || "todo";
-       %>
-          <div class="blog-card">
-            <div class="blog-content">
-            <div class="blog-cat">
-              <h5><%= blog.category %></h5>
-            </div>
-            <div class="blog-title">
-              <h3><a href="/learn/view/<%= blog._id %>"><%= blog.title %></a></h3>
-              <% const blogIdStr = blog._id.toString(); const status = blogProgressMap[blogIdStr] || 'To Do'; %>
-            <span id="status-<%= blogIdStr %>" class="status-badge <%= status === 'Complete' ? 'complete' : 'todo' %>">
-              <%= status === 'Complete' ? 'Complete' : 'To Do' %>
-            </span>
-
-            <!-- <button class="mark-complete-btn" onclick="markLearningComplete('<%= blogIdStr %>')">
-              <%= status === 'Complete' ? 'Undo' : 'Mark as Complete' %>
-            </button> -->
-
-
-            </div>
-            <div class="blog-summary">
-              <p><%= blog.summary %></p>
-            </div>
-            <!-- <% if (blog.image) { %>
-              <img src="<%= blog.image %>" alt="<%= blog.title %>">
-            <% } %> -->
-          </div>
-        </div>
-
-        <% }) %>
-
+          <% if (blogs.length === 0) { %>
+            <p>No blogs available yet, why not add some!</p>
+          <% } else { %>
+            <% blogs.forEach(blog => { %>
+              <div class="blog-card">
+                <div class="blog-content">
+                  <div class="blog-cat">
+                    <h5><%= blog.category %></h5>
+                  </div>
+                  <div class="blog-title">
+                    <h3><a href="/learn/view/<%= blog._id %>"><%= blog.title %></a></h3>
+                    
+                    <div class="taskStatus">
+                      <% 
+                        const statusLower = (blog.status || 'new').toLowerCase();
+                        const isComplete = statusLower === 'completed' || statusLower === 'complete';
+                      %>
+                      <% if (isComplete) { %>
+                        <span class="statusBadge completed">Complete</span>
+                      <% } else if (statusLower === 'to do') { %>
+                        <span class="statusBadge todo">To Do</span>
+                      <% } else { %>
+                        <span class="statusBadge new">New</span>
+                      <% } %>
+                    </div>
+                  </div>
+                  <div class="blog-summary">
+                    <p><%= blog.summary %></p>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          <% } %>
       </main>
         <footer>
     <%- include('../partials/bottomNav') %>
   </footer>
-  <script>
-  async function markLearningComplete(blogId) {
-    try {
-      const res = await fetch(`/progress/${blogId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "Complete" }),
-      });
-
-      if (res.ok) {
-        document.getElementById(`status-${blogId}`).textContent = "Complete";
-        document.getElementById(`status-${blogId}`).classList.remove("todo");
-        document.getElementById(`status-${blogId}`).classList.add("complete");
-      }
-    } catch (err) {
-      console.error("Failed to mark complete:", err);
-    }
-  }
-</script>
 
     </div>
-        </div>
+    </div>

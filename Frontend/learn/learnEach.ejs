@@ -1,66 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Money Monsters Learn</title>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body> 
 <div class="singleLearn">
   <div class="container">
     <header class="learn-each-header">
-      <div class="back-button">
-        <a href="/learn">
-          <i class="fas fa-arrow-left"></i> Back
-        </a>
-      </div>
       <%- include('../partials/header') %>
-    </header>
+      <% if (locals.viewingAsChild && locals.viewingChildName) { %>
+        <%- include('../partials/viewingAsChild') %>
+      <% } %>    </header>
 
     <main>
-      <article>
-        <h5><%= blog.category %></h5>
-        <h1><%= blog.title %></h1>
-        <%- blog.content.split('\n\n').map(paragraph => `<p>${paragraph}</p>`).join('') %>
-      </article>
+        <article>
+          <h5><%= blog.category %></h5>
+          <h1><%= blog.title %></h1>
+          <%- blog.content.split(/\n+/).filter(p => p.trim()).map(paragraph => 
+            `<p>${paragraph.trim()}</p>`).join('') %>
+        </article>
+        
+          <% if (progress.status === 'completed') { %>
+            <div class="reflectionContainer">
+              <div class="completedMessage">
+                <h3>Completed! </h3>
+                <% if(blog.reward > 0) { %>
+                  <p>Reward of $<%= blog.reward.toFixed(2) %> has been added to your balance.</p>
+                <% } %>
+              </div>
+              
+              <% if (progress.reflection && progress.reflection.trim() !== '') { %>
+                <div class="reflectionContent">  
+                  <p>What I Learned: "<%= progress.reflection %>"</p>
+                </div>
+              <% } %>
+            </div>
+          <% } else if (user.accountType === 'child' && !viewingAsChild) { %>
+            <button data-modal-target="whatLearnedModal" class="completeBtn"> Mark as Complete </button>
+          <% } %>
 
-      <!-- <p>Status:
-        <span id="status-<%= blog._id %>" class="status-badge <%= hasSubmitted ? 'complete' : 'todo' %>">
-          <%= hasSubmitted ? 'Complete' : 'To Do' %>
-        </span>
-      </p> -->
-
-<button onclick="completeAndRedirect('<%= blog._id %>')">Mark as Complete</button>
-
-      <!-- works at bottom need to figure out how to use button above to open popup-->
-        <%- include('./whatLearned') %>
+        <%- include('../partials/modals/whatLearned') %>
     </main>
 
     <footer>
       <%- include('../partials/bottomNav') %>
     </footer>
     
-<script>
-  async function completeAndRedirect(blogId) {
-    try {
-      const res = await fetch(`/progress/${blogId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "Complete" })
-      });
-
-      if (res.ok) {
-        window.location.href = "/learn";
-      } else {
-        alert("Something went wrong marking this complete.");
-      }
-    } catch (err) {
-      console.error("❌ Failed to complete article:", err);
-    }
-  }
-</script>
+    <script src="/dynamic/modalPopUp.js"></script>
   </div>
 </div>
 </body>

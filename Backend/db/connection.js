@@ -1,8 +1,6 @@
-// Connection to Mongo DB database
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const uri = process.env.MONGODB_URI;
-
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -19,9 +17,32 @@ const connectDB = async () => {
     await client.connect();
     
     await client.db("admin").command({ ping: 1 });
-    console.log("Successfully connected to MongoDB!");
+    console.log("Connected to MongoDB");
     
     db = client.db("userDB");
+    
+    try {
+      const goalsCollection = db.collection('goals');
+      const changeStream = goalsCollection.watch();
+      
+      changeStream.on('change', change => {
+        if (change.operationType === 'update' && 
+            change.updateDescription && 
+            change.updateDescription.updatedFields) {
+          
+          const updatedFields = change.updateDescription.updatedFields;
+          
+          if (updatedFields.lastUpdateSource === 'taskCompletion' || 
+              (updatedFields.uniqueMarker && 
+               (updatedFields.uniqueMarker.startsWith('task-') || 
+                updatedFields.uniqueMarker.startsWith('restored-task-')))) {
+            return;
+          }
+        }
+      });
+    } catch (watchErr) {
+      console.error("Error setting up change stream:", watchErr);
+    }
     
     return db;
   } catch (err) {
@@ -53,6 +74,5 @@ process.on('SIGTERM', async () => {
   await closeDB();
   process.exit(0);
 });
-
 
 module.exports = { connectDB, getDB, closeDB };

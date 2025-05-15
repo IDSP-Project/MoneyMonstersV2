@@ -15,50 +15,53 @@
         <%- include('../partials/viewingAsChild') %>
       <% } %>
     </header>
-    <div class="goal-page">
-      <div class="goals-container">
+    <div class="goalPage">
+      <div class="goalsContainer">
+        <% if (user.accountType === 'parent' && !locals.viewingAsChild) { %>
+            <h1>Family's goal progress %></h1>
+            <% } %>
         <% if (goals && goals.length > 0) { %>
-          <div class="section-tabs">
-            <span class="tab goals-tab">Goals</span>
-            <span class="tab progress-tab">Progress</span>
+          <div class="sectionTabs">
+            <h2>Goals</h2>
+            <h2>Progress</h2>
           </div>
-          <div class="goal-list">
+          <div class="goalList">
             <% goals.forEach(function(goal) { %>
-              <a href="/goals/view/<%= goal._id %>" class="goal-card-link">
-                <div class="goal-card">
-                  <div class="goal-info">
+              <a href="/goals/view/<%= goal._id %>" class="goalCardLink">
+                <div class="goalCard">
+                  <div class="goalInfo">
                     <% if (goal.purchaseLink) { %>
-                      <img src="/images/goal.png" alt="Goal Image" class="goal-image" />
+                      <img src="/images/goal.png" alt="Goal Image" class="goalImage" />
                     <% } else { %>
-                      <div class="initials-avatar"><%= getInitials(goal.title) %></div>
+                      <div class="initialsAvatar"><%= getInitials(goal.title) %></div>
                     <% } %>
-                    <div class="goal-text">
+                    <div class="goalText">
                       <h3><%= goal.title %></h3>
                       <p><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
                     </div>
                   </div>
-                  <div class="goal-progress">
-                    <div class="progress-bar">
-                      <div class="progress-fill" data-progress="<%= goal.progress || 0 %>" style="--progress-width: <%= goal.progress || 0 %>%"></div>
+                  <div class="goalProgress">
+                    <div class="progressBar">
+                      <div class="progressFill" data-progress="<%= goal.progress || 0 %>" style="--progress-width: <%= goal.progress || 0 %>%"></div>
                     </div>
-                    <span><%= goal.progress || 0 %>%</span>
+                    <span><%= Math.round(goal.progress || 0) %>%</span>
                   </div>
                 </div>
               </a>
             <% }); %>
           </div>
         <% } else { %>
-          <div class="no-goals-message">
+          <div class="noGoalsMessage">
             <i class="fas fa-bullseye"></i>
-            <h2>No Goals Yet</h2>
+            <h1>No Goals Yet</h1>
             <p>You haven't set any goals yet. Start by adding your first goal!</p>
           </div>
         <% } %>
       </div>
 
       <% if (user.accountType === 'child') { %>
-        <div class="add-goal-btn-container">
-          <button class="btn">Add a New Goal</button>
+        <div class="addGoalBtnContainer">
+          <button class="btn" data-modal-target="addGoalModal">Add a New Goal</button>
         </div>
       <% } %>
     </div>
@@ -67,18 +70,12 @@
       <%- include('../partials/bottomNav') %>
     </footer>
 
-    <!-- Success Modal for Adding Goal -->
-    <div id="successGoalModal" class="success-goal-modal" style="display: none;">
-      <div class="success-goal-modal-content">
-        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
-        <h2>Goal Added!</h2>
-        <p>Your new goal was added successfully.</p>
-        <button class="done-btn" id="successGoalDoneBtn">Done</button>
-      </div>
-    </div>
+    <%- include('../partials/modals/addGoalModal') %>
+    <%- include('../partials/modals/assignGoalModal') %>
+    <%- include('../partials/modals/assignTaskModal') %>
+    <%- include('../partials/modals/confirmReassignModal') %>
   </div>
-
-  <%- include('./addGoalModal') %>
-  <script src="/dynamic/addGoalModal.js"></script>
+  
+  <script src="/dynamic/modalPopUp.js"></script>
 </body>
 </html>

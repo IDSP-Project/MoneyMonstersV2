@@ -1,0 +1,85 @@
+<div id="taskProgressModal" class="baseModal">
+  <div class="modalContent">
+    <h2>Task Progress</h2>
+    
+    <div class="modalBody">
+      <div class="taskDetails">
+        <h3 id="taskProgressTitle"></h3>
+        <p id="taskProgressDescription"></p>
+        <div class="taskMetaInfo">
+          <span id="taskProgressReward"></span>
+          <span id="taskProgressDueDate"></span>
+          <span id="taskProgressStatus" class="statusBadge"></span>
+        </div>
+        <div class="taskChild">
+          <p>Assigned to: <span id="taskProgressChild"></span></p>
+        </div>
+      </div>
+      
+      <div class="taskActions">
+        <button class="modalBtn primary" id="approveTaskBtn">Approve Completion</button>
+        <button class="modalBtn primary" id="rejectTaskBtn">Reject Completion</button>
+        <button class="modalBtn tertiary" id="deleteTaskBtn">Delete Task</button>
+      </div>
+      
+      <div id="taskProgressError" class="modalError"></div>
+      
+      <div class="modalFooter">
+        <button class="modalBtn secondary" id="closeTaskProgressModal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="taskModal" class="baseModal">
+  <div class="modalContent">
+    <div class="taskDetailsRow">
+      <div class="iconCircle" id="modalTaskIcon"></div>
+      <h2 class="detailsTitle" id="modalTaskTitle">Task Details</h2>
+      <div class="statusBadge" id="modalTaskStatus"></div>
+    </div>
+    
+    <div class="modalBody">
+      <h5>Description:</h5>
+      <p id="modalTaskDesc" class="taskDescription"></p>
+      
+        <div class="taskMeta">
+          <div class="metaRow">
+            <h5>Reward:</h5>
+            <span id="modalTaskReward"></span>
+          </div>
+          <div class="metaRow">
+            <h5>Due By:</h5> 
+            <span id="modalTaskDue"></span>
+          </div>
+        </div>
+      
+      <div class="taskGoalInfo">
+        <p id="modalConfirmedBy"></p>
+        <p id="modalGoalInfo"></p>
+      </div>
+      
+      <div class="modalFooter">
+        <button class="modalBtn primary action" id="modalStartBtn">Start</button>
+        <button class="modalBtn primary action" id="modalCompleteBtn" style="display:none;">Mark Completed</button>
+        <button class="modalBtn tertiary action" id="modalAssignGoalBtn" style="display:none;">Assign to Goal</button>
+        <button class="modalBtn secondary" id="modalCancelBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="successGoalModal" class="baseModal">
+  <div class="modalContent">
+    <h2>Task Complete!</h2>
+    
+    <div class="modalBody">
+      <div class="successIcon"><i class="fas fa-check-circle"></i></div>
+      <p class="successMessage">Your task is now marked complete.</p>
+      
+      <div class="modalFooter">
+        <button class="modalBtn primary" id="successGoalDoneBtn">Done</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,8 +1,6 @@
-// Format due dates in the browser for user's local time zone
 function formatDueDateForUser(dueDate) {
   const now = new Date();
   const due = new Date(dueDate);
-  // Remove time for day comparison
   const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate());
   const diffMs = dueDay - nowDay;
@@ -30,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const utcDate = el.dataset.due;
     if (utcDate) {
       const date = new Date(utcDate);
-      // Remove the old text after the $amount |
       const oldText = el.textContent.split('|')[0] + '| ';
       el.textContent = oldText + formatDueDateForUser(date);
     }

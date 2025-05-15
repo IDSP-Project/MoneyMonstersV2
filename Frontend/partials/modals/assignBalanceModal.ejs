@@ -1,0 +1,24 @@
+<div id="assignBalanceModal" class="baseModal">
+  <div class="modalContent">
+    <h2>Assign Balance to Goal</h2>
+    
+    <div class="modalBody">
+      <p>Your current balance is $<span id="currentUserBalance"><%= user.balance %></span></p>
+      <p>Remaining needed for this goal: $<span id="remainingGoalAmount"><%= (goal.totalRequired - goal.amountAchieved).toFixed(2) %></span></p>
+      
+      <div class="errorMessage" id="assignBalanceError" style="display: none;"></div>
+      
+      <form id="assignBalanceForm">
+        <div class="formGroup" style="width: 80%; margin: 1rem;">
+          <label for="assignAmount">Amount to assign:</label>
+          <div class="redeemAmount"><input type="number" id="assignAmount" name="assignAmount" step="0.01" min="0.01" required></div>
+        </div>
+        
+        <div class="modalFooter">
+          <button type="submit" class="modalBtn primary">Assign</button>
+          <button type="button" class="modalBtn secondary" id="cancelAssignBalance">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,3 @@
-// Helper functions for login, registration and user profile management
-
 const bcrypt = require("bcrypt");
 const User = require("../db/userModel.js");
 const { ObjectId } = require('mongodb'); 
@@ -97,7 +95,7 @@ async function registerUser(firstName, lastName, email, password, accountType, f
       email,
       password,
       accountType || "parent",
-      null, //profilephoto not set at registration
+      null,
       familyObjectId || null,
     );
     

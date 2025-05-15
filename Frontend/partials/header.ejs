@@ -1,10 +1,15 @@
 <div class="headerbar">
-  <header class="main-header">
-    <div class="header-left">
-      <div class="logo-wrapper" onclick="window.location.href='/dashboard';" style="cursor: pointer;">
+  <header class="mainHeader">
+    <div class="headerLeft">
+      <a href="javascript:history.back()" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+
+      <div class="logoWrapper" onclick="window.location.href='/dashboard';" style="cursor: pointer;">
         <%- include('../logo') %>
       </div>
-      <h1 class="brand-name">Money Monsters</h1>
+
+      <h1 class="brandName">Money Monsters</h1>
     </div>
 
     <button class="icon-button hamburger-toggle" onclick="toggleMenu()">
@@ -13,16 +18,13 @@
     </button>
   </header>
 
-  <!-- This dropdown is BELOW the header, but independent -->
   <nav class="dropdown-menu hidden" id="hamburgerMenu">
-   <% if (user) { %>
-  <ul class="menu-items">
-    <li><a href="#">Notifications</a></li>
-    <li><a href="/profile/<%= user.id %>">Account Settings</a></li>
-    <li><a href="/logout/<%= user.id %>">Log Out</a></li>
-  </ul>
-<% } %>
-
+    <% if (user) { %>
+      <ul class="menu-items">
+        <li><a href="/profile/<%= user.id %>">Account Settings</a></li>
+        <li><a href="/logout/<%= user.id %>">Log Out</a></li>
+      </ul>
+    <% } %>
   </nav>
 
   <script>

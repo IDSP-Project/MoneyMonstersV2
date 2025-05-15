@@ -1,27 +1,36 @@
-.tasks-container {
-  margin: 0 auto;
-  margin-bottom: 4rem;
+.tasks {
+  h2 {
+    font-size: $font-size-sm;
+    color: lighten($secondary, 20%);
+    background-color: $primary;
+    padding: 0.5rem 1.5rem;
+    border-top: $secondary-light 1px solid;
+    border-bottom: $secondary-light 1px solid;
+    margin: 1rem 0 0 0;
+  }
 
-  .section-tabs {
+  .sectionTabs {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1rem 0.5rem 1rem;
+    padding: 1rem 0 0 0;
     font-weight: $font-regular;
     font-family: $primary-font;
     color: $secondary;
+    width: 18.9rem;
     font-size: $font-size-xs;
     border-bottom: 1px solid rgb(236, 236, 236);
-    margin-bottom: 0.5rem;
+    margin: 0 0.2rem 0 0.1rem;
 
-    .tasks-tab {
+    .tasksTab {
       flex: 2;
       text-align: left;
       background: none;
       box-shadow: none;
       cursor: default;
     }
-    .status-tab {
+    
+    .statusTab {
       flex: 1;
       text-align: right;
       background: none;
@@ -30,13 +39,13 @@
     }
   }
 
-  .task-list {
+  .taskList {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
 
-  .task-card {
+  .taskCard {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -47,13 +56,13 @@
     cursor: pointer;
   }
 
-  .task-info {
+  .taskInfo {
     display: flex;
     align-items: center;
     gap: 0.8rem;
     flex: 1;
 
-    .task-icon {
+    .taskIcon {
       width: 40px;
       height: 40px;
       display: flex;
@@ -68,16 +77,19 @@
       }
     }
 
-    .task-text {
+    .taskText {
       flex: 1;
+      
       h3 {
         font-size: 1rem;
         margin: 0;
       }
+      
       p {
         color: $secondary;
         margin: 0.2rem 0 0.3rem 0;
       }
+      
       small {
         color: $secondary;
         font-size: $font-size-xs;
@@ -86,57 +98,77 @@
     }
   }
 
-  .task-status {
+  .taskStatus {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     min-width: 90px;
-    .status-badge {
-      display: inline-block;
-      padding: 0.4em 1em;
-      border-radius: 12px;
-      font-size: 0.9em;
-      font-weight: 600;
-      text-align: center;
-      &.new { background: rgb(212, 237, 218); color: $success; font-family: $primary-font; font-size: $font-size-xs;}
-      &.in_progress { background: rgb(227, 227, 250); color: $tertiary; font-family: $primary-font; font-size: $font-size-xs;}
-      &.completed { background: rgb(235, 231, 231); color: $secondary; font-family: $primary-font; font-size: $font-size-xs;}
-      &.overdue { background: rgb(248, 215, 218); color: $error; font-family: $primary-font; font-size: $font-size-xs;}
-    }
   }
 
-  .no-tasks-message {
+  .noTasksMessage {
     display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  padding: 2.5rem 1.5rem;
-  margin: 2rem 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: 2.5rem 1.5rem;
+    margin: 2rem 0;
 
-  i {
-    font-size: 3rem;
-    color: $tertiary;
-    margin-bottom: 1rem;
-  }
+    i {
+      font-size: 3rem;
+      color: $tertiary;
+      margin-bottom: 1rem;
+    }
 
-  h2 {
-    font-size: $font-size-xl;
-    font-weight: bold;
-    color: $tertiary;
-    margin-bottom: 0.5rem;
-  }
+    h2 {
+      font-size: $font-size-xl;
+      font-weight: bold;
+      color: $tertiary;
+      margin-bottom: 0.5rem;
+    }
 
-  p {
-    color: $secondary;
-    font-size: $font-size-md;
-    text-align: center;
-    margin-bottom: 0;
-  }
+    p {
+      color: $secondary;
+      font-size: $font-size-md;
+      text-align: center;
+      margin-bottom: 0;
+    }
   }
 }
 
-// Shared styles for dashboard and tasks page
+
+.statusBadge {
+  display: inline-block;
+  padding: 0.4em 1em;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: 600;
+  text-align: center;
+  font-family: $primary-font;
+  font-size: $font-size-xs;
+  
+  &.new { 
+    background: rgb(212, 237, 218); 
+    color: $success; 
+  }
+  
+  &.in_progress { 
+    background: rgb(227, 227, 250); 
+    color: $tertiary; 
+  }
+  
+  &.completed { 
+    background: rgb(235, 231, 231); 
+    color: $secondary; 
+  }
+  
+  &.overdue { 
+    background: rgb(248, 215, 218); 
+    color: $error; 
+  }
+}
+
+
 .card.earn {
   display: flex;
   justify-content: space-between;
@@ -146,70 +178,166 @@
   background-color: $white;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   margin-bottom: 1rem;
+  
+  .taskIcon {
+    font-size: 1.5rem;
+    color: $tertiary;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .taskText {
+    flex: 1;
+    margin-left: 0.8rem;
+    
+    p {
+      font-size: 0.875rem;
+      color: #666;
+      margin: 0.2rem 0 0.3rem 0;
+    }
+    
+    small {
+      color: #aaa;
+      font-size: 0.8rem;
+    }
+  }
+  
+  .taskStatus {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 90px;
+  }
+  
+  .statusBadge {
+    display: inline-block;
+    padding: 0.4em 1em;
+    border-radius: 12px;
+    font-size: 0.9em;
+    font-weight: 600;
+    text-align: center;
+    
+    &.new { background: rgb(212, 237, 218); color: $success; }
+    &.in_progress { background: rgb(227, 227, 250); color: $tertiary; }
+    &.completed { background: rgb(235, 231, 231); color: $secondary; }
+    &.overdue { background: rgb(248, 215, 218); color: $error; }
+  }
 }
 
-.card.earn .task-icon {
-  font-size: 1.5rem;
-  color: $tertiary;
-  width: 40px;
-  height: 40px;
+
+
+.taskDescription {
+  color: #222;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.taskMeta {
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card.earn .task-text {
-  flex: 1;
-  margin-left: 0.8rem;
-}
-
-.card.earn .task-text p {
-  font-size: 0.875rem;
-  color: #666;
-  margin: 0.2rem 0 0.3rem 0;
-}
-
-.card.earn .task-text small {
-  color: #aaa;
-  font-size: 0.8rem;
-}
-
-.card.earn .task-status {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 90px;
-}
-
-.card.earn .status-badge {
-  display: inline-block;
-  padding: 0.4em 1em;
-  border-radius: 12px;
-  font-size: 0.9em;
-  font-weight: 600;
-  text-align: center;
-}
-.card.earn .status-badge.new { background: rgb(212, 237, 218); color: $success; }
-.card.earn .status-badge.in_progress { background: rgb(227, 227, 250); color: 8f5be8; }
-.card.earn .status-badge.completed { background: rgb(235, 231, 231); color: $secondary; }
-.card.earn .status-badge.overdue { background: rgb(248, 215, 218); color: $error; }
-
-
-
-.task-modal {
-  display: none;
-  position: absolute;
-  z-index: 2000;
-  left: 0;
-  top: 0;
+  flex-direction: column;
   width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.25);
-  justify-content: center;
+  margin-bottom: 1rem;
   align-items: center;
+  
+  .metaRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+
+    
+    h5 {
+      margin: 0;
+      font-size: 0.9rem;
+      color: $secondary;
+      text-align: center;
+    }
+    
+    span {
+      color: #444;
+      font-size: 0.9rem;
+    }
+  }
 }
 
-.task-type-icon {
+.taskGoalInfo {
+  width: 100%;
+  margin-bottom: 1rem;
+  
+  p {
+    font-size: 0.9rem;
+    color: #888;
+    margin: 0.2rem 0;
+    
+    &#modalGoalInfo {
+      font-weight: $font-bold;
+    }
+  }
+}
+
+
+.taskDetailsIconRow {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+  width: 100%;
+  
+  .taskDetailsIconCircle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #f3eafd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: $tertiary;
+    margin-right: 0.5rem;
+  }
+  
+  .taskDetailsTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #222;
+    font-family: $primary-font;
+    flex: 1;
+  }
+  
+  .taskStatusBadge {
+    margin-left: auto;
+  }
+}
+
+
+.modalBtnGroup {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+  
+  .modalBtn {
+    margin-bottom: 0;
+  }
+  
+  &.horizontal {
+    flex-direction: row;
+    
+    .modalBtn {
+      flex: 1;
+    }
+  }
+  
+  &.vertical {
+    flex-direction: column;
+  }
+}
+
+
+.taskTypeIcon {
   position: relative;
   display: flex;
   align-items: center; 
@@ -221,33 +349,19 @@
   border-radius: 50%; 
   box-sizing: border-box; 
   margin: 0 auto;
+  
+  svg {
+    width: 32px;
+    height: 32px;
+    padding: 2px;
+  }
+  
+  &.selected {
+    border-color: $tertiary;
+  }
 }
 
-.task-type-icon svg {
-  width: 32px;
-  height: 32px;
-  padding: 2px;
-}
-
-.task-type-icon.selected {
-  border-color:$tertiary;
-}
-
-.task-modal[style*="display: flex"] {
-  display: flex !important;
-}
-.task-modal-content {
-  background: $white;
-  border-radius: 16px;
-  padding: 1rem 0.5rem 1rem 0.5rem;
-  max-width: 280px;
-  position: relative;
-  display: block;
-  flex-direction: column;
-  align-items: center;
-}
-
-.task-type-icons-row {
+.taskTypeIconsRow {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem; 
@@ -255,57 +369,56 @@
   width: 85%; 
 }
 
-
 .taskType {
   display: flex;
   flex-direction: column;
   align-items: center;
+  
+  .taskTypeLabel {
+    font-size: $font-size-xs;
+    color: #444;
+    margin-top: 0.1rem;
+    font-family: $primary-font;
+  }
 }
 
 
-.task-type-label {
-  font-size: $font-size-xs;
-  color: #444;
-  margin-top: 0.1rem;
-  font-family: $primary-font;
-}
-
-.confirm-btn {
-  background: #714AA8;
-  color: #fff;
-  width: 100%;
-  border-radius: 10px;
-  margin-bottom: 0.7rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  padding: 0.7rem 0;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.cancel-btn {
-  background: #fff;
-  color: #000;
-  width: 100%;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  padding: 0.7rem 0;
+.taskDetailsInput {
+  width: 80%;
+  margin-bottom: 0.8rem;
+  padding: 0.7rem 1rem;
   border: 1px solid #ececec;
-  cursor: pointer;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: $primary-font;
+  background: #faf9fb;
+  color: #222;
+  outline: none;
+  
+  &:focus {
+    border: 1.5px solid $tertiary;
+  }
 }
 
-.assign-goal-row {
-  display: flex;
-  align-self: center;
-  margin-top: 0.5rem;
+
+.taskSectionBox {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.2rem 1rem 0.5rem 1rem;
+  margin-bottom: 3rem;
+  
+  .taskSectionTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #714AA8;
+    margin-bottom: 0.7rem;
+    margin-left: 0.2rem;
+    font-family: $primary-font;
+  }
 }
 
-.assign-goal-row .assign-goal-btn {
-  min-width: 160px;
-}
 
-.add-task-btn-container {
+.addTaskBtnContainer {
   position: absolute;
   left: 50%;
   bottom: 4rem;
@@ -315,7 +428,7 @@
   z-index: 20;
   border-radius: 0 0 0.2rem 0.2rem;
 
-  .add-task-btn {
+  .addTaskBtn {
     width: 100%;
     color: $white;
     background-color: $tertiary;
@@ -330,285 +443,52 @@
   }
 }
 
-.task-section-box {
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(113, 74, 168, 0.07);
-  padding: 1.2rem 1rem 0.5rem 1rem;
-  margin-bottom: 1.2rem;
-  border: 1px solid #ececec;
-}
 
-.task-section-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #714AA8;
-  margin-bottom: 0.7rem;
-  margin-left: 0.2rem;
-  font-family: $primary-font;
-}
 
-.add-task-details-modal-content {
-  min-width: 240px;
-  max-width: 320px;
-  padding: 1.5rem 1rem 1rem 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.task-details-icon-row {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  margin-bottom: 1.1rem;
-  width: 100%;
-}
-.task-details-icon-circle {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #f3eafd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: $tertiary;
-}
-.task-details-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #222;
-  font-family: $primary-font;
-}
-.task-details-input {
-  width: 100%;
-  margin-bottom: 0.8rem;
-  padding: 0.7rem 1rem;
-  border: 1px solid #ececec;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: $primary-font;
-  background: #faf9fb;
-  color: #222;
-  outline: none;
-  // transition: border 0.2s;
-}
-.task-details-input:focus {
-  border: 1.5px solid $tertiary;
-}
-#confirmAddTaskBtn {
-  background: $tertiary;
-  color: #fff;
-  width: 100%;
-  border-radius: 10px;
-  margin-bottom: 0.7rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  padding: 0.7rem 0;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-#cancelAddTaskBtn {
-  background: #fff;
-  color: #000;
-  width: 100%;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  padding: 0.7rem 0;
-  border: 1px solid #ececec;
-  cursor: pointer;
-}
-
-.modal-error {
-  color: $error;
-  font-size: $font-size-base;
-  margin: 0.3rem 0 0.5rem 0.1rem;
-  min-height: 1.1em;
-  font-weight: 500;
-}
-
-.child-task-modal {
-  display: none;
-  position: absolute;
-  z-index: 2000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.25);
-  justify-content: center;
-  align-items: center;
-}
-.child-task-modal[style*="display: flex"] {
-  display: flex !important;
-}
-.child-task-modal-content {
-  background: $white;
-  border-radius: 16px;
-  padding: 1rem 0.5rem 1rem 0.5rem;
-  max-width: 280px;
-  min-width: 240px;
-  min-height: 320px;
-  max-height: 90vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-sizing: border-box;
-}
-.child-modal-close {
-  position: absolute;
-  top: 0.7rem;
-  right: 0.9rem;
-  background: #f3f3f3;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 1.1rem;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 2;
-  transition: background 0.15s;
-}
-.child-modal-close:hover {
-  background: #ececec;
-}
-.child-task-modal-icon {
-  margin-top: 2.2rem;
-  margin-bottom: 0.7rem;
-  font-size: 2.1rem;
-  color: $tertiary;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.child-task-modal-icon svg {
-  width: 50px;
-  height: 50px;
-}
-
-.child-task-modal-meta {
-  font-size: 1.05rem;
-  color: #222;
-  margin-bottom: 1.1rem;
-  margin-top: 0.2rem;
-  font-family: $primary-font;
-}
-.child-task-modal-actions {
-  display: flex;
-  gap: 0.7rem;
-  width: 100%;
-  margin-bottom: 0.7rem;
-  justify-content: center;
-}
-.child-cancel-btn, .child-start-btn {
-  min-width: 90px;
-  padding: 0.7rem 0.7rem;
-  font-size: 1.08rem;
-  border-radius: 10px;
-  font-weight: 600;
-  border: 1px solid #ececec;
-  cursor: pointer;
-}
-.child-cancel-btn {
-  background: #fff;
-  font-weight: $font-regular;
-  color: #000;
-}
-.child-start-btn {
-  background: #714AA8;
-  font-weight: $font-regular;
-  color: #fff;
-  border: none;
-}
-.child-complete-btn {
-  background: #714AA8;
-  font-weight: $font-regular;
-  color: #fff;
-  border: none;
-  min-width: 120px;
-  padding: 0.7rem 0.7rem;
-  font-size: 1.08rem;
-  border-radius: 10px;
-  cursor: pointer;
-}
-.child-assign-goal-row {
-  display: flex;
-  align-self: center;
-  margin-top: 0.5rem;
-  width: 100%;
-  justify-content: center;
-}
-.child-assign-goal-btn {
-  font-weight: $font-regular;
-  min-width: 180px;
-  background: #714AA8;
-  color: #fff;
-  border-radius: 10px;
-  font-size: 1.08rem;
-  padding: 0.7rem 0;
-  border: none;
-  cursor: pointer;
-  margin-top: 0.2rem;
-}
-.child-task-modal-desc {
-  font-size: 1.08rem;
-  color: #222;
-  margin-bottom: 0.7rem;
-  margin-top: 0.2rem;
-  text-align: center;
-  font-family: $primary-font;
-  min-height: 1.2em;
-}
-.child-back-btn {
-  background: #fff;
-  color: #000;
-  width: 100%;
-  border-radius: 10px;
-  font-size: 1.08rem;
-  font-weight: 600;
-  padding: 0.7rem 0;
-  border: 1px solid #ececec;
-  cursor: pointer;
-  margin-top: 1.2rem;
-  margin-bottom: 0.2rem;
-  box-sizing: border-box;
-  display: block;
-}
-
-.child-task-goal-info-row {
+.taskGoalInfoRow {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   margin-bottom: 0.5rem;
   gap: 0.1rem;
-}
-.child-task-goal-info {
-  font-size: 0.97rem;
-  color: #888;
-  font-family: $primary-font;
-  text-align: center;
-  display: block;
-  width: 100%;
+  
+  .taskGoalInfo {
+    font-size: 0.97rem;
+    color: #888;
+    font-family: $primary-font;
+    text-align: center;
+    display: block;
+    width: 100%;
+  }
+  
+  .taskConfirmedBy {
+    font-size: 0.97rem;
+    color: #888;
+    font-family: $primary-font;
+    text-align: center;
+    display: block;
+    width: 100%;
+    margin-bottom: 0.1rem;
+  }
 }
 
 #modalGoalInfo {
   font-weight: $font-bold;
 }
 
-.child-task-confirmed-by {
-  font-size: 0.97rem;
-  color: #888;
-  font-family: $primary-font;
-  text-align: center;
-  display: block;
-  width: 100%;
-  margin-bottom: 0.1rem;
-}
+    .modalContent {
+    h2 {
+      background-color: $white;
+      border: none;    }
+  }
+  
+
+  .tasksContainer {
+     h1 {
+          margin: 1rem 3.2rem;
+          font-size: 1.1rem;
+          color: $secondary;
+          font-weight: 600;
+    }
+  }
