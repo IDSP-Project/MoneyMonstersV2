@@ -522,12 +522,78 @@ position: absolute;
 }
 
 .progressPercentage {
-  font-size: 24px;
+  font-size: $font-size-lg;
   font-weight: bold;
 }
 
 .progressLabel, .assignedToGoal {
-  font-size: 16px;
-  color: #666;
+  font-size: $font-size-base;
+}
+
+.requestStatus {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-block;
+
+  &.pending {
+    background-color: rgb(255, 244, 222);
+    color: $warnings;
+  }
+
+  &.approved {
+    background-color: $quarternary;
+    color: $success;
+  }
+
+  &.denied {
+    background-color: rgb(255, 226, 229);
+    color: $error;
+  }
+}
+
+.requestBtn {
+  background-color: $tertiary;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+
+  &.disabled {
+    background-color: $primary;
+    color: $secondary-light;
+    cursor: not-allowed;
+  }
+}
+
+.requestActionsContainer {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.approveBtn {
+  background-color: $tertiary;
+  color: $white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.denyBtn {
+  background-color: $secondary-light;
+  color: $white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
 }
 

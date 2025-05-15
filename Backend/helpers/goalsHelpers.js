@@ -135,7 +135,8 @@ const createGoal = async (goalData) => {
       amountAchieved: parseFloat(goalData.amountAchieved || 0),
       progress: parseFloat(goalData.progress || 0),
       completed: false,              
-      completedAt: null                
+      completedAt: null,
+      requestStatus: 'none'
     };
     
     const result = await db.collection('goals').insertOne(newGoal);

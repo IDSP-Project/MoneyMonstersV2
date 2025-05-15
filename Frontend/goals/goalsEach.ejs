@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Goal Details - Money Monsters</title>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body data-goal-id="<%= goal._id %>">
@@ -31,7 +31,7 @@
 
           <div class="goalDetailsCard">
             <% if (goal.purchaseLink) { %>
-              <img src="/images/goal.png" alt="Goal Image" class="goalImage" />
+              <img src="/images/goal.png" alt="Goal Image" class="goalImage">
             <% } else { %>
               <div class="initialsAvatar"><%= goal.title ? goal.title.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) : '' %></div>
             <% } %>
@@ -44,18 +44,47 @@
                 <p class="goalDescription missing">No Description Added</p>
               <% } %>
               <div class="goalPrice">Target: $<%= goal.price ? goal.price.toFixed(2) : '0.00' %></div>
+              
+              <% if (goal.requestStatus && goal.requestStatus !== 'none') { %>
+                <div class="requestStatus <%= goal.requestStatus %>">
+                  <% if (goal.requestStatus === 'pending') { %>
+                    <span>Request Pending</span>
+                  <% } else if (goal.requestStatus === 'approved') { %>
+                    <span>Request Approved</span>
+                  <% } else if (goal.requestStatus === 'denied') { %>
+                    <span>Request Denied</span>
+                  <% } %>
+                </div>
+              <% } %>
             </div>
           </div>
           
-          <div class="tasksContainer">
-            <% if (user.accountType === 'child' && !viewingAsChild && goal.completed === false) { %>
+      <div class="tasksContainer">
+            <% if (user.accountType === 'child' && !viewingAsChild) { %>
               <div class="goalActionsContainer">
-                <button class="assignTaskBtn" data-modal-target="assignTaskModal">
-                  Assign Task
-                </button>
+                <% if (!goal.completed) { %>
+                  <button class="assignTaskBtn" data-modal-target="assignTaskModal">
+                    Assign Task
+                  </button>
+                  
+                  <button class="assignBalanceBtn" data-modal-target="assignBalanceModal">
+                    Assign Balance
+                  </button>
+                <% } %>
                 
-                <button class="assignBalanceBtn" data-modal-target="assignBalanceModal">
-                  Assign Balance
+                <% if (goal.completed === true && (!goal.requestStatus || goal.requestStatus === 'none')) { %>
+                  <button class="requestBtn" onclick="sendRequest('<%= goal._id %>')">
+                    Send Request
+                  </button>
+                <% } %>
+              </div>
+            <% } else if (user.accountType === 'parent' && goal.requestStatus === 'pending') { %>
+              <div class="requestActionsContainer">
+                <button class="approveBtn" onclick="respondToRequest('<%= goal._id %>', 'approved')">
+                  Approve
+                </button>
+                <button class="denyBtn" onclick="respondToRequest('<%= goal._id %>', 'denied')">
+                  Deny
                 </button>
               </div>
             <% } %>
@@ -79,9 +108,9 @@
                           <%- include('../tasks/icons/garage') %>
                         <% } else if (task.category === 'garden') { %>
                           <%- include('../tasks/icons/garden') %>
-                          <% } else if (task.category === 'misc') { %>
-                            <%- include('../tasks/icons/misc') %>
-                          <% } %>
+                        <% } else if (task.category === 'misc') { %>
+                          <%- include('../tasks/icons/misc') %>
+                        <% } %>
                       </div>
                       <div class="taskText">
                         <h3><%= task.title %></h3>
@@ -116,10 +145,12 @@
     <%- include('../partials/modals/assignTaskModal') %>
     <%- include('../partials/modals/confirmReassignModal') %>
     <%- include('../partials/modals/assignBalanceModal') %>
+    <%- include('../partials/modals/requestSuccessModal') %>
   </div>
 
   <script src="/dynamic/formatDueDates.js"></script>
   <script src="/dynamic/progressBar.js"></script>
   <script src="/dynamic/modalPopUp.js"></script>
+  <script src="/dynamic/goalRequest.js"></script>
 </body>
 </html>

@@ -15,6 +15,7 @@ class Goal {
     this.updatedAt = data.updatedAt || new Date();
     this.totalRequired = parseFloat(data.totalRequired || data.price || 0);
     this.amountAchieved = data.amountAchieved !== undefined ? parseFloat(data.amountAchieved) : 0;
+    this.requestStatus = data.requestStatus || 'none';
     
     if (this.totalRequired > 0) {
       this.progress = Math.min(100, Math.round((this.amountAchieved / this.totalRequired) * 100));

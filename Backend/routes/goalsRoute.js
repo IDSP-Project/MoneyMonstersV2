@@ -343,4 +343,104 @@ router.post('/goals/:goalId/assign-balance', ensureAuthenticated, async (req, re
   }
 });
 
+router.post('/goals/:goalId/request', ensureAuthenticated, async (req, res) => {
+  try {
+    const goalId = req.params.goalId;
+    const goal = await findGoalById(goalId);
+    
+    if (!goal) {
+      return res.status(404).json({ success: false, error: 'Goal not found' });
+    }
+    
+    const userId = req.session.user._id || req.session.user.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'User not authenticated' });
+    }
+    
+    if (goal.childId.toString() !== userId.toString()) {
+      return res.status(403).json({ success: false, error: 'Not authorized to send request for this goal' });
+    }
+    
+    if (!goal.completed) {
+      return res.status(400).json({ success: false, error: 'Goal must be completed to send request' });
+    }
+    
+    if (goal.requestStatus && goal.requestStatus !== 'none') {
+      return res.status(400).json({ success: false, error: 'Request already exists for this goal' });
+    }
+    
+    const result = await updateGoal(goalId, { requestStatus: 'pending' });
+    
+    if (result.success) {
+      res.json({ success: true, message: 'Request sent successfully' });
+    } else {
+      throw new Error('Failed to update goal');
+    }
+  } catch (error) {
+    console.error('Error sending request:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/goals/:goalId/request-response', ensureAuthenticated, async (req, res) => {
+  try {
+    const goalId = req.params.goalId;
+    const { response } = req.body; 
+    
+    if (!response || !['approved', 'denied'].includes(response)) {
+      return res.status(400).json({ success: false, error: 'Invalid response' });
+    }
+    
+    const goal = await findGoalById(goalId);
+    
+    if (!goal) {
+      return res.status(404).json({ success: false, error: 'Goal not found' });
+    }
+
+    const userId = req.session.user._id || req.session.user.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'User not authenticated' });
+    }
+    
+    const isParent = goal.parentId.some(id => id.toString() === userId.toString());
+    if (!isParent) {
+      return res.status(403).json({ success: false, error: 'Not authorized to respond to this request' });
+    }
+    
+    if (goal.requestStatus !== 'pending') {
+      return res.status(400).json({ success: false, error: 'No pending request for this goal' });
+    }
+
+    const db = getDB();
+    const childUser = await db.collection('users').findOne({ _id: new ObjectId(goal.childId) });
+    
+    if (!childUser) {
+      return res.status(404).json({ success: false, error: 'Child user not found' });
+    }
+
+    if (response === 'denied') {
+      const newBalance = childUser.balance + goal.amountAchieved;
+      await db.collection('users').updateOne(
+        { _id: new ObjectId(goal.childId) },
+        { $set: { balance: newBalance } }
+      );
+
+      await updateGoal(goalId, { 
+        requestStatus: response,
+        amountAchieved: 0,
+        progress: 0,
+        completed: false,
+        completedAt: null
+      });
+    } else {
+      await updateGoal(goalId, { requestStatus: response });
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error responding to request:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 module.exports = { router };
