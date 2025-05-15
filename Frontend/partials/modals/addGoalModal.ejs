@@ -51,7 +51,7 @@
       <p>Please copy the link of the product you wish to add to your goal from Amazon.ca and paste it below</p>
       <form id="amazonGoalForm">
         <div class="modalInput amazonLinkInput">
-          <input type="text" name="amazonLink" placeholder="amazn.ca/abcd" required />
+          <input type="text" name="amazonUrl" placeholder="https://amazon.ca/..." required />
           <span class="copyIcon" title="Copy"><i class="fa fa-copy"></i></span>
         </div>
         
@@ -78,6 +78,32 @@
     </div>
   </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('amazonGoalForm');
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const amazonUrl = e.target.amazonUrl.value;
+
+        const response = await fetch('/goals/create-amazon', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ amazonUrl })
+        });
+
+        if (response.ok) {
+          // Show success modal instead of direct redirect
+          window.location.href = "/dashboard";
+        } else {
+          alert("Failed to create goal from Amazon link.");
+        }
+      });
+    }
+  });
+</script>
 
 
 

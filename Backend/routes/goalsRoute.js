@@ -16,6 +16,8 @@ const {
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../db/connection');
 const User = require('../db/userModel');
+const { extractASIN, fetchAmazonProductData } = require('../helpers/amazonHelpers');
+
 
 
 
@@ -342,5 +344,46 @@ router.post('/goals/:goalId/assign-balance', ensureAuthenticated, async (req, re
     });
   }
 });
+
+router.post('/goals/create-amazon', ensureAuthenticated, async (req, res) => {
+  console.log("Received POST to /goals/create-amazon");
+  const { amazonUrl } = req.body;
+
+  const asin = extractASIN(amazonUrl);
+  const user = req.session.user;
+
+  if (!asin) {
+    return res.status(400).json({ error: 'Invalid Amazon URL' });
+  }
+
+  const productData = await fetchAmazonProductData(asin);
+
+  const price = parseFloat(productData.price) || 0;
+
+  const newGoal = {
+    title: productData.title || 'Amazon Goal',
+    description: 'Amazon goal created by link',
+    price,
+    totalRequired: price,
+    purchaseLink: amazonUrl,
+    image: productData.image?.link || productData.image || '',
+    amountAchieved: 0,
+    parentId: [user._id || user.id],
+    childId: req.viewingChild?._id || req.viewingChild?.id || user._id || user.id,
+    createdAt: new Date(),
+    status: 'active',
+    progress: 0,
+    completed: false
+  };
+
+  console.log("Final Goal:", newGoal);
+
+  const db = getDB();
+  await db.collection('goals').insertOne(newGoal);
+
+  res.status(200).json({ success: true });
+});
+
+
 
 module.exports = { router };
