@@ -499,7 +499,7 @@ html {
 }
 .signin p, .register p {
   text-align: center;
-  color: #7c7c7c;
+  color: rgb(123.5, 123.5, 123.5);
   font-size: 14px;
   margin-bottom: 0.5rem;
 }
@@ -555,7 +555,7 @@ html {
   display: block;
   text-align: right;
   font-size: 12px;
-  color: #7c7c7c;
+  color: rgb(123.5, 123.5, 123.5);
   margin-bottom: 15px;
 }
 .signin .error-message, .signin .profile .success-message, .profile .signin .success-message, .register .error-message, .register .profile .success-message, .profile .register .success-message {
@@ -627,7 +627,7 @@ html {
 }
 .forgotPassword p {
   text-align: center;
-  color: #7c7c7c;
+  color: rgb(123.5, 123.5, 123.5);
   font-size: 14px;
   margin: 1rem 2rem;
 }
@@ -701,7 +701,7 @@ html {
 }
 .setPassword p {
   text-align: center;
-  color: #7c7c7c;
+  color: rgb(123.5, 123.5, 123.5);
   font-size: 12px;
   margin: 1rem 0.5rem;
 }
@@ -1102,7 +1102,7 @@ html {
   transition: background-color 0.3s ease;
 }
 .homepage .primary-btn:hover {
-  background-color: #161616;
+  background-color: rgb(21.5, 21.5, 21.5);
 }
 
 .profile {
@@ -2061,7 +2061,7 @@ html {
   transition: background 0.3s;
 }
 .singleLearn .completeBtn:hover {
-  background-color: #654296;
+  background-color: rgb(101.0929752066, 66.2024793388, 150.2975206612);
   text-decoration: underline;
 }
 .singleLearn .completedMessage {
@@ -2739,7 +2739,7 @@ form button {
   background-color: white;
 }
 .familyMembers .memberCard:hover {
-  background-color: #fefefe;
+  background-color: rgb(253.75, 253.75, 253.75);
 }
 .familyMembers .avatar {
   margin-right: 0.8rem;
@@ -2881,7 +2881,7 @@ form button {
   background-color: white;
 }
 .selectChild .memberCard:hover {
-  background-color: #fefefe;
+  background-color: rgb(253.75, 253.75, 253.75);
 }
 .selectChild .memberCard form {
   margin-left: auto;
@@ -2896,7 +2896,7 @@ form button {
   font-size: 14px;
 }
 .selectChild .memberCard .view-as-btn:hover {
-  background-color: #593a85;
+  background-color: rgb(89.1859504132, 58.4049586777, 132.5950413223);
   text-decoration: underline;
 }
 .selectChild .avatar {
@@ -2944,13 +2944,13 @@ form button {
   font-size: 16px;
 }
 .selectChild .viewSelf .btn:hover {
-  background-color: #161616;
+  background-color: rgb(21.5, 21.5, 21.5);
   text-decoration: underline;
 }
 .selectChild .noChildren {
   text-align: center;
   padding: 2rem 1rem;
-  background-color: #fefefe;
+  background-color: rgb(253.75, 253.75, 253.75);
   border: 1px solid #BDBDBD;
 }
 .selectChild .noChildren p {
@@ -2966,7 +2966,7 @@ form button {
   border-radius: 4px;
 }
 .selectChild .noChildren .btn:hover {
-  background-color: #593a85;
+  background-color: rgb(89.1859504132, 58.4049586777, 132.5950413223);
   text-decoration: underline;
 }
 
@@ -2980,7 +2980,7 @@ form button {
   background-color: white;
 }
 .viewAsChild .memberCard:hover {
-  background-color: #fefefe;
+  background-color: rgb(253.75, 253.75, 253.75);
 }
 .viewAsChild .avatar {
   margin-right: 0.8rem;
@@ -3071,4 +3071,6 @@ form button {
   font-weight: 400;
   font-size: 16px;
   font-family: "Inter", sans-serif;
-}/*# sourceMappingURL=style.css.map */
+}
+
+/*# sourceMappingURL=style.css.map */
