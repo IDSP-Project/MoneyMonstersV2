@@ -36,9 +36,13 @@
               <div class="initialsAvatar"><%= goal.title ? goal.title.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) : '' %></div>
             <% } %>
             <div class="goalInfo">
-              <h2 class="goalTitle"><%= goal.title %></h2>
-              <p class="goalSource"><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
-              <% if (goal.description && goal.description.trim() !== '' && goal.description !== 'Custom goal') { %>
+            <% if (goal.purchaseLink.includes("amazon")) { %>
+            <h2 class="goalTitle"><a href="<%= goal.purchaseLink %>" target="_blank" rel="noopener noreferrer"><%= goal.title %></a></h2>              <p class="goalSource"><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
+            <% } else { %> 
+            <h2 class="goalTitle"><%= goal.title %></h2>
+          <% } %>
+            
+            <% if (goal.description && goal.description.trim() !== '' && goal.description !== 'Custom goal') { %>
                 <p class="goalDescription"><%= goal.description %></p>
               <% } else { %>
                 <p class="goalDescription missing">No Description Added</p>
