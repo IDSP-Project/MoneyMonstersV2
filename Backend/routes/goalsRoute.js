@@ -11,7 +11,8 @@ const {
   updateGoal,
   deleteGoal,
   getAssignedFundsForGoal,
-  updateGoalProgress
+  updateGoalProgress,
+  findPendingRequests
 } = require('../helpers/goalsHelpers');
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../db/connection');
@@ -121,13 +122,18 @@ router.post('/goals/:goalId/update-progress', ensureAuthenticated, async (req, r
 router.get('/goals/:childId', ensureAuthenticated, async (req, res) => {
   try {
     const goals = await findGoalsByChildId(req.params.childId);
-    
+    const pendingRequests = await findPendingRequests([req.params.childId]);
     res.render('goals/goals', { 
       goals, 
       activeGoals: goals,
       user: req.session.user,
       childId: req.params.childId,
-      currentPage: 'goals'
+      currentPage: 'goals',
+      pendingRequests,
+      getInitials: getGoalInitials,
+      viewingAsChild: req.viewingChild ? true : false,
+      viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+      child: req.viewingChild 
     });
   } catch (error) {
     console.error('Error fetching child goals:', error);
@@ -135,7 +141,12 @@ router.get('/goals/:childId', ensureAuthenticated, async (req, res) => {
       goals: [], 
       user: req.session.user,
       error: 'Failed to fetch goals',
-      currentPage: 'goals'
+      currentPage: 'goals',
+      pendingRequests: [],
+      getInitials: getGoalInitials,
+      viewingAsChild: req.viewingChild ? true : false,
+      viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+      child: req.viewingChild
     });
   }
 });
@@ -145,22 +156,26 @@ router.get('/goals', ensureAuthenticated, async (req, res) => {
     let goals = [];
     let userId;
     let userType;
-    
+    let pendingRequests = [];
     if (req.viewingChild) {
       userId = req.viewingChild._id || req.viewingChild.id;
       userType = 'child';
+      pendingRequests = await findPendingRequests([userId]);
     } else {
       userId = req.session.user._id || req.session.user.id;
       userType = req.session.user.accountType;
+      if (userType === 'parent') {
+        const familyId = req.session.user.familyId;
+        goals = await findGoalsByParentId(userId, familyId);
+        const db = getDB();
+        const children = await db.collection('users').find({ familyId: familyId ? new ObjectId(familyId) : null, accountType: 'child' }).toArray();
+        const childIds = children.map(child => child._id.toString());
+        pendingRequests = childIds.length > 0 ? await findPendingRequests(childIds) : [];
+      }
     }
-    
     if (userType === 'child') {
       goals = await findGoalsByChildId(userId);
-    } else if (userType === 'parent') {
-      const familyId = req.session.user.familyId;
-      goals = await findGoalsByParentId(userId, familyId);
     }
-
     res.render('goals/goals', { 
       goals,
       activeGoals: goals,
@@ -169,7 +184,8 @@ router.get('/goals', ensureAuthenticated, async (req, res) => {
       getInitials: getGoalInitials,
       viewingAsChild: req.viewingChild ? true : false,
       viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
-      child: req.viewingChild 
+      child: req.viewingChild,
+      pendingRequests
     });
   } catch (error) {
     res.status(500).render('goals/goals', { 
@@ -179,6 +195,8 @@ router.get('/goals', ensureAuthenticated, async (req, res) => {
       viewingAsChild: req.viewingChild ? true : false,
       viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
       child: req.viewingChild,
+      pendingRequests: [],
+      getInitials: getGoalInitials
     });
   }
 });

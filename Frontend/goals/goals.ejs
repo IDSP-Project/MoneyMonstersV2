@@ -20,13 +20,79 @@
         <% if (user.accountType === 'parent' && !locals.viewingAsChild) { %>
             <h1>Family's goal progress %></h1>
             <% } %>
+            <% if (pendingRequests && pendingRequests.length > 0) { %>
+              <div class="requestsSection">
+                <h2 class="sectionTabs">Requests</h2>
+                <div class="goalList">
+                  <% pendingRequests.forEach(function(goal) { %>
+                    <a href="/goals/view/<%= goal._id %>" class="goalCardLink">
+                      <div class="goalCard">
+                        <div class="goalInfo">
+                          <% if (goal.image) { %>
+                            <div class="amazonImg"><img src="<%= goal.image %>" alt="Goal Image"></div>
+                          <% } else { %>
+                            <div class="initialsAvatar"><%= getInitials(goal.title) %></div>
+                          <% } %>
+                          <div class="goalText">
+                            <h3><%= goal.title.length > 14 ? goal.title.substring(0, 15) + '...' : goal.title %></h3>
+                            <p><%= goal.purchaseLink ? 'Amazon Goal' : 'Custom Goal' %></p>
+                          </div>
+                        </div>
+                        <div class="goalProgress">
+                        </div>
+                        <a href="/goals/view/<%= goal._id %>" class="viewBtn">View</a>
+                      </div>
+                    </a>
+                  <% }); %>
+                </div>
+              </div>
+            <% } %>
+        <% 
+          // Get IDs of all pending requests
+          const pendingIds = (pendingRequests || []).map(g => g._id.toString());
+          // Get reviewed goals (approved or denied)
+          const reviewedGoals = (goals || []).filter(g => g.requestStatus === 'approved' || g.requestStatus === 'denied');
+          // Get IDs of reviewed goals
+          const reviewedIds = reviewedGoals.map(g => g._id.toString());
+          // Get pending goals for child (requestStatus: 'pending')
+          const sentRequests = (goals || []).filter(g => g.requestStatus === 'pending');
+          const sentRequestIds = sentRequests.map(g => g._id.toString());
+        %>
+        <% if (user.accountType === 'child' && sentRequests.length > 0) { %>
+          <div class="sentRequestsSection">
+            <h2 class="sectionTabs">Pending</h2>
+            <div class="goalList">
+              <% sentRequests.forEach(function(goal) { %>
+                <a href="/goals/view/<%= goal._id %>" class="goalCardLink">
+                  <div class="goalCard">
+                    <div class="goalInfo">
+                      <% if (goal.image) { %>
+                        <div class="amazonImg"><img src="<%= goal.image %>" alt="Goal Image"></div>
+                      <% } else { %>
+                        <div class="initialsAvatar"><%= getInitials(goal.title) %></div>
+                      <% } %>
+                      <div class="goalText">
+                        <h3><%= goal.title.length > 14 ? goal.title.substring(0, 15) + '...' : goal.title %></h3>
+                        <p><%= goal.purchaseLink ? 'Amazon Goal' : 'Custom Goal' %></p>
+                      </div>
+                    </div>
+                    <div class="goalProgress">
+                      <span class="requestStatus pending">Pending</span>
+                    </div>
+                  </div>
+                </a>
+              <% }); %>
+            </div>
+          </div>
+        <% } %>
         <% if (goals && goals.length > 0) { %>
           <div class="sectionTabs">
             <h2>Goals</h2>
             <h2>Progress</h2>
           </div>
           <div class="goalList">
-            <% goals.forEach(function(goal) { %>
+            <% goals.forEach(function(goal) { 
+                 if (!pendingIds.includes(goal._id.toString()) && !reviewedIds.includes(goal._id.toString()) && !sentRequestIds.includes(goal._id.toString())) { %>
               <a href="/goals/view/<%= goal._id %>" class="goalCardLink">
                 <div class="goalCard">
                   <div class="goalInfo">
@@ -48,13 +114,43 @@
                   </div>
                 </div>
               </a>
-            <% }); %>
+            <% } }); %>
           </div>
         <% } else { %>
           <div class="noGoalsMessage">
             <i class="fas fa-bullseye"></i>
             <h1>No Goals Yet</h1>
             <p>You haven't set any goals yet. Start by adding your first goal!</p>
+          </div>
+        <% } %>
+
+        <% if (reviewedGoals.length > 0) { %>
+          <div class="reviewedSection">
+            <h2 class="sectionTabs">Reviewed</h2>
+            <div class="goalList">
+              <% reviewedGoals.forEach(function(goal) { %>
+                <a href="/goals/view/<%= goal._id %>" class="goalCardLink">
+                  <div class="goalCard">
+                    <div class="goalInfo">
+                      <% if (goal.image) { %>
+                        <div class="amazonImg"><img src="<%= goal.image %>" alt="Goal Image"></div>
+                      <% } else { %>
+                        <div class="initialsAvatar"><%= getInitials(goal.title) %></div>
+                      <% } %>
+                      <div class="goalText">
+                        <h3><%= goal.title.length > 14 ? goal.title.substring(0, 15) + '...' : goal.title %></h3>
+                        <p><%= goal.purchaseLink ? 'Amazon Goal' : 'Custom Goal' %></p>
+                      </div>
+                    </div>
+                    <div class="goalProgress">
+                      <span class="requestStatus <%= goal.requestStatus %>">
+                        <%= goal.requestStatus.charAt(0).toUpperCase() + goal.requestStatus.slice(1) %>
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              <% }); %>
+            </div>
           </div>
         <% } %>
       </div>

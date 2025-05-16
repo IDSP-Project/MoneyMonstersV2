@@ -1309,8 +1309,11 @@ html {
 .goalPage .goalsContainer .goalList {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 6rem;
+  margin-bottom: 2rem;
+}
+.goalPage .goalsContainer h2.sectionTabs {
+  font-size: 14px;
+  padding: 0.5rem 1rem;
 }
 .goalPage .goalsContainer .sectionTabs {
   display: flex;
@@ -1343,6 +1346,14 @@ html {
   margin-bottom: 0.75rem;
   padding: 1rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.goalPage .goalsContainer .goalCard .viewBtn {
+  font-size: 14px;
+  padding: 0.5rem 1rem;
+  background-color: #FFFFFF;
+  color: #714AA8;
+  border-radius: 6px;
+  border: #714AA8 1px solid;
 }
 .goalPage .goalsContainer .goalCard .goalInfo {
   display: grid;

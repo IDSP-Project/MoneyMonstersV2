@@ -331,6 +331,15 @@ const isGoalCompleted = async (goalId) => {
   }
 };
 
+const findPendingRequests = async (childIds) => {
+  const db = getDB();
+  const ids = childIds.map(id => id.toString());
+  return db.collection('goals')
+    .find({ childId: { $in: ids }, requestStatus: 'pending' })
+    .sort({ createdAt: -1 })
+    .toArray();
+};
+
 module.exports = {
   fetchGoalsForHome,
   getGoalInitials,
@@ -342,5 +351,6 @@ module.exports = {
   deleteGoal,
   getAssignedFundsForGoal,
   updateGoalProgress,
-  isGoalCompleted
+  isGoalCompleted,
+  findPendingRequests
 };

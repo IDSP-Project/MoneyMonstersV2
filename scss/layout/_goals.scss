@@ -19,8 +19,13 @@
     .goalList {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 6rem;
+      // gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    h2.sectionTabs {
+      font-size: $font-size-sm;
+      padding: 0.5rem 1rem;
     }
 
   .sectionTabs {
@@ -56,6 +61,15 @@
       margin-bottom: 0.75rem;
       padding: 1rem;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+      .viewBtn {
+        font-size: $font-size-sm;
+        padding: 0.5rem 1rem;
+        background-color: $white;
+        color: $tertiary;
+        border-radius: 6px;
+        border: $tertiary 1px solid;
+      }
       
       .goalInfo {
         display: grid;
