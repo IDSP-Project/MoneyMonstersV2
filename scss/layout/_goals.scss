@@ -203,62 +203,6 @@
   border: none;
 }
 
-// .amazonLinkInput {
-//   display: flex;
-//   align-items: center;
-//   background: $primary;
-//   border-radius: 10px;
-//   padding: 0.5rem 1rem;
-//   margin-bottom: 1.2rem;
-//   position: relative;
-  
-//   input {
-//     border: none;
-//     background: transparent;
-//     font-size: 1rem;
-//     flex: 1;
-//     outline: none;
-//     color: $black;
-//   }
-  
-//   .copyIcon {
-//     color: $secondary-light;
-//     font-size: 1.2rem;
-//     margin-left: 0.5rem;
-//     cursor: pointer;
-//     transition: color 0.2s;
-    
-//     &:hover {
-//       color: $tertiary;
-//     }
-    
-//     &.copied {
-//       color: $success;
-//     }
-//   }
-// }
-
-// .goalDetailsCard {
-//   grid-area: details;
-//     margin-top: 4rem;
-  
-//   .goalSource {
-//     font-family: $primary-font;
-//   }
-  
-//   .goalDescription {
-//     font-family: $primary-font;
-//   }
-  
-//   .goalPrice {
-//     font-family: $primary-font;
-//   }
-  
-//   .goalProgress {
-//     font-family: $primary-font;
-//   }
-// }
-
 .goalDetailsPage {
   display: grid;
   grid-template-columns: 1fr;
