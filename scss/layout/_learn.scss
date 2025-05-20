@@ -60,6 +60,11 @@
     font-size: $font-size-sm;
     font-style: normal;
     font-weight: 600;
+
+    h5 {
+      padding: 0;
+      margin: 1rem auto auto auto ;
+    }
   }
   
   .blog-title a {
@@ -306,11 +311,6 @@ form {
     margin-top: 1rem;
   }
   
-  input, textarea {
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.25rem;
-  }
   
   button {
     margin-top: 1rem;
@@ -337,5 +337,11 @@ form {
       text-align: center;
       font-size: $font-size-xs;
     }
+    input, textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    font-family: $primary-font;
+  }
   }
 }

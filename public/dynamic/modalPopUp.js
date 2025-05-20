@@ -120,6 +120,22 @@ async function completeAndRedirect(blogId, reflection = "") {
 
 
 function setupGoalModalHandlers() {
+  const customGoalModalContent = document.querySelector('#customGoalModal .modalContent');
+  if (customGoalModalContent && !document.getElementById('goalSuccessOverlay')) {
+    const successOverlay = document.createElement('div');
+    successOverlay.id = 'goalSuccessOverlay';
+    successOverlay.className = 'successOverlay';
+    successOverlay.innerHTML = `
+      <div class="successIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <div class="successMessage">Goal Created Successfully</div>
+    `;
+    customGoalModalContent.appendChild(successOverlay);
+  }
+
   const addGoalBtn = document.querySelector('.addGoalBtnContainer .btn');
   if (addGoalBtn) {
     addGoalBtn.addEventListener('click', function() {
@@ -142,7 +158,7 @@ function setupGoalModalHandlers() {
     });
   }
   
-  const customGoalForm = document.getElementById('customGoalForm');
+    const customGoalForm = document.getElementById('customGoalForm');
   if (customGoalForm) {
     customGoalForm.addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -165,8 +181,29 @@ function setupGoalModalHandlers() {
         
         const result = await response.json();
         if (result.success) {
-          closeModal('customGoalModal');
-          openModal('successGoalModal');
+          const successOverlay = document.getElementById('goalSuccessOverlay');
+          if (successOverlay) {
+            successOverlay.classList.add('show');
+            
+            this.reset();
+            
+            setTimeout(() => {
+              successOverlay.classList.remove('show');
+              
+              setTimeout(() => {
+                closeModal('customGoalModal');
+                
+                if (result.goal) {
+                  addGoalToUI(result.goal);
+                }
+              }, 300);
+            }, 1500);
+          } else {
+            closeModal('customGoalModal');
+            if (result.goal) {
+              addGoalToUI(result.goal);
+            }
+          }
         } else {
           throw new Error(result.error || 'Failed to create goal');
         }
@@ -176,15 +213,53 @@ function setupGoalModalHandlers() {
       }
     });
   }
+  }
+
+function addGoalToUI(goal) {
+  const goalsList = document.querySelector('.goalsList');
+  if (!goalsList) return;
   
-  const successDoneBtn = document.getElementById('successGoalDoneBtn');
-  if (successDoneBtn) {
-    successDoneBtn.addEventListener('click', function() {
-      closeModal('successGoalModal');
-      window.location.reload();
+  const goalCard = document.createElement('div');
+  goalCard.className = 'goalCard';
+  goalCard.dataset.goalId = goal._id;
+  
+  const progress = goal.progress || 0;
+  const progressPercent = Math.min(100, Math.max(0, (progress / goal.price) * 100));
+  
+  goalCard.innerHTML = `
+    <div class="goalHeader">
+      <h3>${goal.title}</h3>
+      <span class="goalPrice">$${parseFloat(goal.price).toFixed(2)}</span>
+    </div>
+    <div class="goalDescription">${goal.description}</div>
+    <div class="goalProgress">
+      <div class="progressBar">
+        <div class="progressFill" style="width: ${progressPercent}%"></div>
+      </div>
+      <div class="progressText">
+        <span>$${parseFloat(progress || 0).toFixed(2)} of $${parseFloat(goal.price).toFixed(2)}</span>
+      </div>
+    </div>
+    <div class="goalActions">
+      <button class="btn secondary viewGoalBtn" data-goal-id="${goal._id}">View</button>
+    </div>
+  `;
+  
+  const viewBtn = goalCard.querySelector('.viewGoalBtn');
+  if (viewBtn) {
+    viewBtn.addEventListener('click', function() {
+      window.location.href = `/goals/${goal._id}`;
     });
   }
+  
+  goalsList.insertAdjacentElement('afterbegin', goalCard);
+  
+  const noGoalsMessage = document.querySelector('.noGoalsMessage');
+  if (noGoalsMessage) {
+    noGoalsMessage.remove();
+  }
 }
+  
 
 function setupTaskModalHandlers() {
   const assignTaskBtn = document.querySelector('.assignTaskBtn');
