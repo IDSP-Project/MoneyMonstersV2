@@ -1,4 +1,4 @@
-<div id="addGoalModal" class="baseModal">
+<div id="addGoalModal" class="baseModal" aria-labelledby="addGoalTitle">
   <div class="modalContent">
     <h2>Add a New Goal!</h2>
     
@@ -15,8 +15,8 @@
         </label>
         
         <div class="modalFooter">
-          <button type="submit" class="modalBtn primary">Confirm</button>
-          <button type="button" class="modalBtn secondary" id="cancelGoalModal">Cancel</button>
+          <button type="submit" class="modalBtn primary" aria-label="Confirm goal type selection">Confirm</button>
+          <button type="button" class="modalBtn secondary" id="cancelGoalModal" aria-label="Cancel adding new goal">Cancel</button>
         </div>
       </form>
     </div>
@@ -35,8 +35,8 @@
         <input type="text" name="goalDescription" placeholder="Description (optional)" class="modalInput" />
         
         <div class="modalFooter">
-          <button type="submit" class="modalBtn primary">Create Goal</button>
-          <button type="button" class="modalBtn secondary" id="cancelGoalModal">Cancel</button>
+          <button type="submit" class="modalBtn primary" aria-label="Create custom goal">Create Goal</button>
+          <button type="button" class="modalBtn secondary" id="cancelGoalModal" aria-label="Cancel creating custom goal">Cancel</button>
         </div>
       </form>
     </div>
@@ -55,8 +55,8 @@
         </div>
         
         <div class="modalFooter">
-          <button type="submit" class="modalBtn primary">Create Goal</button>
-          <button type="button" class="modalBtn secondary" id="backToTypeModalAmazon">Back</button>
+          <button type="submit" class="modalBtn primary" aria-label="Create goal from Amazon product">Create Goal</button>
+          <button type="button" class="modalBtn secondary" id="backToTypeModalAmazon" aria-label="Go back to goal type selection">Back</button>
         </div>
       </form>
     </div>
@@ -72,7 +72,7 @@
       <p class="successMessage">Your new goal was added successfully.</p>
       
       <div class="modalFooter">
-        <button class="modalBtn primary" id="successGoalDoneBtn">Done</button>
+        <button class="modalBtn primary" id="successGoalDoneBtn" aria-label="Close success message">Done</button>
       </div>
     </div>
   </div>

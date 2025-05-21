@@ -47,7 +47,7 @@
                       <% statusGroups[statusKey].tasks.forEach(function(task) { %>
                         <div class="taskCard">
                           <div class="taskInfo">
-                            <div class="taskIcon">
+                            <div class="taskIcon" aria-hidden="true">
                               <% if (task.category === 'pet') { %>
                                   <%- include('../tasks/icons/pet') %>
                                 <% } else if (task.category === 'cleaning') { %>
@@ -69,7 +69,8 @@
                             </div>
                           </div>
                           <div class="taskStatus">
-                            <span class="statusBadge <%= task.status %>">
+                            <span class="statusBadge <%= task.status %>"
+                                  aria-label="Task status: <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>">
                               <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>
                             </span>
                           </div>
@@ -82,7 +83,7 @@
             <% }); %>
           <% } else { %>
             <div class="noTasksMessage">
-              <i class="fas fa-tasks"></i>
+              <i class="fas fa-tasks" aria-hidden="true"></i>
               <h1>No Tasks Yet</h1>
               <p>Your children don't have any tasks assigned yet.</p>
             </div>
@@ -90,7 +91,7 @@
         </div>
         <% if (locals.viewingAsChild) { %>
             <div class="addTaskBtnContainer">
-              <button class="addTaskBtn">Add New Task</button>
+              <button class="addTaskBtn" aria-label="Add new task">Add New Task</button>
             </div>
             <% } %>
           <% } %>

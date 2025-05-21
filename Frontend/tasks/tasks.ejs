@@ -27,7 +27,7 @@
               <% tasks.forEach(function(task) { %>
                 <div class="taskCard" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>" data-parent-name="<%= task.parentName || '' %>" data-category="<%= task.category || 'misc' %>">
                   <div class="taskInfo">
-                    <div class="taskIcon">
+                    <div class="taskIcon" aria-hidden="true">
                        <% if (task.category === 'pet') { %>
                           <%- include('../tasks/icons/pet') %>
                         <% } else if (task.category === 'cleaning') { %>
@@ -46,7 +46,7 @@
                     </div>
                   </div>
                   <div class="taskStatus">
-                    <span class="statusBadge <%= task.status %>">
+                    <span class="statusBadge <%= task.status %>" aria-label="Task status: <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>">
                       <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>
                     </span>
                   </div>
@@ -55,7 +55,7 @@
             </div>
           <% } else { %>
             <div class="noTasksMessage">
-              <i class="fas fa-tasks"></i>
+              <i class="fas fa-tasks" aria-hidden="true"></i>
               <h1>No Tasks Yet</h1>
               <p>Ask your parent to assign a task.</p>
             </div>

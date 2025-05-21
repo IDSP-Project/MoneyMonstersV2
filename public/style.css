@@ -1314,6 +1314,7 @@ html {
 .goalPage .goalsContainer h2.sectionTabs {
   font-size: 14px;
   padding: 0.5rem 1rem;
+  color: #2F2F2F;
 }
 .goalPage .goalsContainer .sectionTabs {
   display: flex;
@@ -1331,7 +1332,6 @@ html {
   padding: 0 0.5rem;
   color: #2F2F2F;
   font-size: 14px;
-  color: #626262;
   padding: 0.5rem 1rem;
   margin: 0;
   background: #F1F1F1;

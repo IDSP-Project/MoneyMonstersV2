@@ -4,28 +4,34 @@
     
     <div class="modalBody">
       <div class="taskDetails">
-        <h3 id="taskProgressTitle"></h3>
-        <p id="taskProgressDescription"></p>
+        <h3 id="taskProgressTitleText" aria-label="Task title"></h3>
+        <p id="taskProgressDescription" aria-label="Task description"></p>
         <div class="taskMetaInfo">
-          <span id="taskProgressReward"></span>
-          <span id="taskProgressDueDate"></span>
-          <span id="taskProgressStatus" class="statusBadge"></span>
+          <span id="taskProgressReward" aria-label="Task reward"></span>
+          <span id="taskProgressDueDate" aria-label="Task due date"></span>
+          <span id="taskProgressStatus" class="statusBadge" aria-label="Task status"></span>
         </div>
         <div class="taskChild">
-          <p>Assigned to: <span id="taskProgressChild"></span></p>
+          <p>Assigned to: <span id="taskProgressChild" aria-label="Task assignee"></span></p>
         </div>
       </div>
       
       <div class="taskActions">
-        <button class="modalBtn primary" id="approveTaskBtn">Approve Completion</button>
-        <button class="modalBtn primary" id="rejectTaskBtn">Reject Completion</button>
-        <button class="modalBtn tertiary" id="deleteTaskBtn">Delete Task</button>
+        <button class="modalBtn primary" 
+                id="approveTaskBtn" 
+                aria-label="Approve task completion">Approve Completion</button>
+        <button class="modalBtn primary" 
+                id="rejectTaskBtn" 
+                aria-label="Reject task completion">Reject Completion</button>
+        <button class="modalBtn tertiary" 
+                id="deleteTaskBtn" 
+                aria-label="Delete task">Delete Task</button>
       </div>
       
       <div id="taskProgressError" class="modalError"></div>
       
       <div class="modalFooter">
-        <button class="modalBtn secondary" id="closeTaskProgressModal">Close</button>
+        <button class="modalBtn secondary" id="closeTaskProgressModal"aria-label="Close task progress modal">Close</button>
       </div>
     </div>
   </div>
