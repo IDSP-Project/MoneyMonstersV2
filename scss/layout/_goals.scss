@@ -444,15 +444,10 @@
         }
       }
     }
-  }
+  
     .noTasksMessage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 60vh;
-    padding: 2.5rem 1.5rem;
-    margin: 2rem 0;
+    padding: 1.5rem;
+    margin: 0;
 
     i {
       font-size: 3rem;
@@ -464,7 +459,8 @@
       font-size: $font-size-xl;
       font-weight: bold;
       color: $tertiary;
-      margin-bottom: 0.5rem;
+      text-align: center;
+      margin: auto;
     }
 
     p {
@@ -474,7 +470,7 @@
       margin-bottom: 0;
     }
   }
-  
+}
 
 .goalList a {
   text-decoration: none;

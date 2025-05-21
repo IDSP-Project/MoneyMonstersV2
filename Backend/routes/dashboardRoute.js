@@ -202,6 +202,7 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
       learningProgress,
       viewingAsChild: req.viewingChild ? true : false,
       viewingChildName: req.viewingChild ? req.viewingChild.firstName : null,
+      viewingChildBalance: req.viewingChild ? req.viewingChild.balance : null,
       child: req.viewingChild,
       currentPage: 'dashboard',
       getInitials: getGoalInitials 
