@@ -238,26 +238,39 @@ function setupGoalModalHandlers() {
   }
 }
 
-  function getGoalInitials(title) {
-    if (!title) return '';
-    return title
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  }
-
 function addGoalToUI(goal) {
+
+  if (!goal.requestStatus || goal.requestStatus === 'pending') {
+    goal.requestStatus = 'none'; 
+  }
   
-  let goalList = document.querySelector('.sectionTabs + .goalList');
+  let goalList = null;
   
-  if (!goalList) {
-    goalList = document.querySelector('.goalList');
+  const sectionTabs = Array.from(document.querySelectorAll('.sectionTabs')).find(tab => {
+    const text = tab.textContent;
+    return text.includes('Goals') && text.includes('Progress') && 
+           !text.includes('Pending') && !text.includes('Requests') && !text.includes('Reviewed');
+  });
+  
+  if (sectionTabs) {
+    goalList = sectionTabs.nextElementSibling;
+    if (goalList && !goalList.classList.contains('goalList')) {
+      goalList = null;
+    }
   }
   
   if (!goalList) {
-    console.log('No goalList found, creating new section');
+    const allGoalLists = document.querySelectorAll('.goalList');
+    for (const list of allGoalLists) {
+      if (!list.closest('.sentRequestsSection, .requestsSection, .reviewedSection')) {
+        goalList = list;
+        break;
+      }
+    }
+  }
+  
+  if (!goalList) {
+    console.log('No main Goals section found, creating new section');
     const goalsContainer = document.querySelector('.goalsContainer');
     
     if (goalsContainer) {
@@ -276,15 +289,32 @@ function addGoalToUI(goal) {
         goalsContainer.insertBefore(sectionTabs, addGoalBtn);
         goalsContainer.insertBefore(goalList, addGoalBtn);
       } else {
-        goalsContainer.appendChild(sectionTabs);
-        goalsContainer.appendChild(goalList);
+        const existingSections = goalsContainer.querySelectorAll('.sectionTabs, .goalList, .requestsSection, .sentRequestsSection, .reviewedSection');
+        if (existingSections.length > 0) {
+          const lastSection = existingSections[existingSections.length - 1];
+          lastSection.insertAdjacentElement('afterend', sectionTabs);
+          sectionTabs.insertAdjacentElement('afterend', goalList);
+        } else {
+          goalsContainer.appendChild(sectionTabs);
+          goalsContainer.appendChild(goalList);
+        }
       }
     } else {
       console.error('Could not find goals container to add new goal');
       return;
     }
   }
+
   
+  function getGoalInitials(title) {
+    if (!title) return '';
+    return title
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
   
   const goalCardLink = document.createElement('a');
   goalCardLink.href = `/goals/view/${goal._id}`;
@@ -297,9 +327,7 @@ function addGoalToUI(goal) {
   
   const progress = goal.progress || 0;
   const progressPercent = Math.min(100, Math.max(0, (progress / goal.price) * 100));
-  
-  console.log('Creating goal card for:', goal.title, 'Progress:', progressPercent + '%');
-  
+    
   goalCard.innerHTML = `
     <div class="goalInfo">
       ${goal.image ? 
@@ -326,10 +354,8 @@ function addGoalToUI(goal) {
   const noGoalsMessage = document.querySelector('.noGoalsMessage');
   if (noGoalsMessage) {
     noGoalsMessage.remove();
-    console.log('Removed noGoalsMessage');
   }
   
-  console.log('Goal successfully added to UI');
 }
 
   
