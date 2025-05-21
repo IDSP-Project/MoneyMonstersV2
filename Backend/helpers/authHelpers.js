@@ -426,7 +426,7 @@ async function getFamilyMembers(familyId) {
 }
 
 
-async function getFamilyWithMembers(familyId, filterType = null) {
+async function getFamilyWithFilteredMembers(familyId, filterType = null) {
   try {
     if (!familyId) {
       return { success: false, error: "Family ID is required" };
@@ -682,8 +682,7 @@ const checkViewingAsChild = async (req, res, next) => {
         req.viewingChild = childUser;
         
         res.locals.viewingAsChild = true;
-        res.locals.viewingChildName = childUser.firstName;
-      }
+        res.locals.child = childUser;      }
     } catch (error) {
       console.error('Error in checkViewingAsChild middleware:', error);
       delete req.session.viewingAsChild;
@@ -804,6 +803,7 @@ module.exports = {
   getFamilyParents,
   getFamilyChildren,
   getFamilyMemberById,
+  getFamilyWithFilteredMembers,
   createFamily,
   updateFamilyInfo,
   addUserToFamilyByEmail,

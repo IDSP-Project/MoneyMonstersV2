@@ -27,6 +27,8 @@ router.get("/family", ensureAuthenticated, async (req, res) => {
     }
     return authHelpers.renderWithError(res, "users/viewFamily", `Error loading family: ${error.message}`, {
       user: req.session.user,
+      family: null,
+      familyMembers: [],
       currentPage: 'family'
     });
   }
@@ -137,26 +139,15 @@ router.get("/remove-from-family/:id", ensureAuthenticated, authHelpers.ensurePar
   try {
     const userId = req.params.id;
     
-    const membersResult = await authHelpers.getFamilyMembers(req.session.user.familyId);
+    const result = await authHelpers.getFamilyWithFilteredMembers(req.session.user.familyId);
     
-    if (!membersResult.success) {
+    if (!result.success) {
       throw new Error("Could not retrieve family members");
     }
     
-    const memberToRemove = membersResult.members.find(member => {
-      let memberId = '';
-      if (member.id) {
-        memberId = member.id.toString();
-      }
-      
-      let member_Id = '';
-      if (member._id) {
-        member_Id = member._id.toString();
-      }
-      
-      const paramId = userId.toString();
-      return memberId === paramId || member_Id === paramId;
-    });
+    const memberToRemove = result.members.find(member => 
+      member.id.toString() === userId
+    );
     
     if (!memberToRemove) {
       throw new Error(`User with ID ${userId} not found in this family`);
@@ -231,11 +222,20 @@ router.get("/generate-invite-link", ensureAuthenticated, authHelpers.ensureParen
 
 router.get("/select-child", ensureAuthenticated, authHelpers.ensureParent, async (req, res) => {
   try {
-    const { family, members } = await authHelpers.getFamilyWithFilteredMembers(req.session.user.familyId, 'child');
+if (!req.session.user.familyId) {
+      authHelpers.setFlashMessage(req, "You need to create a family first", "error");
+      return res.redirect("/family");
+    }
     
+    const result = await authHelpers.getFamilyWithFilteredMembers(req.session.user.familyId, 'child');
+    
+    if (!result.success) {
+      throw new Error(result.error);
+    }
+
     res.render("dashboard/selectChild", {
       user: req.session.user,
-      familyMembers: members,
+    familyMembers: result.children || [],
       currentPage: 'family',
       error: null,
       success: null
@@ -260,34 +260,24 @@ router.post("/view-as-child", ensureAuthenticated, authHelpers.ensureParent, asy
       return res.redirect("/dashboard");
     }
     
-    const membersResult = await authHelpers.getFamilyMembers(req.session.user.familyId);
+    const result = await authHelpers.getFamilyWithFilteredMembers(req.session.user.familyId, 'child');
     
-    if (!membersResult.success) {
+    if (!result.success) {
       throw new Error("Could not retrieve family members");
     }
     
-    const childExists = membersResult.members.some(member => {
-      let idMatches = false;
-      
-      if (member.id === childId) {
-        idMatches = true;
-      }
-      
-      if (member._id && member._id.toString() === childId) {
-        idMatches = true;
-      }
-      
-      return idMatches && member.accountType === "child";
-    });
+      const childExists = result.children.some(child => 
+      child.id.toString() === childId
+    );
     
     if (!childExists) {
       throw new Error("Child not found in your family");
     }
-    
+
     req.session.viewingAsChild = childId;
-    
-    const childMember = membersResult.members.find(member => 
-      (member.id === childId || member._id?.toString() === childId)
+
+    const childMember = result.children.find(child => 
+    child.id.toString() === childId
     );
     
     authHelpers.setFlashMessage(req, `Now viewing as ${childMember.firstName}`);
