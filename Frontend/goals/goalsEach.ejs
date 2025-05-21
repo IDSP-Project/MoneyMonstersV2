@@ -20,129 +20,125 @@
         <% if (error) { %>
           <div class="errorMessage"><%= error %></div>
         <% } else if (goal) { %>
-          <section class="goalSection">
-            <div class="progressContainer">
-              <%- include('../goals/progressBar', { 
-                goalId: goal._id, 
-                progress: Math.max(0.01, goal.progress || 0.01),
-                amountAchieved: goal.amountAchieved || 0,
-                totalRequired: goal.totalRequired || goal.price
-              }) %>
-            </div>
+          <div class="progressContainer" aria-label="Goal progress">
+            <%- include('../goals/progressBar', { 
+              goalId: goal._id, 
+              progress: Math.max(0.01, goal.progress || 0.01),
+              amountAchieved: goal.amountAchieved || 0,
+              totalRequired: goal.totalRequired || goal.price
+            }) %>
+          </div>
 
-            <div class="goalDetailsCard">
-              <% if (goal.image) { %>
-                <div class="amazonImg"><img src="<%= goal.image %>" alt="Goal Image"></div>
-              <% } else { %>
-                <div class="initialsAvatar"><%= goal.title ? goal.title.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) : '' %></div>
-              <% } %>
-              <div class="goalInfo">
-                <% if (goal.purchaseLink && goal.purchaseLink.includes("amazon")) { %>
-                  <h2 class="goalTitle"><a href="<%= goal.purchaseLink %>" target="_blank" rel="noopener noreferrer"><%= goal.title %></a></h2>
-                  <p class="goalSource"><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
-                <% } else { %> 
-                  <h2 class="goalTitle"><%= goal.title %></h2>
-                <% } %>
-              
-                <% if (goal.description && goal.description.trim() !== '' && goal.description !== 'Custom goal') { %>
-                  <p class="goalDescription"><%= goal.description %></p>
-                <% } else { %>
-                  <p class="goalDescription missing">No Description Added</p>
-                <% } %>
-                <div class="goalPrice">Target: $<%= goal.price ? goal.price.toFixed(2) : '0.00' %></div>
-                
-                <% if (goal.requestStatus && goal.requestStatus !== 'none') { %>
-                  <div class="requestStatus <%= goal.requestStatus %>">
-                    <% if (goal.requestStatus === 'pending') { %>
-                      <span>Request Pending</span>
-                    <% } else if (goal.requestStatus === 'approved') { %>
-                      <span>Request Approved</span>
-                    <% } else if (goal.requestStatus === 'denied') { %>
-                      <span>Request Denied</span>
-                    <% } %>
-                  </div>
-                <% } %>
-              </div>
-            </div>
+          <div class="goalDetailsCard">
+            <% if (goal.image) { %>
+              <div class="amazonImg"><img src="<%= goal.image %>" alt="Product image for <%= goal.title %>"></div>
+            <% } else { %>
+              <div class="initialsAvatar" aria-label="Initials for <%= goal.title %>"><%= goal.title ? goal.title.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) : '' %></div>
+            <% } %>
+            <div class="goalInfo">
+            <% if (goal.purchaseLink.includes("amazon")) { %>
+            <h2 class="goalTitle"><a href="<%= goal.purchaseLink %>" target="_blank" rel="noopener noreferrer" aria-label="View product on Amazon: <%= goal.title %>"><%= goal.title %></a></h2>              <p class="goalSource"><%= goal.purchaseLink ? new URL(goal.purchaseLink).hostname : 'Custom Goal' %></p>
+            <% } else { %> 
+            <h2 class="goalTitle"><%= goal.title %></h2>
+          <% } %>
             
+            <% if (goal.description && goal.description.trim() !== '' && goal.description !== 'Custom goal') { %>
+                <p class="goalDescription"><%= goal.description %></p>
+              <% } else { %>
+                <p class="goalDescription missing" aria-label="No description has been added for this goal">No Description Added</p>
+              <% } %>
+              <div class="goalPrice" aria-label="Target amount: $<%= goal.price ? goal.price.toFixed(2) : '0.00' %>">Target: $<%= goal.price ? goal.price.toFixed(2) : '0.00' %></div>
+              
+              <% if (goal.requestStatus && goal.requestStatus !== 'none') { %>
+                <div class="requestStatus <%= goal.requestStatus %>" aria-label="Request status: <%= goal.requestStatus %>">
+                  <% if (goal.requestStatus === 'pending') { %>
+                    <span>Request Pending</span>
+                  <% } else if (goal.requestStatus === 'approved') { %>
+                    <span>Request Approved</span>
+                  <% } else if (goal.requestStatus === 'denied') { %>
+                    <span>Request Denied</span>
+                  <% } %>
+                </div>
+              <% } %>
+            </div>
+          </div>
+          
+          <div class="tasksContainer" aria-label="Tasks for this goal">
             <% if (user.accountType === 'child' && !viewingAsChild) { %>
-              <div class="goalActionsContainer">
+              <div class="goalActionsContainer" aria-label="Goal actions">
                 <% if (!goal.completed && (!goal.requestStatus || goal.requestStatus === 'none' || goal.requestStatus === 'approved')) { %>
-                  <button class="assignTaskBtn" data-modal-target="assignTaskModal">
+                  <button class="assignTaskBtn" data-modal-target="assignTaskModal" aria-label="Assign a new task to this goal">
                     Assign Task
                   </button>
                   
-                  <button class="assignBalanceBtn" data-modal-target="assignBalanceModal">
+                  <button class="assignBalanceBtn" data-modal-target="assignBalanceModal" aria-label="Assign balance to this goal">
                     Assign Balance
                   </button>
                 <% } %>
                 
                 <% if (goal.completed === true && (!goal.requestStatus || goal.requestStatus === 'none')) { %>
-                  <button class="requestBtn" onclick="sendRequest('<%= goal._id %>')">
+                  <button class="requestBtn" onclick="sendRequest('<%= goal._id %>')" aria-label="Send request to parent for this goal">
                     Send Request
                   </button>
                 <% } %>
               </div>
             <% } else if (user.accountType === 'parent' && goal.requestStatus === 'pending') { %>
-              <div class="requestActionsContainer">
-                <button class="approveBtn" onclick="respondToRequest('<%= goal._id %>', 'approved')">
+              <div class="requestActionsContainer" aria-label="Request actions">
+                <button class="approveBtn" onclick="respondToRequest('<%= goal._id %>', 'approved')" aria-label="Approve this goal request">
                   Approve
                 </button>
-                <button class="denyBtn" onclick="respondToRequest('<%= goal._id %>', 'denied')">
+                <button class="denyBtn" onclick="respondToRequest('<%= goal._id %>', 'denied')" aria-label="Deny this goal request">
                   Deny
                 </button>
               </div>
             <% } %>
-          </section>
 
-          <section class="taskSection">
-            <div class="tasksContainer">
-              <div class="taskHistory">
-                <div class="sectionTabs">
-                  <h2>Tasks</h2>
-                  <h2>Status</h2>
-                </div>
+            <div class="taskHistory">
+              <div class="sectionTabs">
+                <h2>Tasks</h2>
+                <h2>Status</h2>
+              </div>
 
-                <% if (assignedTasks && assignedTasks.length > 0) { %>
-                  <div class="taskList">
-                    <% assignedTasks.forEach(function(task) { %>
-                      <div class="taskCard" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>">
-                        <div class="taskInfo">
-                          <div class="taskIcon">
-                            <% if (task.category === 'pet') { %>
-                              <%- include('../tasks/icons/pet') %>
-                            <% } else if (task.category === 'cleaning') { %>
-                              <%- include('../tasks/icons/cleaning') %>
-                            <% } else if (task.category === 'garage') { %>
-                              <%- include('../tasks/icons/garage') %>
-                            <% } else if (task.category === 'garden') { %>
-                              <%- include('../tasks/icons/garden') %>
-                            <% } else if (task.category === 'misc') { %>
-                              <%- include('../tasks/icons/misc') %>
-                            <% } %>
-                          </div>
-                          <div class="taskText">
-                            <h3><%= task.title %></h3>
-                            <small class="dueDate" data-due="<%= task.dueDate && task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> <%= task.formattedDue ? task.formattedDue : '' %></small>
-                          </div>
+              <% if (assignedTasks && assignedTasks.length > 0) { %>
+                <div class="taskList">
+                  <% assignedTasks.forEach(function(task) { %>
+                    <div class="taskCard" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>">
+                      <div class="taskInfo">
+                        <div class="taskIcon" aria-hidden="true">
+                          <% if (task.category === 'pet') { %>
+                            <%- include('../tasks/icons/pet') %>
+                          <% } else if (task.category === 'cleaning') { %>
+                            <%- include('../tasks/icons/cleaning') %>
+                          <% } else if (task.category === 'garage') { %>
+                            <%- include('../tasks/icons/garage') %>
+                          <% } else if (task.category === 'garden') { %>
+                            <%- include('../tasks/icons/garden') %>
+                          <% } else if (task.category === 'misc') { %>
+                            <%- include('../tasks/icons/misc') %>
+                          <% } %>
                         </div>
-                        <div class="taskStatus">
-                          <span class="statusBadge <%= task.status %>">
-                            <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>
-                          </span>
+                        <div class="taskText">
+                          <h3><%= task.title %></h3>
+                          <small class="dueDate" data-due="<%= task.dueDate && task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>" aria-label="Reward: $<%= task.reward ? task.reward.toFixed(2) : '0.00' %>, Due: <%= task.formattedDue ? task.formattedDue : 'No due date' %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> <%= task.formattedDue ? task.formattedDue : '' %></small>
                         </div>
                       </div>
-                    <% }); %>
-                  </div>
-                <% } else { %>
-                  <div class="noTasksMessage">
-                    <h2>No Tasks Yet</h2>
-                    <p>There are no tasks assigned to this goal yet. You can assign tasks to your goal by clicking the "Assign Task" button.</p>
-                  </div>
-                <% } %>
-              </div>
+                      <div class="taskStatus">
+                        <span class="statusBadge <%= task.status %>" aria-label="Task status: <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>">
+                          <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>
+                        </span>
+                      </div>
+                    </div>
+                  <% }); %>
+                </div>
+              <% } else { %>
+                <div class="noTasksMessage" role="status">
+                  <i class="fas fa-tasks" aria-hidden="true"></i>
+                  <h2>No Tasks Yet</h2>
+                  <p>There are no tasks assigned to this goal yet. You can assign tasks to your goal by clicking the "Assign Task" button.</p>
+                </div>
+              <% } %>
             </div>
-          </section>
+          </div>
         <% } %>
       </div>
     </main>

@@ -13,18 +13,18 @@
           <% }); %>
           
           <div class="modalFooter">
-            <button type="submit" class="modalBtn primary">Assign</button>
-            <button type="button" class="modalBtn secondary" id="cancelAssignGoalModal">Cancel</button>
+            <button type="submit" class="modalBtn primary" aria-label="Assign to selected goal">Assign</button>
+            <button type="button" class="modalBtn secondary" id="cancelAssignGoalModal" aria-label="Cancel goal assignment">Cancel</button>
           </div>
         </form>
       <% } else { %>
         <div class="noGoalsMessage">
-          <i class="fas fa-bullseye"></i>
+          <i class="fas fa-bullseye" aria-hidden="true"></i>
           <p>No active goals to assign.</p>
         </div>
         
         <div class="modalFooter">
-          <button type="button" class="modalBtn secondary" id="cancelAssignGoalModal">Close</button>
+          <button type="button" class="modalBtn secondary" id="cancelAssignGoalModal" aria-label="Close modal">Close</button>
         </div>
       <% } %>
     </div>

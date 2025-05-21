@@ -9,10 +9,17 @@
                 placeholder="Type something you learned from this article..."></textarea>
       
       <div class="modalFooter">
-        <button id="submitLearningBtn" data-blog-id="<%= blog._id %>" class="modalBtn primary">
+        <button id="submitLearningBtn" 
+                data-blog-id="<%= blog._id %>" 
+                class="modalBtn primary"
+                aria-label="Mark learning as complete">
           Mark as Complete
         </button>
-        <button id="cancelLearningBtn" class="modalBtn secondary">Cancel</button>
+        <button id="cancelLearningBtn" 
+                class="modalBtn secondary"
+                aria-label="Cancel learning reflection">
+          Cancel
+        </button>
       </div>
     </div>
   </div>
@@ -23,7 +30,7 @@
     <h2>Success!</h2>
     
     <div class="modalBody">
-      <div class="successIcon">
+      <div class="successIcon" aria-hidden="true">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
         </svg>
