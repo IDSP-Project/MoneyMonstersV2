@@ -17,7 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         fetch('/upload-photo', {
           method: 'POST',
-          body: formData
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest' 
+          }
         })
         .then(response => response.json())
         .then(data => {
@@ -59,12 +62,10 @@ document.addEventListener('DOMContentLoaded', function() {
       messageDiv.style.display = 'block';
       messageDiv.textContent = message;
       
-      const profilePhotoElement = document.querySelector('.profilePhoto');
-      profilePhotoElement.parentNode.insertBefore(messageDiv, profilePhotoElement.nextSibling);
+      profilePhoto.parentNode.insertBefore(messageDiv, profilePhoto.nextSibling);
       
       setTimeout(() => {
         messageDiv.remove();
       }, 5000);
     }
 });
-

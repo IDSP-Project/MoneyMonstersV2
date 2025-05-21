@@ -50,9 +50,13 @@ const { router: goalsRoute, fetchGoalsForHome } = require('./Backend/routes/goal
 const { router: taskRoute, fetchTasksForHome } = require('./Backend/routes/taskRoute');
 const learnRoute = require('./Backend/routes/learnRoute.js');
 const dashboardRoute = require('./Backend/routes/dashboardRoute');
+const userRoute = require('./Backend/routes/userRoute.js');
+const familyRoute = require('./Backend/routes/familyRoute.js');
 
 app.use(express.json());
-app.use('/', authRoute);         
+app.use('/', authRoute);   
+app.use('/', userRoute);
+app.use('/', familyRoute);      
 app.use('/', goalsRoute);  
 app.use('/', taskRoute);
 app.use('/', learnRoute);

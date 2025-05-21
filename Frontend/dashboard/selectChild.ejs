@@ -32,28 +32,28 @@
                             <% familyMembers.forEach(function(child) { %>
                                 <div class="memberCard">
                                     <div class="avatar">
-                                        <% if (child.profilePhoto && child.profilePhoto.url) { %>
-                                            <img src="<%= child.profilePhoto.url %>" alt="Profile Photo">
+                                        <% if (child.profilePhotoUrl) { %>
+                                            <img src="<%= child.profilePhotoUrl %>" alt="Profile Photo">
                                         <% } else { %>
                                             <i class="fas fa-user avatar-icon"></i>
-                                            <% } %>
+                                        <% } %>
                                     </div>
                                     <div class="memberInfo">
                                         <div class="memberName"><%= child.firstName %></div>
                                     </div>
                                     <form action="/view-as-child" method="POST" style="margin: 0;">
-                                        <input type="hidden" name="childId" value="<%= child._id %>">
+                                        <input type="hidden" name="childId" value="<%= child.id %>">
                                         <button type="submit" class="view-as-btn">View As</button>
                                     </form>
                                 </div>
                             <% }); %>
                         
-                        <div class="viewSelf">
-                            <form action="/view-as-child" method="POST">
-                                <input type="hidden" name="childId" value="none">
-                                <button type="submit" class="btn">View as Myself</button>
-                            </form>
-                        </div>
+                            <div class="viewSelf">
+                                <form action="/view-as-child" method="POST">
+                                    <input type="hidden" name="childId" value="none">
+                                    <button type="submit" class="btn">View as Myself</button>
+                                </form>
+                            </div>
                         </div>
                     <% } else { %>
                         <div class="noChildren">
@@ -61,7 +61,7 @@
                             <p><a href="/family" class="btn">Manage Family</a></p>
                         </div>
                     <% } %>
-                </div>
+                
             </main>
             
             <footer>

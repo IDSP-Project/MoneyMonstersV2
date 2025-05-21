@@ -12,30 +12,27 @@
     <main class="container">
       <header>
         <%- include('../partials/header') %>
-        <% if (locals.viewingAsChild && locals.viewingChildName) { %>
+        <% if (locals.viewingAsChild && locals.child) { %>
           <%- include('../partials/viewingAsChild') %>
         <% } %>
       </header>
 
-<section class="balance-section">
-  <% if (user && user.balance != null) { %>
-    <% if (user.accountType === 'parent') { %>
-      <% if (locals.viewingAsChild) { %>
-        <% if (locals.child && locals.child.balance != null) { %>
-          <h1>You have saved: $<%= locals.child.balance.toFixed(2) %></h1>
-        <% } %>
-      <% } else { %>
-        <h1>Your Family's Progress</h1>
-      <% } %>
-    <% } else if (user.accountType === 'child') { %>
-      <h1>You have saved: $<%= user.balance.toFixed(2) %></h1>
-    <% } %>
-  <% } else { %>
-    <h2>Balance not available</h2>
-  <% } %>
-</section>
+        <section class="balance-section">
+          <% if (user.accountType === 'parent' && locals.viewingAsChild && locals.child) { %>
+            <h1>You have saved: $<%= locals.child.balance.toFixed(2) %></h1>
+          <% } else if (user.accountType === 'parent') { %>
+            <h1>Your Family's Progress</h1>
+          <% } else if (user.accountType === 'child') { %>
+            <h1>You have saved: $<%= user.balance.toFixed(2) %></h1>
+          <% } else { %>
+            <h2>Balance not available</h2>
+          <% } %>
+        </section>
 
-        <!-- <form action="/balance/add" method="POST" style="display: inline;">
+      <!-- For testing, buttons to add an remove balance from member -->
+      <!--
+      <section class="balance-actions">
+        <form action="/balance/add" method="POST" style="display: inline;">
           <input type="hidden" name="amount" value="1" />
           <button type="submit" class="btn">Add $1</button>
         </form>
@@ -43,54 +40,80 @@
         <form action="/balance/remove" method="POST" style="display: inline;">
           <input type="hidden" name="amount" value="1" />
           <button type="submit" class="btn">Remove $1</button>
-        </form> -->
+        </form>
       </section>
-     <section class="response-section">
+      -->
+      
+      <section class="response-section">
       </section>
+      
       <section class="card-section-goals">
-       <div class="goalsContainer">
-        <% if (goals && goals.length > 0) { %>
-          <div class="sectionTabs">
-            <h2>Goals</h2>
-            <h2>Progress</h2>
-          </div>
-         <div class="goalList">
-            <% goals.forEach(function(goal) { %>
-              <a href="/goals/view/<%= goal._id %>" class="goalCardLink">
-                <div class="goalCard">
-                  <div class="goalInfo">
-                    <% if (goal.image) { %>
-                        <div class="amazonImg"><img src="<%= goal.image %>" alt="Goal Image"></div>
-                    <% } else { %>
-                        <div class="initialsAvatar"><%= getInitials(goal.title) %></div>
-                    <% } %>
-                  <div class="goalText">
-                    <h3><%= goal.title.length > 14 ? goal.title.substring(0, 15) + '...' : goal.title %></h3>
-                    <p><%= goal.purchaseLink ? 'Amazon Goal' : 'Custom Goal' %></p>
-                  </div>
-                  </div>
-                  <div class="goalProgress">
-                    <div class="progressBar">
-                      <div class="progressFill" data-progress="<%= goal.progress || 0 %>" style="--progress-width: <%= goal.progress || 0 %>%"></div>
+        <div class="goalsContainer">
+          <% if (goals && goals.length > 0) { %>
+            <div class="sectionTabs">
+              <h2>Goals</h2>
+              <h2>Progress</h2>
+            </div>
+            <div class="goalList">
+              <% goals.forEach(function(goal) { %>
+                <a href="/goals/view/<%= goal._id %>" class="goalCardLink">
+                  <div class="goalCard">
+                    <div class="goalInfo">
+                      <% if (goal.image) { %>
+                        <div class="amazonImg">
+                          <img src="<%= goal.image %>" alt="Goal Image">
+                        </div>
+                      <% } else { %>
+                        <div class="initialsAvatar">
+                          <% if (goal.title) { %>
+                            <%= getInitials(goal.title) %>
+                          <% } else { %>
+                            GO
+                          <% } %>
+                        </div>
+                      <% } %>
+                      <div class="goalText">
+                        <% if (goal.title) { %>
+                          <% if (goal.title.length > 14) { %>
+                            <h3><%= goal.title.substring(0, 15) + '...' %></h3>
+                          <% } else { %>
+                            <h3><%= goal.title %></h3>
+                          <% } %>
+                        <% } else { %>
+                          <h3>Unnamed Goal</h3>
+                        <% } %>
+                        
+                        <% if (goal.purchaseLink) { %>
+                          <p>Amazon Goal</p>
+                        <% } else { %>
+                          <p>Custom Goal</p>
+                        <% } %>
+                      </div>
                     </div>
-                    <span><%= Math.round(goal.progress || 0) %>%</span>
+                    <div class="goalProgress">
+                      <div class="progressBar">
+                        <% let progressValue = 0; %>
+                        <% if (goal.progress) { %>
+                          <% progressValue = goal.progress; %>
+                        <% } %>
+                        <div class="progressFill" data-progress="<%= progressValue %>" style="--progress-width: <%= progressValue %>%"></div>
+                      </div>
+                      <span><%= Math.round(progressValue) %>%</span>
+                    </div>
                   </div>
-                </div>
-              </a>
-            <% }); %>
-          </div>
-        <% } else { %>
-          <div class="noGoalsMessage">
-            <i class="fas fa-bullseye"></i>
-            <h1>No Goals Yet</h1>
-            <p>You haven't set any goals yet. Start by adding your first goal!</p>
-          </div>
-        <% } %>
-      </div>
-
+                </a>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <div class="noGoalsMessage">
+              <i class="fas fa-bullseye"></i>
+              <h1>No Goals Yet</h1>
+              <p>You haven't set any goals yet. Start by adding your first goal!</p>
+            </div>
+          <% } %>
+        </div>
   
-
-          <div class="tasksContainer">
+        <div class="tasksContainer">
           <% if (tasks && tasks.length > 0) { %>
             <div class="sectionTabs">
               <h2>Tasks</h2>
@@ -98,29 +121,66 @@
             </div>
             <div class="taskList">
               <% tasks.forEach(function(task) { %>
-                <div class="taskCard" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>" data-parent-name="<%= task.parentName || '' %>" data-category="<%= task.category || 'misc' %>">
+                <% 
+                  let description = '';
+                  if (task.description) {
+                    description = task.description.split('"').join('&quot;');
+                  }
+                  
+                  let goalId = '';
+                  if (task.goalId) {
+                    goalId = task.goalId;
+                  }
+                  
+                  let parentName = '';
+                  if (task.parentName) {
+                    parentName = task.parentName;
+                  }
+                  
+                  let category = 'misc';
+                  if (task.category) {
+                    category = task.category;
+                  }
+                %>
+                <div class="taskCard" data-description="<%= description %>" data-task-id="<%= task._id %>" data-goal-id="<%= goalId %>" data-parent-name="<%= parentName %>" data-category="<%= category %>">
                   <div class="taskInfo">
                     <div class="taskIcon">
-                       <% if (task.category === 'pet') { %>
-                          <%- include('../tasks/icons/pet') %>
-                        <% } else if (task.category === 'cleaning') { %>
-                          <%- include('../tasks/icons/cleaning') %>
-                        <% } else if (task.category === 'garage') { %>
-                          <%- include('../tasks/icons/garage') %>
-                        <% } else if (task.category === 'garden') { %>
-                          <%- include('../tasks/icons/garden') %>
-                          <% } else if (task.category === 'misc') { %>
-                            <%- include('../tasks/icons/misc') %>
-                          <% } %>
+                      <% if (task.category === 'pet') { %>
+                        <%- include('../tasks/icons/pet') %>
+                      <% } else if (task.category === 'cleaning') { %>
+                        <%- include('../tasks/icons/cleaning') %>
+                      <% } else if (task.category === 'garage') { %>
+                        <%- include('../tasks/icons/garage') %>
+                      <% } else if (task.category === 'garden') { %>
+                        <%- include('../tasks/icons/garden') %>
+                      <% } else { %>
+                        <%- include('../tasks/icons/misc') %>
+                      <% } %>
                     </div>
                     <div class="taskText">
                       <h3><%= task.title %></h3>
-                      <small class="dueDate" data-due="<%= task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> | <%= task.formattedDue %></small>
+                      <% 
+                        let dueDate = task.dueDate;
+                        if (task.dueDate && task.dueDate.toISOString) {
+                          dueDate = task.dueDate.toISOString();
+                        }
+                        
+                        let rewardAmount = '0.00';
+                        if (task.reward) {
+                          rewardAmount = task.reward.toFixed(2);
+                        }
+                      %>
+                      <small class="dueDate" data-due="<%= dueDate %>">$<%= rewardAmount %> | <%= task.formattedDue %></small>
                     </div>
                   </div>
                   <div class="taskStatus">
-                    <span class="statusBadge <%= task.status %>">
-                      <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>
+                    <% let statusClass = task.status ? task.status : 'new'; %>
+                    <span class="statusBadge <%= statusClass %>">
+                      <% if (task.status) { %>
+                        <%= task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') %>
+                      <% } else { %>
+                        New
+                      <% } %>
                     </span>
                   </div>
                 </div>
@@ -128,60 +188,68 @@
             </div>
           <% } else { %>
             <div class="taskCard">
-            <div class="noTasksMessage">
-              <h1>No Tasks Yet</h1>
-              <p>Ask your parent to assign a task.</p>
+              <div class="noTasksMessage">
+                <h1>No Tasks Yet</h1>
+                <p>Ask your parent to assign a task.</p>
+              </div>
             </div>
           <% } %>
         </div>
 
-<div class="learningContainer">
-  <% if (learningProgress && learningProgress.length > 0) { %>
-    <div class="sectionTabs">
-      <h2>Learning</h2>
-      <h2>Status</h2>
-    </div>
-    <div class="learningList">
-      <% learningProgress.forEach(function(module) { %>
-        <a href="/learn/view/<%= module._id %>" class="learningCardLink">
-          <div class="learningCard">
-            <div class="learningInfo">
-              <div class="learningIcon">
-                <i class="fa-solid fa-book-open-reader"></i>
-              </div>
-              <div class="learningText">
-                <h3><%= module.title %></h3>
-                <p><%= module.category || 'Financial Education' %></p>
-                <% if (user.accountType === 'parent' && !viewingAsChild && module.childName) { %>
-                  <small>Assigned to: <%= module.childName %></small>
-                <% } %>
-              </div>
+        <div class="learningContainer">
+          <% if (learningProgress && learningProgress.length > 0) { %>
+            <div class="sectionTabs">
+              <h2>Learning</h2>
+              <h2>Status</h2>
             </div>
-            <div class="taskStatus">
-              <% if (module.completed) { %>
-                <span class="statusBadge completed"><i class="fa-solid fa-check"></i> Complete</span>
-              <% } else if (module.status === 'to do') { %>
-                <span class="statusBadge todo">To Do</span>
-              <% } else { %>
-                <span class="statusBadge new">New</span>
-              <% } %>
+            <div class="learningList">
+              <% learningProgress.forEach(function(module) { %>
+                <a href="/learn/view/<%= module._id %>" class="learningCardLink">
+                  <div class="learningCard">
+                    <div class="learningInfo">
+                      <div class="learningIcon">
+                        <i class="fa-solid fa-book-open-reader"></i>
+                      </div>
+                      <div class="learningText">
+                        <h3><%= module.title %></h3>
+                        <% 
+                          let categoryText = 'Financial Education';
+                          if (module.category) {
+                            categoryText = module.category;
+                          }
+                        %>
+                        <p><%= categoryText %></p>
+                        <% if (user.accountType === 'parent' && !locals.viewingAsChild && module.childName) { %>
+                          <small>Assigned to: <%= module.childName %></small>
+                        <% } %>
+                      </div>
+                    </div>
+                    <div class="taskStatus">
+                      <% if (module.completed) { %>
+                        <span class="statusBadge completed"><i class="fa-solid fa-check"></i> Complete</span>
+                      <% } else if (module.status === 'to do') { %>
+                        <span class="statusBadge todo">To Do</span>
+                      <% } else { %>
+                        <span class="statusBadge new">New</span>
+                      <% } %>
+                    </div>
+                  </div>
+                </a>
+              <% }); %>
             </div>
-          </div>
-        </a>
-      <% }); %>
-    </div>
-  <% } else { %>
-    <div class="noLearningMessage">
-      <h2>Learning</h2>
-      <h3>No Learning Modules</h3>
-      <p>Check back soon for new learning content!</p>
-    </div>
-  <% } %>
-</div>
+          <% } else { %>
+            <div class="noLearningMessage">
+              <h2>Learning</h2>
+              <h3>No Learning Modules</h3>
+              <p>Check back soon for new learning content!</p>
+            </div>
+          <% } %>
+        </div>
+      </section>
       
       <%- include('../partials/bottomNav') %>
     </main>
   </div>
   <script src="/dynamic/formatDueDates.js"></script>
 </body>
-</html> 
+</html>
