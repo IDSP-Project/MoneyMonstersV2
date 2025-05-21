@@ -1,7 +1,12 @@
 // CAREFUL: The is a global style, it applies all modals
+
+html {
+    overflow-y: scroll;
+}
+
 .baseModal {
   display: none;
-  position: absolute;
+  position: fixed;
   z-index: 2000;;
   left: 50%;
   top: 52.5%;

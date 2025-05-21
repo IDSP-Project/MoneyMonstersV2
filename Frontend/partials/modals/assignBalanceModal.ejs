@@ -3,8 +3,8 @@
     <h2>Assign Balance to Goal</h2>
     
     <div class="modalBody">
-      <p>Your current balance is $<span id="currentUserBalance"><%= user.balance %></span></p>
-      <p>Remaining needed for this goal: $<span id="remainingGoalAmount"><%= (goal.totalRequired - goal.amountAchieved).toFixed(2) %></span></p>
+      <p>Your current balance is $<span id="currentUserBalance" aria-label="Current balance: $<%= user.balance %>"><%= user.balance %></span></p>
+      <p>Remaining needed for this goal: $<span id="remainingGoalAmount" aria-label="Remaining amount needed: $<%= (goal.totalRequired - goal.amountAchieved).toFixed(2) %>"><%= (goal.totalRequired - goal.amountAchieved).toFixed(2) %></span></p>
       
       <div class="errorMessage" id="assignBalanceError" style="display: none;"></div>
       
@@ -15,8 +15,8 @@
         </div>
         
         <div class="modalFooter">
-          <button type="submit" class="modalBtn primary">Assign</button>
-          <button type="button" class="modalBtn secondary" id="cancelAssignBalance">Cancel</button>
+          <button type="submit" class="modalBtn primary" aria-label="Assign balance to goal">Assign</button>
+          <button type="button" class="modalBtn secondary" id="cancelAssignBalance" aria-label="Cancel assigning balance">Cancel</button>
         </div>
       </form>
     </div>

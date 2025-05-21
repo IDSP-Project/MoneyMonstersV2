@@ -61,15 +61,20 @@
                                   <% } %>
                             </div>
                             <div class="taskText">
-                              <h3><%= task.title %></h3>
-                              <small class="dueDate" data-due="<%= task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>">$<%= task.reward ? task.reward.toFixed(2) : '0.00' %> | <%= task.formattedDue %></small>
+                              <h3 id="taskTitle-<%= task._id %>"><%= task.title %></h3>
+                              <small class="dueDate" 
+                                     data-due="<%= task.dueDate.toISOString ? task.dueDate.toISOString() : task.dueDate %>"
+                                     aria-label="Reward: $<%= task.reward ? task.reward.toFixed(2) : '0.00' %>, Due: <%= task.formattedDue %>">
+                                $<%= task.reward ? task.reward.toFixed(2) : '0.00' %> | <%= task.formattedDue %>
+                              </small>
                               <% if (task.description === 'No description') { %>
                                 <small class="noDescription">No description</small>
                               <% } %>
                             </div>
                           </div>
                           <div class="taskStatus">
-                            <span class="statusBadge <%= task.status %>">
+                            <span class="statusBadge <%= task.status %>" 
+                                  aria-label="Task status: <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>">
                               <%= task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ') : 'New' %>
                             </span>
                           </div>
@@ -90,7 +95,7 @@
         </div>
         <% if (locals.viewingAsChild) { %>
             <div class="addTaskBtnContainer">
-              <button class="addTaskBtn">Add New Task</button>
+              <button class="addTaskBtn" aria-label="Add new task">Add New Task</button>
             </div>
             <% } %>
           <% } %>
