@@ -64,31 +64,30 @@
                 <% } %>
               </div>
             </div>
-            
             <% if (user.accountType === 'child' && !viewingAsChild) { %>
-              <div class="goalActionsContainer">
+              <div class="goalActionsContainer" aria-label="Goal actions">
                 <% if (!goal.completed && (!goal.requestStatus || goal.requestStatus === 'none' || goal.requestStatus === 'approved')) { %>
-                  <button class="assignTaskBtn" data-modal-target="assignTaskModal">
+                  <button class="assignTaskBtn" data-modal-target="assignTaskModal" aria-label="Assign a new task to this goal">
                     Assign Task
                   </button>
                   
-                  <button class="assignBalanceBtn" data-modal-target="assignBalanceModal">
+                  <button class="assignBalanceBtn" data-modal-target="assignBalanceModal" aria-label="Assign balance to this goal">
                     Assign Balance
                   </button>
                 <% } %>
                 
                 <% if (goal.completed === true && (!goal.requestStatus || goal.requestStatus === 'none')) { %>
-                  <button class="requestBtn" onclick="sendRequest('<%= goal._id %>')">
+                  <button class="requestBtn" onclick="sendRequest('<%= goal._id %>')" aria-label="Send request to parent for this goal">
                     Send Request
                   </button>
                 <% } %>
               </div>
             <% } else if (user.accountType === 'parent' && goal.requestStatus === 'pending') { %>
-              <div class="requestActionsContainer">
-                <button class="approveBtn" onclick="respondToRequest('<%= goal._id %>', 'approved')">
+              <div class="requestActionsContainer" aria-label="Request actions">
+                <button class="approveBtn" onclick="respondToRequest('<%= goal._id %>', 'approved')" aria-label="Approve this goal request">
                   Approve
                 </button>
-                <button class="denyBtn" onclick="respondToRequest('<%= goal._id %>', 'denied')">
+                <button class="denyBtn" onclick="respondToRequest('<%= goal._id %>', 'denied')" aria-label="Deny this goal request">
                   Deny
                 </button>
               </div>
@@ -102,7 +101,6 @@
                   <h2>Tasks</h2>
                   <h2>Status</h2>
                 </div>
-
                 <% if (assignedTasks && assignedTasks.length > 0) { %>
                   <div class="taskList">
                     <% assignedTasks.forEach(function(task) { %>
