@@ -98,11 +98,13 @@
   
     .currentDetails {
       padding: 0.75rem;
+      font-size: $font-size-sm;
       border: 1px solid $secondary;
       color: $secondary-light;
       border-radius: 6px;
       width: 100%;
       box-sizing: border-box;
+      overflow-x: hidden;
     }
 
     .userInfo input[type="text"],

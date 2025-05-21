@@ -30,6 +30,43 @@ document.addEventListener('DOMContentLoaded', function() {
       openModals.forEach(modal => closeModal(modal.id));
     }
   });
+  
+  window.showSuccessOverlay = function(overlayId, callback) {
+    const overlay = document.getElementById(overlayId);
+    if (!overlay) return;
+    
+    const modalContent = overlay.closest('.modalContent');
+    if (modalContent) {
+      Array.from(modalContent.children).forEach(child => {
+        if (child !== overlay) {
+          child.style.display = 'none';
+        }
+      });
+    }
+    
+    overlay.style.display = 'flex';
+    overlay.classList.add('show');
+    
+    setTimeout(() => {
+      overlay.classList.remove('show');
+      
+      setTimeout(() => {
+        if (callback && typeof callback === 'function') {
+          callback();
+        }
+        
+        if (modalContent) {
+          Array.from(modalContent.children).forEach(child => {
+            if (child !== overlay) {
+              child.style.display = '';
+            }
+          });
+        }
+        
+        overlay.style.display = 'none';
+      }, 300);
+    }, 1500);
+  };
 });
 
 function initModals() {
@@ -158,7 +195,7 @@ function setupGoalModalHandlers() {
     });
   }
   
-    const customGoalForm = document.getElementById('customGoalForm');
+  const customGoalForm = document.getElementById('customGoalForm');
   if (customGoalForm) {
     customGoalForm.addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -181,29 +218,15 @@ function setupGoalModalHandlers() {
         
         const result = await response.json();
         if (result.success) {
-          const successOverlay = document.getElementById('goalSuccessOverlay');
-          if (successOverlay) {
-            successOverlay.classList.add('show');
-            
-            this.reset();
-            
-            setTimeout(() => {
-              successOverlay.classList.remove('show');
-              
-              setTimeout(() => {
-                closeModal('customGoalModal');
-                
-                if (result.goal) {
-                  addGoalToUI(result.goal);
-                }
-              }, 300);
-            }, 1500);
-          } else {
+          this.reset();
+          
+          showSuccessOverlay('goalSuccessOverlay', () => {
             closeModal('customGoalModal');
+            
             if (result.goal) {
               addGoalToUI(result.goal);
             }
-          }
+          });
         } else {
           throw new Error(result.error || 'Failed to create goal');
         }
@@ -213,11 +236,60 @@ function setupGoalModalHandlers() {
       }
     });
   }
+}
+
+  function getGoalInitials(title) {
+    if (!title) return '';
+    return title
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   }
 
 function addGoalToUI(goal) {
-  const goalsList = document.querySelector('.goalsList');
-  if (!goalsList) return;
+  
+  let goalList = document.querySelector('.sectionTabs + .goalList');
+  
+  if (!goalList) {
+    goalList = document.querySelector('.goalList');
+  }
+  
+  if (!goalList) {
+    console.log('No goalList found, creating new section');
+    const goalsContainer = document.querySelector('.goalsContainer');
+    
+    if (goalsContainer) {
+      const sectionTabs = document.createElement('div');
+      sectionTabs.className = 'sectionTabs';
+      sectionTabs.innerHTML = `
+        <h2>Goals</h2>
+        <h2>Progress</h2>
+      `;
+      
+      goalList = document.createElement('div');
+      goalList.className = 'goalList';
+      
+      const addGoalBtn = document.querySelector('.addGoalBtnContainer');
+      if (addGoalBtn) {
+        goalsContainer.insertBefore(sectionTabs, addGoalBtn);
+        goalsContainer.insertBefore(goalList, addGoalBtn);
+      } else {
+        goalsContainer.appendChild(sectionTabs);
+        goalsContainer.appendChild(goalList);
+      }
+    } else {
+      console.error('Could not find goals container to add new goal');
+      return;
+    }
+  }
+  
+  
+  const goalCardLink = document.createElement('a');
+  goalCardLink.href = `/goals/view/${goal._id}`;
+  goalCardLink.className = 'goalCardLink';
+  goalCardLink.setAttribute('aria-label', `View goal: ${goal.title}`);
   
   const goalCard = document.createElement('div');
   goalCard.className = 'goalCard';
@@ -226,39 +298,40 @@ function addGoalToUI(goal) {
   const progress = goal.progress || 0;
   const progressPercent = Math.min(100, Math.max(0, (progress / goal.price) * 100));
   
+  console.log('Creating goal card for:', goal.title, 'Progress:', progressPercent + '%');
+  
   goalCard.innerHTML = `
-    <div class="goalHeader">
-      <h3>${goal.title}</h3>
-      <span class="goalPrice">$${parseFloat(goal.price).toFixed(2)}</span>
+    <div class="goalInfo">
+      ${goal.image ? 
+        `<div class="amazonImg"><img src="${goal.image}" alt="Product image for ${goal.title}"></div>` :
+        `<div class="initialsAvatar" aria-label="Initials for ${goal.title}">${getGoalInitials(goal.title)}</div>`
+      }
+      <div class="goalText">
+        <h3>${goal.title.length > 14 ? goal.title.substring(0, 15) + '...' : goal.title}</h3>
+        <p>${goal.purchaseLink ? 'Amazon Goal' : 'Custom Goal'}</p>
+      </div>
     </div>
-    <div class="goalDescription">${goal.description}</div>
     <div class="goalProgress">
       <div class="progressBar">
-        <div class="progressFill" style="width: ${progressPercent}%"></div>
+        <div class="progressFill" data-progress="${progressPercent}" style="--progress-width: ${progressPercent}%"></div>
       </div>
-      <div class="progressText">
-        <span>$${parseFloat(progress || 0).toFixed(2)} of $${parseFloat(goal.price).toFixed(2)}</span>
-      </div>
-    </div>
-    <div class="goalActions">
-      <button class="btn secondary viewGoalBtn" data-goal-id="${goal._id}">View</button>
+      <span aria-label="Progress: ${Math.round(progressPercent)}%">${Math.round(progressPercent)}%</span>
     </div>
   `;
   
-  const viewBtn = goalCard.querySelector('.viewGoalBtn');
-  if (viewBtn) {
-    viewBtn.addEventListener('click', function() {
-      window.location.href = `/goals/${goal._id}`;
-    });
-  }
+  goalCardLink.appendChild(goalCard);
   
-  goalsList.insertAdjacentElement('afterbegin', goalCard);
+  goalList.insertAdjacentElement('afterbegin', goalCardLink);
   
   const noGoalsMessage = document.querySelector('.noGoalsMessage');
   if (noGoalsMessage) {
     noGoalsMessage.remove();
+    console.log('Removed noGoalsMessage');
   }
+  
+  console.log('Goal successfully added to UI');
 }
+
   
 
 function setupTaskModalHandlers() {
@@ -611,66 +684,57 @@ function setupAddTaskFlow() {
         console.log("Task created successfully:", result);
         
         if (result.success) {
-          const successOverlay = document.getElementById('successOverlay');
-          if (successOverlay) {
-            successOverlay.classList.add('show');
+          document.getElementById('addTaskDetailsModal').querySelectorAll('input').forEach(input => {
+            input.value = '';
+          });
+          
+          showSuccessOverlay('successOverlay', () => {
+            closeModal('addTaskDetailsModal');
             
-            setTimeout(() => {
-              successOverlay.classList.remove('show');
+            if (result.task) {
+              if (!result.task.reward && taskData.amount) {
+                result.task.reward = taskData.amount;
+              }
               
-              document.getElementById('addTaskDetailsModal').querySelectorAll('input').forEach(input => {
-                input.value = '';
-              });
+              if (!result.task.category && taskData.category) {
+                result.task.category = taskData.category || 'misc';
+              }
               
-              setTimeout(() => {
-                closeModal('addTaskDetailsModal');
+              console.log("Adding task to UI:", result.task);
+              
+              const taskList = document.querySelector('.tasksContainer .taskList');
+              console.log("Found task list:", !!taskList);
+              
+              if (taskList) {
+                const dueDate = new Date(result.task.dueDate);
+                const formattedDue = dueDate.toLocaleDateString() + ' ' + 
+                  dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
-                if (result.task) {
-                  if (!result.task.reward && taskData.amount) {
-                    result.task.reward = taskData.amount;
-                  }
+                const taskCard = createTaskCard(result.task, formattedDue);
+                
+                taskList.insertAdjacentElement('afterbegin', taskCard);
+                
+                const noTasksMessage = document.querySelector('.noTasksMessage');
+                if (noTasksMessage) {
+                  noTasksMessage.remove();
                   
-                  if (!result.task.category && taskData.category) {
-                    result.task.category = taskData.category || 'misc';
-                  }
-                  
-                  console.log("Adding task to UI:", result.task);
-                  
-                  const taskList = document.querySelector('.tasksContainer .taskList');
-                  console.log("Found task list:", !!taskList);
-                  
-                  if (taskList) {
-                    const dueDate = new Date(result.task.dueDate);
-                    const formattedDue = dueDate.toLocaleDateString() + ' ' + 
-                      dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    
-                    const taskCard = createTaskCard(result.task, formattedDue);
-                    
-                    taskList.insertAdjacentElement('afterbegin', taskCard);
-                    
-                    const noTasksMessage = document.querySelector('.noTasksMessage');
-                    if (noTasksMessage) {
-                      noTasksMessage.remove();
-                      
-                      const tasksContainer = document.querySelector('.tasksContainer');
-                      if (tasksContainer && !document.querySelector('.sectionTabs')) {
-                        const sectionTabs = document.createElement('div');
-                        sectionTabs.className = 'sectionTabs';
-                        sectionTabs.innerHTML = `
-                          <span class="tab tasksTab"><h2>Tasks</h2></span>
-                          <span class="tab statusTab"><h2>Status</h2></span>
-                        `;
-                        tasksContainer.insertBefore(sectionTabs, taskList);
-                      }
-                    }
-                  } else {
-                    console.log("Task list not found, falling back to appendNewTaskToUI");
-                    appendNewTaskToUI(result.task);
+                  const tasksContainer = document.querySelector('.tasksContainer');
+                  if (tasksContainer && !document.querySelector('.sectionTabs')) {
+                    const sectionTabs = document.createElement('div');
+                    sectionTabs.className = 'sectionTabs';
+                    sectionTabs.innerHTML = `
+                      <span class="tab tasksTab"><h2>Tasks</h2></span>
+                      <span class="tab statusTab"><h2>Status</h2></span>
+                    `;
+                    tasksContainer.insertBefore(sectionTabs, taskList);
                   }
                 }
-              }, 300);
-            }, 1500);
-          }
+              } else {
+                console.log("Task list not found, falling back to appendNewTaskToUI");
+                appendNewTaskToUI(result.task);
+              }
+            }
+          });
         } else {
           throw new Error(result.error || 'Failed to create task');
         }
@@ -872,7 +936,7 @@ async function loadAvailableTasks() {
           formHtml += `
             <label class="radioOption">
               <input type="radio" name="taskId" value="${task._id}" />
-              <span>${task.title} ($${task.reward ? parseFloat(task.reward).toFixed(2) : '0.00'})</span>
+              <span>${task.title} (${task.reward ? parseFloat(task.reward).toFixed(2) : '0.00'})</span>
             </label>
           `;
         });
@@ -1009,50 +1073,6 @@ function populateTaskModal(taskId, title, desc, reward, due, category, goalId) {
   }
 }
 
-function initModals() {
-  document.querySelectorAll('.modalClose').forEach(button => {
-    button.addEventListener('click', function() {
-      const modal = this.closest('.baseModal');
-      if (modal) {
-        closeModal(modal.id);
-      }
-    });
-  });
-  
-  document.querySelectorAll('.baseModal').forEach(modal => {
-    modal.addEventListener('click', function(e) {
-      if (e.target === this) {
-        closeModal(this.id);
-      }
-    });
-  });
-  
-  document.querySelectorAll('.modalBtn.secondary').forEach(button => {
-    button.addEventListener('click', function() {
-      const modal = this.closest('.baseModal');
-      if (modal) {
-        closeModal(modal.id);
-      }
-    });
-  });
-  
-  document.querySelectorAll('[data-modal-target]').forEach(trigger => {
-    trigger.addEventListener('click', function() {
-      const modalId = this.dataset.modalTarget;
-      openModal(modalId);
-    });
-  });
-  
-  setupGoalModalHandlers();
-  setupTaskModalHandlers();
-  setupTaskAssignmentHandlers();
-  setupAssignGoalHandlers();
-  setupLearningHandlers();
-  setupReassignmentHandlers(); 
-  setupAssignBalanceHandlers();
-}
-
-
 async function loadAndShowTaskDetails(taskId) {
   try {
     const response = await fetch(`/tasks/${taskId}/details`);
@@ -1074,7 +1094,7 @@ async function loadAndShowTaskDetails(taskId) {
     
     if (titleEl) titleEl.textContent = task.title;
     if (descEl) descEl.textContent = task.description || 'No description';
-    if (rewardEl) rewardEl.textContent = `$${task.reward ? parseFloat(task.reward).toFixed(2) : '0.00'}`;
+    if (rewardEl) rewardEl.textContent = `${task.reward ? parseFloat(task.reward).toFixed(2) : '0.00'}`;
     
     if (dueDateEl) {
       const dueDate = new Date(task.dueDate);
@@ -1228,8 +1248,6 @@ async function completeTask(taskId, goalId) {
         modalContent.appendChild(successOverlay);
       }
       
-      successOverlay.classList.add('show');
-      
       const startBtn = document.getElementById('modalStartBtn');
       const completeBtn = document.getElementById('modalCompleteBtn');
       const assignGoalBtn = document.getElementById('modalAssignGoalBtn');
@@ -1245,10 +1263,10 @@ async function completeTask(taskId, goalId) {
         modalStatusEl.innerHTML = `<span class="statusBadge completed">Completed</span>`;
       }
       
-      setTimeout(() => {
+      showSuccessOverlay('completeTaskSuccessOverlay', () => {
         closeModal('taskModal');
         window.location.reload();
-      }, 1500);
+      });
     }
   } catch (error) {
     console.error('Error completing task:', error);
@@ -1278,39 +1296,15 @@ async function assignTaskToGoal(taskId, goalId) {
       const assignGoalModalVisible = document.getElementById('assignGoalModal')?.style.display === 'flex';
       
       if (assignTaskModalVisible) {
-        const successOverlay = document.getElementById('assignTaskSuccessOverlay');
-        if (successOverlay) {
-          successOverlay.classList.add('show');
-          
-          setTimeout(() => {
-            successOverlay.classList.remove('show');
-            
-            setTimeout(() => {
-              closeModal('assignTaskModal');
-              window.location.reload();
-            }, 300);
-          }, 1500);
-        } else {
+        showSuccessOverlay('assignTaskSuccessOverlay', () => {
           closeModal('assignTaskModal');
           window.location.reload();
-        }
+        });
       } else if (assignGoalModalVisible) {
-        const successOverlay = document.getElementById('assignGoalSuccessOverlay');
-        if (successOverlay) {
-          successOverlay.classList.add('show');
-          
-          setTimeout(() => {
-            successOverlay.classList.remove('show');
-            
-            setTimeout(() => {
-              closeModal('assignGoalModal');
-              window.location.reload();
-            }, 300);
-          }, 1500);
-        } else {
+        showSuccessOverlay('assignGoalSuccessOverlay', () => {
           closeModal('assignGoalModal');
           window.location.reload();
-        }
+        });
       } else {
         window.location.reload();
       }
@@ -1341,6 +1335,7 @@ async function assignTaskToGoal(taskId, goalId) {
     }
   }
 }
+
 async function deleteTask(taskId) {
   try {
     const response = await fetch(`/tasks/${taskId}`, {
@@ -1470,7 +1465,7 @@ function setupReassignmentHandlers() {
   }
 
   const confirmReassignNo = document.getElementById('confirmReassignNo');
-if (confirmReassignNo) {
+  if (confirmReassignNo) {
     confirmReassignNo.addEventListener('click', function() {
       closeModal('confirmReassignModal');
       sessionStorage.removeItem('currentTaskId');
@@ -1478,8 +1473,23 @@ if (confirmReassignNo) {
   }
 }
 
-
 function setupAssignBalanceHandlers() {
+  const assignBalanceModalContent = document.querySelector('#assignBalanceModal .modalContent');
+  if (assignBalanceModalContent && !document.getElementById('assignBalanceSuccessOverlay')) {
+    const successOverlay = document.createElement('div');
+    successOverlay.id = 'assignBalanceSuccessOverlay';
+    successOverlay.className = 'successOverlay';
+    successOverlay.innerHTML = `
+      <div class="successIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <div class="successMessage">Balance Assigned Successfully</div>
+    `;
+    assignBalanceModalContent.appendChild(successOverlay);
+  }
+
   const assignBalanceBtn = document.querySelector('.assignBalanceBtn');
   if (assignBalanceBtn) {
     assignBalanceBtn.addEventListener('click', function() {
@@ -1543,32 +1553,10 @@ function setupAssignBalanceHandlers() {
         const result = await response.json();
         
         if (result.success) {
-          const modalContent = document.querySelector('#assignBalanceModal .modalContent');
-          let successOverlay = document.getElementById('assignBalanceSuccessOverlay');
-          
-          if (!successOverlay) {
-            successOverlay = document.createElement('div');
-            successOverlay.id = 'assignBalanceSuccessOverlay';
-            successOverlay.className = 'successOverlay';
-            successOverlay.innerHTML = `
-              <div class="successIcon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div class="successMessage">Balance Assigned Successfully</div>
-            `;
-            modalContent.appendChild(successOverlay);
-          }
-          
-          successOverlay.classList.add('show');
-          
-          setTimeout(() => {
-            successOverlay.classList.remove('show');
+          showSuccessOverlay('assignBalanceSuccessOverlay', () => {
             closeModal('assignBalanceModal');
-            
             window.location.reload();
-          }, 1500);
+          });
         } else {
           throw new Error(result.error || 'Failed to assign balance');
         }
@@ -1593,3 +1581,4 @@ window.closeModal = closeModal;
 window.openAssignTaskModal = function() { openModal('assignTaskModal'); };
 window.closeAssignTaskModal = function() { closeModal('assignTaskModal'); };
 window.completeAndRedirect = completeAndRedirect;
+window.addGoalToUI = addGoalToUI;

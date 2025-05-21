@@ -53,11 +53,11 @@ router.post("/login", forwardAuthenticated, async (req, res) => {
     }
     
     if (req.session.user.accountType === 'parent') {
-      const { family, members } = await authHelpers.getFamilyWithFilteredMembers(req.session.user.familyId, 'child');
+      const result = await authHelpers.getFamilyWithFilteredMembers(req.session.user.familyId, 'child');
       
       return res.render("dashboard/selectChild", {
         user: req.session.user,
-        familyMembers: members,
+        familyMembers: result.children || [],
         currentPage: 'family',
         error: null,
         success: null
@@ -209,7 +209,7 @@ router.post('/reset-password/:token', async (req, res) => {
   }
 });
 
-// Email checks using AJAX
+// Email and password matching using AJAX
 
 router.post("/check-email", async (req, res) => {
   try {
@@ -239,6 +239,58 @@ router.post("/check-email", async (req, res) => {
     return res.status(500).json({ 
       exists: false, 
       message: "Error checking email availability" 
+    });
+  }
+});
+
+router.post("/validate-password", async (req, res) => {
+  try {
+    const { password } = req.body;
+    
+    if (!password) {
+      return res.status(400).json({ 
+        valid: false, 
+        message: "Password is required" 
+      });
+    }
+    
+    const validation = authHelpers.validatePassword(password);
+    
+    return res.json({ 
+      valid: validation.valid, 
+      message: validation.valid ? null : validation.message 
+    });
+  } catch (error) {
+    console.error("Error validating password:", error);
+    return res.status(500).json({ 
+      valid: false, 
+      message: "Error validating password" 
+    });
+  }
+});
+
+router.post("/validate-password-match", async (req, res) => {
+  try {
+    const { password, confirmPassword } = req.body;
+    
+    if (!password || !confirmPassword) {
+      return res.status(400).json({ 
+        valid: false, 
+        message: "Both passwords are required" 
+      });
+    }
+    
+    const valid = password === confirmPassword;
+    
+    return res.json({ 
+      valid: valid, 
+      message: valid ? null : "Passwords do not match" 
+    });
+  } catch (error) {
+    console.error("Error validating password match:", error);
+    return res.status(500).json({ 
+      valid: false, 
+      message: "Error validating password match" 
     });
   }
 });
@@ -322,11 +374,12 @@ router.get("/register/family/:familyId", forwardAuthenticated, async (req, res) 
 });
 
 
-router.post("/register/family", forwardAuthenticated, async (req, res) => {
+router.post("/register/family/:familyId", forwardAuthenticated, async (req, res) => {
   try {
-    const { fName, lName, email, password, confirmPassword, accountType, familyId } = req.body;
-    
-    const family = await Family.findById(familyId);
+    const { fName, lName, email, password, confirmPassword, accountType } = req.body;
+    const familyIdFromParams = req.params.familyId;
+
+    const family = await Family.findById(familyIdFromParams);
     if (!family) {
       return res.redirect('/register');
     }
@@ -350,7 +403,7 @@ router.post("/register/family", forwardAuthenticated, async (req, res) => {
       });
     }
     
-    const regResult = await authHelpers.processRegistration(fName, lName, email, password, accountType, familyId);
+    const regResult = await authHelpers.processRegistration(fName, lName, email, password, accountType, familyIdFromParams);
     if (!regResult.success) {
       if (authHelpers.isAjaxRequest(req)) {
         return res.status(400).json({
@@ -384,7 +437,7 @@ router.post("/register/family", forwardAuthenticated, async (req, res) => {
     
     let familyData = null;
     try {
-      const family = await Family.findById(req.body.familyId);
+      const family = await Family.findById(req.params.familyId);
       if (family) {
         familyData = {
           id: family._id,

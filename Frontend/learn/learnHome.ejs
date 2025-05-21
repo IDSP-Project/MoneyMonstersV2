@@ -34,7 +34,9 @@
           <% } %>
 
           <% if (blogs.length === 0) { %>
-            <p>No blogs available yet, why not add some!</p>
+            <div class="noLearningMessage">
+            <p>No blogs available yet, select a child to add some!</p>
+            </div>
           <% } else { %>
             <% blogs.forEach(blog => { %>
               <div class="blog-card">

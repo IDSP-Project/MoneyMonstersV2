@@ -1,20 +1,23 @@
-// CAREFUL: The is a global style, it applies all modals
+// CAREFUL: This is a global style, it applies to all modals
 
 html {
     overflow-y: scroll;
 }
 
+.successOverlay {
+  display: none;
+}
+
 .baseModal {
   display: none;
-  position: fixed;
-  z-index: 2000;;
+  position: absolute;
+  z-index: 2000;
+  width: 20rem;
+  height: 97vh;
   left: 50%;
-  top: 52.5%;
-  transform: translate(-50%, -49.5%);
-  width: 90%;
-  max-width: 20rem;
-  height: 96vh;
-  background-color: rgba(0,0,0,0.25);
+  top: 50%;
+  transform: translate(-50%, -46.5%);
+  background-color: rgba($black, 0.25);
   justify-content: center;
   align-items: center;
   
@@ -22,21 +25,42 @@ html {
     display: flex !important;
   }
 
-    .modalContent {
+  .modalContent {
     position: relative;
     background-color: $white;
     border-radius: 16px;
     padding: 1.5rem 0.5rem;
     width: 90%;
     margin: auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba($black, 0.15);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    min-height: 60vh;
     max-height: 85vh;
     overflow-y: auto;
     overflow-x: hidden;
+    
+    .successOverlay {
+      display: none;
+      position: absolute;
+      width: 100%;
+      height: 18rem;
+      background-color: $white;
+      border-radius: 16px;
+      z-index: 10;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      
+      &.show {
+        display: flex;
+        opacity: 1;
+      }
+    }
   }
   
   h2 {
@@ -52,8 +76,8 @@ html {
     position: absolute;
     top: 0.7rem;
     right: 0.9rem;
-    background: #f3f3f3;
-    border: 1px solid #e0e0e0;
+    background: $primary;
+    border: 1px solid $secondary-light;
     border-radius: 6px;
     font-size: 1.1rem;
     width: 28px;
@@ -66,7 +90,7 @@ html {
     transition: background 0.15s;
     
     &:hover {
-      background: #ececec;
+      background: darken($primary, 3%);
     }
   }
   
@@ -103,10 +127,10 @@ html {
     background-color: $success;
     color: $white;
     border-radius: 50%;
+    margin: 6rem auto 1rem auto;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 1rem auto;
+    justify-content: center; 
+    align-items: center;  
     
     svg, i {
       width: 36px;
@@ -118,9 +142,9 @@ html {
   .successMessage {
     font-size: 1.2rem;
     font-weight: 600;
-    color: #333;
+    color: $secondary;
     text-align: center;
-    margin: 1rem 0;
+    margin: 1rem auto;
   }
 }
 
@@ -130,9 +154,9 @@ html {
   font-size: $font-size-base;
   font-weight: 600;
   padding: 0.7rem 0;
+  margin: 0.5rem auto;
   cursor: pointer;
   transition: background 0.2s, opacity 0.3s;
-  margin-bottom: 0.7rem;
   text-align: center;
   
   &.primary {
@@ -184,13 +208,15 @@ html {
 .modalInput {
   width: 80%;
   padding: 0.7rem 1rem;
-  border: 1px solid #ececec;
+  margin: 0.3rem auto;;
+  border: 1px solid $secondary-light;
   border-radius: 8px;
   font-size: 1rem;
   font-family: $primary-font;
-  background: #faf9fb;
-  color: #222;
+  background: lighten($primary, 3%);
+  color: $secondary;
   outline: none;
+
   
   &:focus {
     border: 1.5px solid $tertiary;
@@ -202,23 +228,65 @@ html {
   }
 }
 
+.amazonLinkInput {
+  width: 100%;
+  border-radius: 5px;
+  background: transparent;
+  padding: 0;
+  border: none;
+  
+  input {
+    width: 80%;
+    border-radius: 5px;
+    padding: 0.5rem;
+    margin: 0 auto;
+    border: 1px solid $secondary-light;
+    background-color: $white;
+    color: $secondary;
+    
+    &:focus {
+      border: 1.5px solid $tertiary;
+    }
+  }
+}
+
+.redeemAmount {
+  width: 100%;
+  border-radius: 5px;
+  background: transparent;
+  padding: 0;
+  border: none;
+  
+  input {
+    width: 80%;
+    border-radius: 5px;
+    padding: 0.5rem;
+    margin: 0 auto;
+    border: 1px solid $secondary-light;
+    background-color: $white;
+    color: $secondary;
+    
+    &:focus {
+      border: 1.5px solid $tertiary;
+    }
+  }
+}
+
 .taskDetailsRow {
   display: flex;
   align-items: center;
-  margin: 1rem 0;
-  width: 100%;
+  margin: 0 0.5rem;
+  width: 90%;
   
   .iconCircle {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: #f3eafd;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
     color: $tertiary;
-    margin-right: 0.5rem;
   }
   
   .detailsTitle {
@@ -267,90 +335,3 @@ html {
   text-align: left;
   width: 100%;
 }
-
-.successOverlay {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 18rem;
-  height: auto;
-  background-color: rgba(255, 255, 255, 0.95);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: inherit;
-  z-index: 2100;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  
-  &.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
-
-.successOverlay {
-  display: none;
-  position: absolute;
-  z-index: 2000;;
-  left: 50%;
-  top: 52.5%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  max-width: 20rem;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.248);
-  justify-content: center;
-  align-items: center;
-}
-
-.successOverlayContent {
-  position: relative;
-  background-color: $white;
-  border-radius: 16px;
-  padding: 1.5rem 0.5rem;
-  width: 90%;
-  margin: auto;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-height: 85vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.successOverlay.show {
-  display: flex;
-  opacity: 1;
-  pointer-events: all;
-}
-.successIcon {
-  color: $success;
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.successIcon svg {
-  width: 3rem;
-  height: 3rem;
-  display: block;
-}
-.successMessage {
-  font-size: 1.3rem;
-  color: #222;
-  background: #fff;
-  padding: 1.2rem 2.2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-  font-weight: 600;
-  text-align: center;
-} 

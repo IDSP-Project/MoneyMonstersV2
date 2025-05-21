@@ -4,18 +4,31 @@ const router = express.Router();
 const User = require("../db/userModel.js");
 const Family = require('../db/familyModel.js');
 
-const { ensureAuthenticated } = authHelpers;
+const { ensureAuthenticated, setFlashMessages} = require('../helpers/authHelpers.js');
 
 router.get("/family", ensureAuthenticated, async (req, res) => {
   try {
     const { family, members } = await authHelpers.getFamilyWithFilteredMembers(req.session.user.familyId);
     
+    let error = null;
+    let success = null;
+    
+    if (req.session.flash) {
+      if (req.session.flash.type === 'error') {
+        error = req.session.flash.message;
+      } else if (req.session.flash.type === 'success') {
+        success = req.session.flash.message;
+      }
+      
+      delete req.session.flash;
+    }
+
     res.render("users/viewFamily", {
       user: req.session.user,
       family: family,
       familyMembers: members,
-      error: null,
-      success: null,
+      error: error,
+      success: success,
       currentPage: 'family'
     });
   } catch (error) {
@@ -138,6 +151,11 @@ router.post("/add-family-member", ensureAuthenticated, authHelpers.ensureParent,
 router.get("/remove-from-family/:id", ensureAuthenticated, authHelpers.ensureParent, async (req, res) => {
   try {
     const userId = req.params.id;
+
+    if (userId === req.session.user.id.toString()) {
+      throw new Error("You cannot remove yourself from the family");
+    }
+    
     
     const result = await authHelpers.getFamilyWithFilteredMembers(req.session.user.familyId);
     
@@ -235,7 +253,7 @@ if (!req.session.user.familyId) {
 
     res.render("dashboard/selectChild", {
       user: req.session.user,
-    familyMembers: result.children || [],
+      familyMembers: result.children || [],
       currentPage: 'family',
       error: null,
       success: null
