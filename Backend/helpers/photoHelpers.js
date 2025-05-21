@@ -1,14 +1,48 @@
 require('dotenv').config();
-
-
 const { v2: cloudinary } = require('cloudinary');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 cloudinary.config({
-  cloud_name: 'dgbsivq33', 
-  api_key: '552595323275138',
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    const tempDir = path.join(__dirname, '../temp-uploads');
+    if (!fs.existsSync(tempDir)){
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+    cb(null, tempDir);
+  },
+  filename: function(req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed!'), false);
+  }
+};
+
+const profilePhotoUpload = multer({ 
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: fileFilter
+});
+
+function cleanupTempFile(filePath) {
+  if (filePath && fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+}
 
 async function uploadProfileImage(file, userId) {
   try {
@@ -40,23 +74,6 @@ async function uploadProfileImage(file, userId) {
   }
 }
 
-
-async function deleteProfileImage(publicId) {
-  try {
-    const result = await cloudinary.uploader.destroy(publicId);
-    return {
-      success: result.result === 'ok',
-      result
-    };
-  } catch (error) {
-    console.error('Error deleting profile image from Cloudinary:', error);
-    return {
-      success: false,
-      error: error.message
-    };
-  }
-}
-
 function getProfileImageUrl(publicId, options = {}) {
   const defaultOptions = {
     width: 200,
@@ -74,6 +91,7 @@ function getProfileImageUrl(publicId, options = {}) {
 
 module.exports = {
   uploadProfileImage,
-  deleteProfileImage,
-  getProfileImageUrl
+  getProfileImageUrl,
+  profilePhotoUpload, 
+  cleanupTempFile
 };
