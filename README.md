@@ -94,7 +94,7 @@ Looking beyond launch, we see exciting opportunities to expand Money Monsters in
 * Implement milestone tracking and progress analytics for goals  
 * Increase personalization options, such as animated characters and congratulatory messages
 
-#### Technical Foundation  
+### Technical Foundation  
 Money Monsters is built on a simple stack: Node.js with Express for the backend, MongoDB for data storage, and EJS templates for server-side rendering. We use custom session-based authentication with bcrypt for security.
 
 ## Final Thoughts
