@@ -53,7 +53,9 @@
         <div class="modalInput amazonLinkInput">
           <input type="text" name="amazonUrl" placeholder="https://amazon.ca/..." required />
         </div>
-        
+
+        <p id="amazonLoadingMessage" style="display: none; margin-top: 10px;">Loading from Amazon...</p>
+
         <div class="modalFooter">
           <button type="submit" class="modalBtn primary" aria-label="Create goal from Amazon product">Create Goal</button>
           <button type="button" class="modalBtn secondary" id="backToTypeModalAmazon" aria-label="Go back to goal type selection">Back</button>
@@ -77,33 +79,44 @@
     </div>
   </div>
 </div>
-<script>
+
+<<script>
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('amazonGoalForm');
+    const loadingMsg = document.getElementById('amazonLoadingMessage');
+
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const amazonUrl = e.target.amazonUrl.value;
 
-        const response = await fetch('/goals/create-amazon', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ amazonUrl })
-        });
+        const amazonUrl = form.amazonUrl.value?.trim();
+        if (!amazonUrl) return alert("Please enter a valid Amazon URL.");
 
-        if (response.ok) {
-          // Show success modal instead of direct redirect
-          window.location.href = "/dashboard";
-        } else {
-          alert("Failed to create goal from Amazon link.");
+        // Show loading text within modal
+        if (loadingMsg) loadingMsg.style.display = 'block';
+
+        try {
+          const response = await fetch('/goals/create-amazon', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amazonUrl })
+          });
+
+          if (response.ok) {
+            window.location.href = "/dashboard";
+          } else {
+            alert("Failed to create goal from Amazon link.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Something went wrong. Please try again.");
+        } finally {
+          // If something fails and you don't redirect, hide the message
+          if (loadingMsg) loadingMsg.style.display = 'none';
         }
       });
     }
   });
 </script>
-
-
-
-

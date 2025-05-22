@@ -74,6 +74,17 @@ router.get('/learn', ensureAuthenticated, async (req, res) => {
       stringId: module._id.toString(),
       status: progressMap[module._id.toString()]?.status || 'new'  
     }));
+
+    modulesWithProgress.sort((a, b) => {
+    const statusOrder = status => {
+      const normalized = status?.toLowerCase();
+      if (normalized === 'completed' || normalized === 'complete') return 2;
+      if (normalized === 'to do') return 1;
+      return 0; // 'new' or unknown
+    };
+
+    return statusOrder(a.status) - statusOrder(b.status);
+    });
     
     res.render("learn/learnHome", {
       blogs: modulesWithProgress,
