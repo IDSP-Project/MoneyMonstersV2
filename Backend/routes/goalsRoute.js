@@ -20,8 +20,6 @@ const User = require('../db/userModel');
 const { extractASIN, fetchAmazonProductData } = require('../helpers/amazonHelpers');
 
 
-
-
 router.get('/goals/view/:goalId', ensureAuthenticated, async (req, res) => {
   try {
     const goalId = req.params.goalId;
@@ -199,6 +197,76 @@ router.get('/goals', ensureAuthenticated, async (req, res) => {
       getInitials: getGoalInitials
     });
   }
+});
+
+router.post('/goals/create-amazon', ensureAuthenticated, async (req, res) => {
+try {
+  const { amazonUrl, childId } = req.body;
+  const user = req.session.user;
+
+  const asin = extractASIN(amazonUrl);
+  if (!asin) {
+    return res.status(400).json({ error: 'Invalid Amazon URL' });
+  }
+
+  const targetChildId = childId || (req.viewingChild?._id || req.viewingChild?.id) || user._id || user.id;
+
+    const db = getDB();
+    const childObjectId = new ObjectId(targetChildId);
+    const childUser = await db.collection('users').findOne({ _id: childObjectId });
+    
+    if (!childUser) {
+      return res.status(404).json({ success: false, error: 'Child user not found' });
+    }
+    
+    let parentIds = [];
+    if (childUser.familyId) {
+      const parentsInFamily = await db.collection('users').find({ 
+        familyId: childUser.familyId, 
+        accountType: 'parent' 
+      }).toArray();
+      
+      parentIds = parentsInFamily.map(parent => parent._id);
+    } 
+    else if (childUser.parentId) {
+      let oldParentIds = childUser.parentId;
+      if (!Array.isArray(oldParentIds)) oldParentIds = [oldParentIds];
+      parentIds = oldParentIds.map(id => (typeof id === 'string' ? new ObjectId(id) : id));
+    }
+    
+    if (parentIds.length === 0) {
+      return res.status(400).json({ success: false, error: 'You must have a parent to create a goal.' });
+    }
+
+  const productData = await fetchAmazonProductData(asin);
+  const price = parseFloat(productData.price) || 0;
+
+  const newGoal = {
+    title: productData.title || 'Amazon Goal',
+    description: 'Amazon goal created by link',
+    price,
+    totalRequired: price,
+    purchaseLink: amazonUrl,
+    image: productData.image?.link || productData.image || '',
+    amountAchieved: 0,
+    parentId: parentIds,
+    childId: targetChildId,
+    createdAt: new Date(),
+    status: 'active',
+    progress: 0,
+    completed: false
+  };
+
+  console.log("Final Goal:", newGoal);
+
+  await db.collection('goals').insertOne(newGoal);
+
+  res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Error creating Amazon goal:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+  
 });
 
 router.post('/add', ensureAuthenticated, async (req, res) => {
@@ -465,76 +533,5 @@ router.post('/goals/:goalId/request-response', ensureAuthenticated, async (req, 
 });
 
 
-
-router.post('/goals/create-amazon', ensureAuthenticated, async (req, res) => {
-try {
-  console.log("Received POST to /goals/create-amazon");
-  const { amazonUrl, childId } = req.body;
-  const user = req.session.user;
-
-  const asin = extractASIN(amazonUrl);
-  if (!asin) {
-    return res.status(400).json({ error: 'Invalid Amazon URL' });
-  }
-
-  const targetChildId = childId || (req.viewingChild?._id || req.viewingChild?.id) || user._id || user.id;
-
-    const db = getDB();
-    const childObjectId = new ObjectId(targetChildId);
-    const childUser = await db.collection('users').findOne({ _id: childObjectId });
-    
-    if (!childUser) {
-      return res.status(404).json({ success: false, error: 'Child user not found' });
-    }
-    
-    let parentIds = [];
-    if (childUser.familyId) {
-      const parentsInFamily = await db.collection('users').find({ 
-        familyId: childUser.familyId, 
-        accountType: 'parent' 
-      }).toArray();
-      
-      parentIds = parentsInFamily.map(parent => parent._id);
-    } 
-    else if (childUser.parentId) {
-      let oldParentIds = childUser.parentId;
-      if (!Array.isArray(oldParentIds)) oldParentIds = [oldParentIds];
-      parentIds = oldParentIds.map(id => (typeof id === 'string' ? new ObjectId(id) : id));
-    }
-    
-    if (parentIds.length === 0) {
-      return res.status(400).json({ success: false, error: 'You must have a parent to create a goal.' });
-    }
-
-  const productData = await fetchAmazonProductData(asin);
-  const price = parseFloat(productData.price) || 0;
-
-  const newGoal = {
-    title: productData.title || 'Amazon Goal',
-    description: 'Amazon goal created by link',
-    price,
-    totalRequired: price,
-    purchaseLink: amazonUrl,
-    image: productData.image?.link || productData.image || '',
-    amountAchieved: 0,
-    parentId: parentIds,
-    childId: targetChildId,
-    createdAt: new Date(),
-    status: 'active',
-    progress: 0,
-    completed: false
-  };
-
-  console.log("Final Goal:", newGoal);
-
-  await db.collection('goals').insertOne(newGoal);
-
-  res.status(200).json({ success: true });
-  } catch (error) {
-    console.error("Error creating Amazon goal:", error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-  
-});
 
 module.exports = { router };

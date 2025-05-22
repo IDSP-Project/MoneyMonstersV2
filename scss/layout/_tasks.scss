@@ -106,13 +106,7 @@
   }
 
   .noTasksMessage {
-    // display: flex;
-    // flex-direction: column;
-    // align-items: center;
-    // justify-content: center;
-    // min-height: 60vh;
-    // padding: 2.5rem 1.5rem;
-    // margin: 2rem 0;
+    text-align: center;
 
     i {
       font-size: 3rem;
@@ -131,7 +125,6 @@
       color: $secondary;
       font-size: $font-size-md;
       text-align: center;
-      margin-bottom: 0;
     }
   }
 }
@@ -142,6 +135,7 @@
   padding: 0.4em 1em;
   border-radius: 12px;
   font-size: 0.9em;
+  width: 4rem;
   font-weight: 600;
   text-align: center;
   font-family: $primary-font;
@@ -366,7 +360,6 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem; 
   margin: 0.5rem;
-  width: 85%; 
 }
 
 .taskType {
@@ -414,6 +407,9 @@
     margin-bottom: 0.7rem;
     margin-left: 0.2rem;
     font-family: $primary-font;
+  }
+   &:last-of-type {
+    margin-bottom: 4rem;
   }
 }
 
@@ -486,9 +482,9 @@
 
   .tasksContainer {
      h1 {
-          margin: 1rem 3.2rem;
-          font-size: 1.1rem;
-          color: $secondary;
-          font-weight: 600;
+      text-align: center;
+      font-size: 1.1rem;
+      color: $secondary;
+      font-weight: 600;
     }
   }

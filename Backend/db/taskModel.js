@@ -150,22 +150,7 @@ class TaskModel {
                                 }
                             }
                         );
-                        
-                        // try {
-                        //     await db.collection('goalUpdates').insertOne({
-                        //         goalId: goalId,
-                        //         taskId: task._id,
-                        //         amount: amountToAllocate,
-                        //         timestamp: new Date(),
-                        //         oldAmount: currentAmount,
-                        //         newAmount: newAmount,
-                        //         updateSource: "taskCompletion",
-                        //         uniqueMarker: uniqueMarker
-                        //     });
-                        // } catch (err) {
-                        //     console.warn("Could not save update metadata:", err.message);
-                        // }
-                        
+                    
                         const finalCheck = await db.collection('goals').findOne({ _id: goalId });
                         updatedGoal = finalCheck;
                         goalUpdated = true;

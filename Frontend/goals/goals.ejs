@@ -48,13 +48,9 @@
               </div>
             <% } %>
         <% 
-          // Get IDs of all pending requests
           const pendingIds = (pendingRequests || []).map(g => g._id.toString());
-          // Get reviewed goals (approved or denied)
           const reviewedGoals = (goals || []).filter(g => g.requestStatus === 'approved' || g.requestStatus === 'denied');
-          // Get IDs of reviewed goals
           const reviewedIds = reviewedGoals.map(g => g._id.toString());
-          // Get pending goals for child (requestStatus: 'pending')
           const sentRequests = (goals || []).filter(g => g.requestStatus === 'pending');
           const sentRequestIds = sentRequests.map(g => g._id.toString());
         %>
@@ -118,7 +114,6 @@
           </div>
         <% } else { %>
           <div class="noGoalsMessage">
-            <i class="fas fa-bullseye" aria-hidden="true"></i>
             <h1>No Goals Yet</h1>
             <p>You haven't set any goals yet. Start by adding your first goal!</p>
           </div>
