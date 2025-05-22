@@ -227,7 +227,6 @@ const getAssignedFundsForGoal = async (goalId) => {
     }).toArray();
     
     const assignedTotal = tasks.reduce((sum, task) => sum + (parseFloat(task.reward) || 0), 0);
-    console.log(`Goal ${goalId}: Found ${tasks.length} completed tasks with total reward of ${assignedTotal}`);
     return assignedTotal;
   } catch (error) {
     console.error('Error getting assigned funds for goal:', error);
@@ -241,7 +240,6 @@ const updateGoalProgress = async (goalId, options = {}) => {
     if (typeof goalId === 'string') goalId = new ObjectId(goalId);
     
     if (options.existingGoal && options.skipCalculation) {
-      console.log(`Using provided goal data for ${goalId} to avoid race condition`);
       return { success: true, goal: options.existingGoal };
     }
     
@@ -256,7 +254,6 @@ const updateGoalProgress = async (goalId, options = {}) => {
       const secondsSinceUpdate = (now - lastUpdateTime) / 1000;
       
       if (secondsSinceUpdate < 5) {
-        console.log(`Skipping progress update for goal ${goalId} - recently updated by task completion`);
         return { 
           success: true, 
           message: 'Skipped update to preserve task completion changes',
@@ -268,16 +265,9 @@ const updateGoalProgress = async (goalId, options = {}) => {
     const assignedAmount = await getAssignedFundsForGoal(goalId);
     const progress = Math.min(100, Math.round((assignedAmount / goal.totalRequired) * 100));
     
-    console.log(`Goal ${goalId} progress calculation:`, {
-      assignedAmount,
-      totalRequired: goal.totalRequired,
-      calculatedProgress: progress,
-      currentProgress: goal.progress
-    });
     
     if (Math.abs(assignedAmount - goal.amountAchieved) < 0.01 && 
         Math.abs(progress - goal.progress) < 1) {
-      console.log(`No significant change for goal ${goalId}, skipping update`);
       return { 
         success: true, 
         message: 'No change needed',
@@ -303,9 +293,7 @@ const updateGoalProgress = async (goalId, options = {}) => {
     }
     
     updateObj.uniqueMarker = `calculation-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-    
-    console.log(`Updating goal ${goalId} with:`, updateObj);
-    
+        
     const updateResult = await updateGoal(goalId, updateObj);
     
     const updatedGoal = await findGoalById(goalId);

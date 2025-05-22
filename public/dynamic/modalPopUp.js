@@ -270,7 +270,6 @@ function addGoalToUI(goal) {
   }
   
   if (!goalList) {
-    console.log('No main Goals section found, creating new section');
     const goalsContainer = document.querySelector('.goalsContainer');
     
     if (goalsContainer) {
@@ -584,7 +583,6 @@ function setupTaskTypeSelection() {
 }
 
 function createTaskCard(task, formattedDue) {
-  console.log("Creating task card for:", task);
   
   let iconHTML = '';
   try {
@@ -681,16 +679,13 @@ function setupAddTaskFlow() {
     const newBtn = document.getElementById('confirmAddTaskBtn');
     
     newBtn.addEventListener('click', async function() {
-      console.log("Task creation button clicked");
       
       const taskData = validateAndGetTaskData();
       if (!taskData) {
-        console.log("Task validation failed");
         return; 
       }
       
       try {
-        console.log("Creating task with data:", taskData);
         
         const response = await fetch('/tasks', {
           method: 'POST',
@@ -707,7 +702,6 @@ function setupAddTaskFlow() {
         }
         
         const result = await response.json();
-        console.log("Task created successfully:", result);
         
         if (result.success) {
           document.getElementById('addTaskDetailsModal').querySelectorAll('input').forEach(input => {
@@ -726,10 +720,8 @@ function setupAddTaskFlow() {
                 result.task.category = taskData.category || 'misc';
               }
               
-              console.log("Adding task to UI:", result.task);
               
               const taskList = document.querySelector('.tasksContainer .taskList');
-              console.log("Found task list:", !!taskList);
               
               if (taskList) {
                 const dueDate = new Date(result.task.dueDate);
@@ -756,7 +748,6 @@ function setupAddTaskFlow() {
                   }
                 }
               } else {
-                console.log("Task list not found, falling back to appendNewTaskToUI");
                 appendNewTaskToUI(result.task);
               }
             }
@@ -776,7 +767,6 @@ function setupAddTaskFlow() {
 window.setupAddTaskFlow = setupAddTaskFlow;
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log("Running updated setupAddTaskFlow");
   setupAddTaskFlow();
 });
 

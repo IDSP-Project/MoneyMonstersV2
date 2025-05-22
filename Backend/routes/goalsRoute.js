@@ -201,7 +201,6 @@ router.get('/goals', ensureAuthenticated, async (req, res) => {
 
 router.post('/goals/create-amazon', ensureAuthenticated, async (req, res) => {
 try {
-  console.log("Received POST to /goals/create-amazon");
   const { amazonUrl, childId } = req.body;
   const user = req.session.user;
 
