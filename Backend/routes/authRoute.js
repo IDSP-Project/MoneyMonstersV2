@@ -5,6 +5,7 @@ const router = express.Router();
 const User = require("../db/userModel.js");
 const Family = require('../db/familyModel.js');
 const { Resend } = require('resend');
+const session = require("express-session");
 
 const { forwardAuthenticated } = authHelpers;
 
@@ -478,8 +479,13 @@ router.get("/logout/:id", authHelpers.ensureAuthenticated, async (req, res) => {
 
 router.post("/logout", authHelpers.ensureAuthenticated, (req, res) => {
   try {
-    req.session = null;
+    req.session.destroy(err => {
+    if (err) {
+      return res.status(500).send("Error logging out");
+    }
+    res.clearCookie('session');
     res.redirect("/");
+  });
   } catch (error) {
     res.status(500).send("Error logging out");
   }
