@@ -22,7 +22,6 @@ async function sendRequest(goalId) {
     const data = await response.json();
     
     if (data.success) {
-      // Show success modal
       showRequestSuccessModal();
     } else {
       throw new Error(data.error || 'Failed to send request');

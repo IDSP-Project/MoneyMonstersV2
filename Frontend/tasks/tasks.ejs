@@ -23,6 +23,7 @@
               <span class="tab tasksTab"><h2>Tasks</h2></span>
               <span class="tab statusTab"><h2>Status</h2></span>
             </div>
+            
             <div class="taskList">
               <% tasks.forEach(function(task) { %>
                 <div class="taskCard" data-description="<%= task.description ? task.description.split('"').join('&quot;') : '' %>" data-task-id="<%= task._id %>" data-goal-id="<%= task.goalId ? task.goalId : '' %>" data-parent-name="<%= task.parentName || '' %>" data-category="<%= task.category || 'misc' %>">

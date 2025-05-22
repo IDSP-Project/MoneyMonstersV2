@@ -106,7 +106,6 @@
             </div>
           <% } else { %>
             <div class="noGoalsMessage">
-              <i class="fas fa-bullseye"></i>
               <h1>No Goals Yet</h1>
               <p>You haven't set any goals yet. Start by adding your first goal!</p>
             </div>
@@ -190,11 +189,19 @@
             <div class="taskCard">
               <div class="noTasksMessage">
                 <h1>No Tasks Yet</h1>
-                <p>Ask your parent to assign a task.</p>
+                <% if (user.accountType === 'parent') { %>
+                  <% if (locals.viewingAsChild) { %>
+                    <p>You haven't assigned any tasks to <%= locals.child.firstName %> yet.</p>
+                  <% } else { %>
+                    <p>Assign a task to get started.</p>
+                  <% } %>
+                <% } else { %>
+                  <p>Ask your parent to assign a task.</p>
+                <% } %>
               </div>
             </div>
           <% } %>
-        </div>
+          </div>
 
         <div class="learningContainer">
           <% if (learningProgress && learningProgress.length > 0) { %>
@@ -239,7 +246,6 @@
             </div>
           <% } else { %>
             <div class="noLearningMessage">
-              <h2>Learning</h2>
               <h3>No Learning Modules</h3>
               <p>Check back soon for new learning content!</p>
             </div>

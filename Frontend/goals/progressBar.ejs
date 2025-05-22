@@ -9,16 +9,18 @@
             stroke-linecap="round" 
             stroke-linejoin="round"/>
       
-      <path class="progress-indicator"
-            id="progress-path-<%= goalId %>"
-            d="M14 139.091C14 122.675 17.2591 106.421 23.5912 91.2555C29.9233 76.0899 39.2044 62.31 50.9046 50.7027C62.6048 39.0953 76.4949 29.8879 91.782 23.606C107.069 17.3243 123.453 14.0911 140 14.0911C156.547 14.0911 172.931 17.3243 188.218 23.6061C203.505 29.888 217.395 39.0954 229.095 50.7028C240.796 62.31 250.077 76.09 256.409 91.2556C262.741 106.421 266 122.675 266 139.091"
-            stroke="#7F56D9" 
-            stroke-width="28" 
-            stroke-linecap="round" 
-            stroke-linejoin="round"
-            stroke-dasharray="502"
-            stroke-dashoffset="<%= 502 - (502 * progress / 100) %>"
-            />
+        <% if (progress > 0) { %>
+        <path class="progress-indicator"
+        id="progress-path-<%= goalId %>"
+        d="M14 139.091C14 122.675 17.2591 106.421 23.5912 91.2555C29.9233 76.0899 39.2044 62.31 50.9046 50.7027C62.6048 39.0953 76.4949 29.8879 91.782 23.606C107.069 17.3243 123.453 14.0911 140 14.0911C156.547 14.0911 172.931 17.3243 188.218 23.6061C203.505 29.888 217.395 39.0954 229.095 50.7028C240.796 62.31 250.077 76.09 256.409 91.2556C262.741 106.421 266 122.675 266 139.091"
+        stroke="#7F56D9" 
+        stroke-width="28" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        stroke-dasharray="<%= 394.27 * progress / 100 %>, 394.27"
+        stroke-dashoffset="0"
+        />
+        <% } %>
     </svg>
   </div>
   <div class="progress-text">
