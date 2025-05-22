@@ -52,7 +52,7 @@ Unfortunately, the confirm signup popups were added to designs after form comple
 #### Radio Button Styling:  
 Similarly, design changes to radio buttons occurred post-implementation, requiring layout adjustments that were not accounted for in the original project timeline. While we adapted to accommodate these changes, they impacted our ability to deliver other planned features.
 
-**What We Learned**
+## What We Learned
 
 Building Money Monsters taught us valuable lessons about working on collaborative projects:
 
@@ -62,7 +62,7 @@ We found that early and continuous communication between designers and developer
 #### User context is critical:  
 Adding the "Viewing as" indicators across all pages of the application improved the overall user experience significantly. This highlights the importance of minor details to reduce confusion and improve the functionality of the platform.
 
-**Pre-Launch Improvements**
+## Pre-Launch Improvements
 
 Before making this product publicly available, we'd like to continue to address several concerns:
 #### Security enhancements:
@@ -76,7 +76,7 @@ A more comprehensive system for handling errors would be helpful to provide user
 #### Database optimization:
 We'd review our data access patterns to ensure the application remains responsive as family accounts grow.
 
-**Future Vision**
+## Future Vision
 
 Looking beyond launch, we see exciting opportunities to expand Money Monsters in the future:
 
@@ -97,7 +97,7 @@ Looking beyond launch, we see exciting opportunities to expand Money Monsters in
 #### Technical Foundation  
 Money Monsters is built on a simple stack: Node.js with Express for the backend, MongoDB for data storage, and EJS templates for server-side rendering. We use custom session-based authentication with bcrypt for security.
 
-**Final Thoughts**
+## Final Thoughts
 
 Building Money Monsters has been an incredible educational journey for our team. As students tackling our first significant group project, we've grown tremendously through this experience. Each of us has learned valuable lessons, both in relation to real-world software development processes and working as a team.
 
