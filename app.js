@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const { connectDB, getDB } = require('./Backend/db/connection.js');
 const { forwardAuthenticated, checkViewingAsChild } = require('./Backend/helpers/authHelpers.js');
 require('dotenv').config();
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,19 +26,37 @@ connectDB()
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cookieSession({
+// app.use(cookieSession({
+//   name: 'session',
+//   keys: [process.env.SESSION_SECRET],
+//   maxAge: 24 * 60 * 60 * 1000,
+//   secure: process.env.NODE_ENV === 'production',
+//   httpOnly: true,
+//   sameSite: 'lax'
+// }));
+
+//fixing the login issue on render
+app.set('trust proxy', 1);
+
+app.use(session({
   name: 'session',
-  keys: [process.env.SESSION_SECRET],
-  maxAge: 24 * 60 * 60 * 1000,
-  secure: process.env.NODE_ENV === 'production',
-  httpOnly: true,
-  sameSite: 'lax'
+  secret: process.env.SESSION_SECRET || 'secret-key',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI
+  }),
+  cookie: {
+    httpOnly: true,
+    secure: process.env.IS_HOSTED === '1', 
+    maxAge: 24 * 60 * 60 * 1000, 
+    sameSite: 'lax'
+  }
 }));
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   next();
 });
-
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'Frontend'));
