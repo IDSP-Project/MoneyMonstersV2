@@ -53,9 +53,9 @@
         <div class="modalInput amazonLinkInput">
           <input type="text" name="amazonUrl" placeholder="https://amazon.ca/..." required />
         </div>
-
-        <p id="amazonLoadingMessage" style="display: none; margin-top: 10px;">Loading from Amazon...</p>
-
+          <p id="amazonLoadingMessage" class="amazonLoadingMessage">
+            Loading from Amazon...
+          </p>
         <div class="modalFooter">
           <button type="submit" class="modalBtn primary" aria-label="Create goal from Amazon product">Create Goal</button>
           <button type="button" class="modalBtn secondary" id="backToTypeModalAmazon" aria-label="Go back to goal type selection">Back</button>
@@ -80,20 +80,28 @@
   </div>
 </div>
 
-<<script>
+<script>
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('amazonGoalForm');
     const loadingMsg = document.getElementById('amazonLoadingMessage');
+    const submitBtn = form?.querySelector('button[type="submit"]');
 
-    if (form) {
+    if (form && loadingMsg && submitBtn) {
+      // Ensure loading message is hidden on load
+      loadingMsg.style.display = 'none';
+
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const amazonUrl = form.amazonUrl.value?.trim();
         if (!amazonUrl) return alert("Please enter a valid Amazon URL.");
 
-        // Show loading text within modal
-        if (loadingMsg) loadingMsg.style.display = 'block';
+        // Show styled loading message
+        loadingMsg.style.display = 'block';
+
+        // Disable the button and change text
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Creating...";
 
         try {
           const response = await fetch('/goals/create-amazon', {
@@ -113,10 +121,13 @@
           console.error("Error:", error);
           alert("Something went wrong. Please try again.");
         } finally {
-          // If something fails and you don't redirect, hide the message
-          if (loadingMsg) loadingMsg.style.display = 'none';
+          // Only reset if not redirected
+          loadingMsg.style.display = 'none';
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Create Goal";
         }
       });
     }
   });
 </script>
+
